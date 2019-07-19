@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from .config import load
 
@@ -9,3 +9,7 @@ config = load()
 if not config:
     print("config not found!")
     exit(1)
+
+@app.route('/')
+def index():
+    return render_template('index.html')

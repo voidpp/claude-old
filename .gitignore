@@ -62,3 +62,4 @@ node_modules
 alembic.ini
 pip-wheel-metadata
 package-lock.json
+claude/static/
