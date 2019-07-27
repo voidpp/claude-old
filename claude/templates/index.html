@@ -5,11 +5,24 @@
         <title>zsomapell klod</title>
     </head>
     <body>
+        <style>
+            html, body, #body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+        </style>
         <div id="body"></div>
 
         <script src="/static/react.development.js"></script>
         <script src="/static/react-dom.development.js"></script>
+        <script src="/static/material-ui.development.js"></script>
+        <script src="/static/fontawesome-free-solid-svg-icons.js"></script>
 
-        <script src="/static/bundle.js"></script>
+        <script src="/static/bundle.js?v={{version}}"></script>
+
+        {% if dev_mode: %}
+            <script src="http://localhost:35729/livereload.js"></script>
+        {% endif %}
     </body>
 </html>

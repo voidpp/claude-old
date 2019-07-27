@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name = "claude",
-    description = "",
-    long_description = "",
+    description = "claude",
+    long_description = "claude",
     author = "Lajos Santa",
     author_email = "santa.lajos@gmail.com",
     url = "https://github.com/voidpp/claude",
@@ -17,5 +17,5 @@ setup(
     packages = [],
     extras_require = {},
     scripts = [],
-    classifiers = []
+    classifiers = [],
 )

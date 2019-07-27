@@ -1,3 +1,4 @@
+from time import time
 from flask import Flask, render_template
 
 from .config import load
@@ -12,4 +13,5 @@ if not config:
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    version = str(time())
+    return render_template('index.html', version = version, dev_mode = app.debug)

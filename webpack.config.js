@@ -1,3 +1,6 @@
+var LiveReloadPlugin = require('webpack-livereload-plugin');
+
+
 module.exports = {
     mode: "development",
 
@@ -42,6 +45,12 @@ module.exports = {
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
         "react": "React",
-        "react-dom": "ReactDOM"
-    }
+        "react-dom": "ReactDOM",
+        "@material-ui/core": "MaterialUI",
+        "@fortawesome/free-solid-svg-icons": "free-solid-svg-icons",
+    },
+
+    plugins: [
+        new LiveReloadPlugin({})
+    ]
 };

@@ -20,11 +20,11 @@ class AppConfig:
 
     servers = tree.list_node([ServerConfig])
 
+config_loader = Config('claude.yaml')
+
 def load() -> AppConfig:
 
-    cfg = Config('claude.yaml')
-
-    if not cfg.load():
+    if not config_loader.load():
         return None
 
-    return tree.load(cfg.data)
+    return tree.load(config_loader.data)
