@@ -1,9 +1,8 @@
 import * as React from "react";
-import { Rnd, DraggableData, ResizableDelta, Position } from "react-rnd";
+import { Rnd, DraggableData, ResizableDelta, Position, RndResizeCallback } from "react-rnd";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import { WidgetConfig, BaseWidgetConfig } from "../types";
 
-import widgetRegistry from '../widgetRegistry'
 import { DraggableEvent } from "react-draggable";
 import { ResizeDirection } from "re-resizable";
 import WidgetRemoveButton from "../containers/WidgetRemoveButton";
@@ -31,15 +30,20 @@ export type DispatchProps = {
     updateWidgetConfig: (id: number, config: Partial<BaseWidgetConfig>) => void,
 }
 
-export interface OwnProps  {
+export interface OwnProps {
     config: WidgetConfig,
     stepSize: number,
+    children: React.ReactNode,
+    removeButton?: boolean,
+    onResize?: RndResizeCallback,
 }
 
 export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & WithStyles<typeof styles>) => {
-    const {config, stepSize, updateWidgetConfig, classes} = props;
+    const {config, stepSize, updateWidgetConfig, classes, removeButton = true, onResize} = props;
 
     const onDragStop = (e: DraggableEvent, data: DraggableData) => {
+        if (data.deltaX == 0 && data.deltaY == 0)
+            return;
         updateWidgetConfig(config.id, {
             x: data.lastX,
             y: data.lastY,
@@ -47,6 +51,8 @@ export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & 
     }
 
     const onResizeStop = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, position: Position) => {
+        if (delta.width == 0 && delta.height == 0)
+            return;
         updateWidgetConfig(config.id, {
             x: position.x,
             y: position.y,
@@ -54,8 +60,6 @@ export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & 
             height: config.height + delta.height,
         })
     }
-
-    const widgetReg = widgetRegistry[config.type];
 
     return <Rnd
         position={{
@@ -70,10 +74,11 @@ export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & 
         resizeGrid={[stepSize, stepSize]}
         onDragStop={onDragStop}
         onResizeStop={onResizeStop}
+        onResize={onResize}
     >
         <div className={props.classes.body}>
-            { React.createElement(widgetReg.factory, {id: config.id, settings: config.settings}) }
-            { widgetReg.commonRemoveButton ? <div className={classes.removeButtonContainer}><WidgetRemoveButton id={config.id} /></div> : null }
+            { props.children }
+            { removeButton ? <div className={classes.removeButtonContainer}><WidgetRemoveButton id={config.id} /></div> : null }
         </div>
     </Rnd>
 }))

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { ThunkDispatcher } from '../types';
 
-import WidgetFrame, {DispatchProps} from '../components/WidgetFrame';
+import WidgetFrame, {DispatchProps, OwnProps} from '../components/WidgetFrame';
 import { updateWidgetConfig } from '../actions';
 
 const mapDispatchToProps = (dispatch: ThunkDispatcher): DispatchProps => {
@@ -10,4 +10,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatcher): DispatchProps => {
     }
 }
 
-export default connect<{}, DispatchProps>(null, mapDispatchToProps)(WidgetFrame);
+export default connect<{}, DispatchProps, OwnProps>(null, mapDispatchToProps)(WidgetFrame);

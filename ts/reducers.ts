@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { State, AppConfig } from './types';
+import { State, AppConfig, LocalStorageSchema } from './types';
 import { claudeLocalStorage } from './tools';
 import widgetRegistry from "./widgetRegistry";
 
@@ -8,7 +8,15 @@ import {addWidget, Action, updateWidgetConfig} from './actions'
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
-function config(state: AppConfig = claudeLocalStorage, action: ConfigAction): AppConfig {
+function localStorageAsDict(): LocalStorageSchema {
+    let res = new LocalStorageSchema();
+    for (let k of Object.keys(claudeLocalStorage)) {
+        res[k] = claudeLocalStorage[k];
+    }
+    return res;
+}
+
+function config(state: AppConfig = localStorageAsDict(), action: ConfigAction): AppConfig {
 
     // 'widgetType' in action only for the Typescript ...
     if ('widgetType' in action && action.type == Action.ADD_WIDGET) {

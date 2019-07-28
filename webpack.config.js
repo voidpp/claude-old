@@ -48,6 +48,7 @@ module.exports = {
         "react-dom": "ReactDOM",
         "@material-ui/core": "MaterialUI",
         "@fortawesome/free-solid-svg-icons": "free-solid-svg-icons",
+        "moment": "moment",
     },
 
     plugins: [

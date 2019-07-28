@@ -14,6 +14,11 @@ export interface WidgetConfig extends BaseWidgetConfig {
     type: string,
 }
 
+export type CommonWidgetProps<T = any> = {
+    config: Omit<WidgetConfig, 'settings'> & {settings: T},
+    stepSize: number,
+}
+
 export type WidgetConfigList = Array<WidgetConfig>;
 
 export class LocalStorageSchema {
@@ -29,8 +34,3 @@ export interface State {
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;
-
-export interface WidgetBaseProps {
-    settings: any,
-    id: number,
-}

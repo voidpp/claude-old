@@ -7,7 +7,6 @@ export type WidgetRegistryType = {
         factory: any,
         title: string,
         default: BaseWidgetConfig,
-        commonRemoveButton: boolean,
     }
 }
 
@@ -20,9 +19,12 @@ let reg: WidgetRegistryType = {
             y: 10,
             width: 300,
             height: 200,
-            settings: {},
+            settings: {
+                showDate: true,
+                timeFormat: 'HH:mm',
+                dateFormat: 'YYYY. MMMM D. dddd',
+            },
         },
-        commonRemoveButton: true,
     },
 }
 

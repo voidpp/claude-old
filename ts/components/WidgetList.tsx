@@ -1,7 +1,8 @@
 import * as React from "react";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import { AppConfig } from "../types";
+import { AppConfig, WidgetConfig } from "../types";
 import WidgetFrame from "../containers/WidgetFrame";
+import widgetRegistry from '../widgetRegistry'
 
 const styles = () => createStyles({
 
@@ -13,5 +14,14 @@ export interface StateProps {
 
 export default withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
     const {config} = props;
-    return <div>{config.widgets.map(w => <WidgetFrame stepSize={config.stepSize} config={w} key={w.id.toString()} />)}</div>
+
+    function factory(wconf: WidgetConfig) {
+        return React.createElement(widgetRegistry[wconf.type].factory, {
+            config: wconf,
+            stepSize: config.stepSize,
+            key: wconf.id,
+        });
+    }
+
+    return <div>{config.widgets.map(factory)}</div>
 }))
