@@ -1,58 +1,67 @@
 import { combineReducers } from 'redux';
-import { State, AppConfig, LocalStorageSchema } from './types';
+// import { State, AppConfig, LocalStorageSchema } from './types';
 import { claudeLocalStorage } from './tools';
 import widgetRegistry from "./widgetRegistry";
 
+import { State} from './types';
 
-import {addWidget, Action, updateWidgetConfig} from './actions'
+
+import {addWidget, Action, updateWidgetConfig, selectDashboard} from './actions'
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
-function localStorageAsDict(): LocalStorageSchema {
-    let res = new LocalStorageSchema();
-    for (let k of Object.keys(claudeLocalStorage)) {
-        res[k] = claudeLocalStorage[k];
+// function localStorageAsDict(): LocalStorageSchema {
+//     let res = new LocalStorageSchema();
+//     for (let k of Object.keys(claudeLocalStorage)) {
+//         res[k] = claudeLocalStorage[k];
+//     }
+//     return res;
+// }
+
+// function config(state: AppConfig = localStorageAsDict(), action: ConfigAction): AppConfig {
+
+//     // 'widgetType' in action only for the Typescript ...
+//     if ('widgetType' in action && action.type == Action.ADD_WIDGET) {
+
+//         let newState =  Object.assign({}, state, {
+//             widgets: state.widgets.concat([{
+//                 id: (state.widgets.length ? Math.max(...state.widgets.map(w => w.id)) : 0) + 1,
+//                 ...widgetRegistry[action.widgetType].default,
+//                 type: action.widgetType,
+//             }])
+//         })
+//         claudeLocalStorage.widgets = newState.widgets;
+//         return newState;
+
+//     } else if('config' in action && action.type == Action.UPDATE_WIDGET_CONFIG) {
+
+//         let newState: AppConfig = JSON.parse(JSON.stringify(state)); // TODO: slice the original array instead of full copy...
+//         Object.assign(newState.widgets.find(i => i.id == action.id), action.config);
+//         claudeLocalStorage.widgets = newState.widgets;
+//         return newState;
+
+//     } else if('id' in action && action.type == Action.REMOVE_WIDGET) {
+
+//         let widgets = [...state.widgets]
+//         widgets.splice(state.widgets.findIndex(i => i.id == action.id), 1);
+//         let newState = Object.assign({}, state, {widgets});
+//         claudeLocalStorage.widgets = newState.widgets;
+//         return newState;
+
+//     }
+
+//     return state;
+// }
+
+function currentDashboardId(state = claudeLocalStorage.currentDashboardId, action: ReturnType<typeof selectDashboard>) {
+    if (action.type == Action.SELECT_DASHBOARD) {
+        return action.id;
     }
-    return res;
-}
-
-function config(state: AppConfig = localStorageAsDict(), action: ConfigAction): AppConfig {
-
-    // 'widgetType' in action only for the Typescript ...
-    if ('widgetType' in action && action.type == Action.ADD_WIDGET) {
-
-        let newState =  Object.assign({}, state, {
-            widgets: state.widgets.concat([{
-                id: (state.widgets.length ? Math.max(...state.widgets.map(w => w.id)) : 0) + 1,
-                ...widgetRegistry[action.widgetType].default,
-                type: action.widgetType,
-            }])
-        })
-        claudeLocalStorage.widgets = newState.widgets;
-        return newState;
-
-    } else if('config' in action && action.type == Action.UPDATE_WIDGET_CONFIG) {
-
-        let newState: AppConfig = JSON.parse(JSON.stringify(state)); // TODO: slice the original array instead of full copy...
-        Object.assign(newState.widgets.find(i => i.id == action.id), action.config);
-        claudeLocalStorage.widgets = newState.widgets;
-        return newState;
-
-    } else if('id' in action && action.type == Action.REMOVE_WIDGET) {
-
-        let widgets = [...state.widgets]
-        widgets.splice(state.widgets.findIndex(i => i.id == action.id), 1);
-        let newState = Object.assign({}, state, {widgets});
-        claudeLocalStorage.widgets = newState.widgets;
-        return newState;
-
-    }
-
     return state;
 }
 
 const rootReducer = combineReducers<State>({
-    config,
+    currentDashboardId,
 });
 
 export default rootReducer;

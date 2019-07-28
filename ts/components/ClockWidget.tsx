@@ -79,7 +79,8 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
                 return;
 
             this.clockElement.style.fontSize = `${elementRef.clientHeight * 0.8}px`;
-            this.dateElement.style.fontSize = `${elementRef.clientHeight * 0.17}px`;
+            if (this.dateElement)
+                this.dateElement.style.fontSize = `${elementRef.clientHeight * 0.17}px`;
 
             this.lastWidth = elementRef.clientWidth;
             this.lastHeight = elementRef.clientHeight;

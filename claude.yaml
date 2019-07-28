@@ -1,5 +1,1 @@
-servers:
-  - ip: 88.151.99.138
-    name: Yggdrasil
-    details-url: http://88.151.99.138:35280
-    location: hu
+database: sqlite:///claude.db

@@ -22,15 +22,11 @@ export type CommonWidgetProps<T = any> = {
 export type WidgetConfigList = Array<WidgetConfig>;
 
 export class LocalStorageSchema {
-    widgets: WidgetConfigList = [];
-    stepSize: number = 10;
+    currentDashboardId: number = 0;
 }
 
-// ffu
-export type AppConfig = LocalStorageSchema;
-
 export interface State {
-    config: AppConfig,
+    currentDashboardId: number,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

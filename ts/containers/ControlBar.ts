@@ -1,8 +1,9 @@
 import { connect } from 'react-redux';
 import { ThunkDispatcher } from '../types';
 
-import ControlBar, {DispatchProps} from '../components/ControlBar';
+import ControlBar, {DispatchProps, OwnProps} from '../components/ControlBar';
 import { addWidget } from '../actions';
+
 
 const mapDispatchToProps = (dispatch: ThunkDispatcher): DispatchProps => {
     return {
@@ -10,4 +11,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatcher): DispatchProps => {
     }
 }
 
-export default connect<{}, DispatchProps>(null, mapDispatchToProps)(ControlBar);
+export default connect<{}, DispatchProps, OwnProps>(null, mapDispatchToProps)(ControlBar);

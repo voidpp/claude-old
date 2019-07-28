@@ -1,16 +1,17 @@
-import { CssBaseline, MuiThemeProvider, colors, createMuiTheme } from "@material-ui/core";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import App from "./components/App";
-import configureStore from "./store";
-import { Provider } from 'react-redux';
-
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { colors, createMuiTheme, CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import * as React from "react";
+import { ApolloProvider } from "react-apollo";
+import * as ReactDOM from "react-dom";
+import { Provider } from 'react-redux';
+import client from "./client";
+import App from "./containers/App";
+import configureStore from "./store";
 
 library.add(fas);
 
-export const store = configureStore();
+const store = configureStore();
 
 const darkTheme = createMuiTheme({
     palette: {
@@ -25,7 +26,9 @@ ReactDOM.render(
         <CssBaseline />
         <Provider store={store}>
             <MuiThemeProvider theme={darkTheme}>
-                <App/>
+                <ApolloProvider client={client}>
+                    <App/>
+                </ApolloProvider>
             </MuiThemeProvider>
         </Provider>
     </React.Fragment>,

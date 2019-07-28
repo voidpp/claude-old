@@ -1,12 +1,19 @@
 import * as React from "react";
-import { createStyles, withStyles, WithStyles, Drawer, Button, Divider } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, Drawer, Button, Divider, MenuItem } from '@material-ui/core';
 import { useState } from "react";
 
 import AddWidgetMenu from './AddWidgetMenu'
 import DashboardSettingsDialog from "./DashboardSettingsDialog";
+import DashboardSelector from "../containers/DashboardSelector";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 
 export type DispatchProps = {
     addWidget: (type: string) => void,
+}
+
+export type OwnProps = {
+    dashboardId: number,
 }
 
 const styles = () => createStyles({
@@ -30,11 +37,10 @@ const styles = () => createStyles({
     }
 });
 
-export default withStyles(styles)((props: WithStyles<typeof styles> & DispatchProps) => {
+export default withStyles(styles)((props: OwnProps &  WithStyles<typeof styles> & DispatchProps) => {
     const [opened, setOpened] = useState(false);
-    const [dashboardSettingsOpened, setdashboardSettingsOpened] = useState(false);
 
-    const {classes} = props;
+    const {classes, dashboardId} = props;
 
     function onAddWidget(type: string) {
         props.addWidget(type);
@@ -47,17 +53,17 @@ export default withStyles(styles)((props: WithStyles<typeof styles> & DispatchPr
 
     return (<div>
         <div className={classes.opener} onClick={() => setOpened(true)} />
-        <Drawer anchor="top" open={opened} onClose={() => setOpened(false)}>
+        <Drawer anchor="top" open={opened || dashboardId == 0} onClose={() => setOpened(false)}>
             <div className={classes.menubar}>
                 <span className={classes.title}>Zsomapell Klod!</span>
-                <Button variant="contained" size="small" color="primary" onClick={() => setdashboardSettingsOpened(true)}>Settings</Button>
-                <DashboardSettingsDialog
-                    opened={dashboardSettingsOpened}
-                    onSubmit={() => {}}
-                    onClose={() => setdashboardSettingsOpened(false)}
-                />
-                <Spacer />
-                <AddWidgetMenu onAddWidget={onAddWidget} />
+
+                <DashboardSelector currentDashboardId={dashboardId} />
+
+                {dashboardId ?
+                    <React.Fragment>
+                        <Spacer />
+                        <AddWidgetMenu onAddWidget={onAddWidget} />
+                    </React.Fragment> : null}
             </div>
         </Drawer>
     </div>)
