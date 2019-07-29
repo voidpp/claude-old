@@ -3,29 +3,40 @@ import { claudeLocalStorage } from "./tools";
 
 export enum Action {
     ADD_WIDGET = 'ADD_WIDGET',
+    ADD_DASHBOARD = 'ADD_DASHBOARD',
     REMOVE_WIDGET = 'REMOVE_WIDGET',
     UPDATE_WIDGET_CONFIG = 'UPDATE_WIDGET_CONFIG',
     SELECT_DASHBOARD = 'SELECT_DASHBOARD',
 }
 
-export const addWidget = (widgetType: string) => ({
+export const addDashboard = (name: string, stepSize: number) => ({
+    type: Action.ADD_DASHBOARD,
+    name,
+    stepSize,
+})
+
+
+export const addWidget = (dashboardId: number, widgetType: string) => ({
     type: Action.ADD_WIDGET,
+    dashboardId,
     widgetType,
 })
 
-export const updateWidgetConfig = (id: number, config: Partial<BaseWidgetConfig>) => ({
+export const updateWidgetConfig = (dashboardId: number, widgetId: number, config: Partial<BaseWidgetConfig>) => ({
     type: Action.UPDATE_WIDGET_CONFIG,
-    id,
+    dashboardId,
+    widgetId,
     config,
 })
 
-export const removeWidget = (id: number) => ({
+export const removeWidget = (dashboardId: number, widgetId: number) => ({
     type: Action.REMOVE_WIDGET,
-    id,
+    dashboardId,
+    widgetId,
 })
 
 export const selectDashboard = (id: number) => {
-    claudeLocalStorage.currentDashboardId = id;
+    // claudeLocalStorage.currentDashboardId = id;
     return {
         type: Action.SELECT_DASHBOARD,
         id,

@@ -58,9 +58,6 @@ module.exports = {
          * @fortawesome/react-fontawesome
          * prop-types
          *
-         * apollo-boost
-         * react-apollo
-         * graphql
          */
     },
 

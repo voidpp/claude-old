@@ -2,12 +2,11 @@ import { Button, Menu, MenuItem } from "@material-ui/core";
 import * as React from "react";
 import widgetRegistry from "../widgetRegistry";
 
-
-export type Props = {
-    onAddWidget: (type: string) => void,
+export type OwnProps = {
+    addWidget: (type: string) => void,
 }
 
-export default function AddWidgetMenu(props: Props) {
+export default function AddWidgetMenu(props: OwnProps) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     function handleClick(event) {
@@ -32,7 +31,7 @@ export default function AddWidgetMenu(props: Props) {
                 onClose={handleClose}
             >
                 {Object.keys(widgetRegistry).map(k => (
-                    <MenuItem key={k} onClick={props.onAddWidget.bind(this, k)}>{widgetRegistry[k].title}</MenuItem>
+                    <MenuItem key={k} onClick={props.addWidget.bind(this, k)}>{widgetRegistry[k].title}</MenuItem>
                 ))}
             </Menu>
         </React.Fragment>

@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 
-from graphql.utils import schema_printer
-
-from claude.app import app, schema
-
-with open('schema.graphql', 'w') as f:
-    f.write(schema_printer.print_schema(schema))
+from claude.app import app
 
 app.run(
     host = '0.0.0.0',

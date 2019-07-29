@@ -3,10 +3,10 @@ import { combineReducers } from 'redux';
 import { claudeLocalStorage } from './tools';
 import widgetRegistry from "./widgetRegistry";
 
-import { State} from './types';
+import { State, DashboardConfigMap} from './types';
 
 
-import {addWidget, Action, updateWidgetConfig, selectDashboard} from './actions'
+import {addWidget, Action, updateWidgetConfig, selectDashboard, addDashboard} from './actions'
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
@@ -53,6 +53,32 @@ type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidge
 //     return state;
 // }
 
+function getNextId(map: {[n: number] : any}): number {
+    const keys = Object.keys(map).map(parseInt);
+    return (keys.length ? Math.max(...keys) : 0) + 1;
+}
+
+// [key in Action] is a mapped object type
+type DashboardHandlerMap = {[key in Action]?: (state: DashboardConfigMap, action: any) => DashboardConfigMap}
+
+function mergeDashboard(old: DashboardConfigMap, new_: DashboardConfigMap): DashboardConfigMap {
+    return Object.assign<{}, DashboardConfigMap, DashboardConfigMap>({}, old, new_);
+}
+
+const dashboardHandlers: DashboardHandlerMap = {
+    [Action.ADD_DASHBOARD]: (state: DashboardConfigMap, action: ReturnType<typeof addDashboard>): DashboardConfigMap => {
+        const id = getNextId(state);
+        return mergeDashboard(state, {
+            [id]: {
+                id,
+                name: action.name,
+                stepSize: action.stepSize,
+                widgets: {},
+            }
+        });
+    }
+}
+
 function currentDashboardId(state = claudeLocalStorage.currentDashboardId, action: ReturnType<typeof selectDashboard>) {
     if (action.type == Action.SELECT_DASHBOARD) {
         return action.id;
@@ -60,8 +86,16 @@ function currentDashboardId(state = claudeLocalStorage.currentDashboardId, actio
     return state;
 }
 
+function dashboards(state = {}, action: {type: Action}): DashboardConfigMap {
+    if (action.type in dashboardHandlers)
+        return dashboardHandlers[action.type](state, action);
+
+    return state;
+}
+
 const rootReducer = combineReducers<State>({
     currentDashboardId,
+    dashboards,
 });
 
 export default rootReducer;

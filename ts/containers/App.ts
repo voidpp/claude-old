@@ -5,9 +5,9 @@ import App, {StateProps} from '../components/App';
 import { State } from '../types';
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId } = state;
+    const { currentDashboardId, dashboards } = state;
     return {
-        currentDashboardId,
+        currentDashboard: dashboards[currentDashboardId],
     }
 }
 

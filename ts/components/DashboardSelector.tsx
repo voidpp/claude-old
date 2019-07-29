@@ -1,72 +1,105 @@
-import { Button, Menu, MenuItem, Divider, ListItemIcon } from "@material-ui/core";
-import { Query } from "react-apollo";
-import { gql } from "apollo-boost";
+import { Button, Menu, MenuItem, Divider, ListItemIcon, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@material-ui/core";
 import * as React from "react";
-import { DashboardSelectorQuery } from "./__generated__/DashboardSelectorQuery";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DashboardConfigMap } from "../types";
+// import { dialogTransition } from "./tools";
 
 export type DispatchProps = {
     selectDashboard: (id: number) => void,
+    addDashboard: (name: string, stepSize: number) => void,
 }
 
-export type Props = {
+export type StateProps = {
     currentDashboardId: number,
+    dashboards: DashboardConfigMap,
 }
 
-export default function DashboardSelector(props: Props & DispatchProps) {
+export default function DashboardSelector(props: StateProps & DispatchProps) {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [createDashboardDialogIsShown, showCreateDashboardDialog] = React.useState(false);
+    const [name, setName] = React.useState('');
+    const [stepSize, setStepSize] = React.useState(10);
 
-    function handleClick(event) {
+    function openMenu(event) {
         setAnchorEl(event.currentTarget);
     }
 
-    function handleClose() {
+    function closeMenu() {
         setAnchorEl(null);
     }
 
     function chooseMenu(id: string) {
         props.selectDashboard(parseInt(id))
-        handleClose()
+        closeMenu()
     }
 
-    function onNewDashboardClick() {
-        alert('TODO')
+    function closeDialog() {
+        showCreateDashboardDialog(false)
+        setName('')
+        setStepSize(10)
     }
+
+    function openDialog() {
+        showCreateDashboardDialog(true)
+        closeMenu()
+    }
+
+    const submit = (ev: React.SyntheticEvent) => {
+        ev.preventDefault();
+        props.addDashboard(name, stepSize);
+        closeDialog();
+    }
+
+    const dashboards = Object.values(props.dashboards);
 
     return (
         <React.Fragment>
-            <Button aria-controls="DashboardSelectorQuery" aria-haspopup="true" variant="contained" size="small" color="primary"
-                    onClick={handleClick}>
+            <Button aria-controls="DashboardSelector" aria-haspopup="true" variant="contained" size="small" color="primary"
+                onClick={openMenu}>
                 dashboards
             </Button>
             <Menu
-                id="DashboardSelectorQuery"
+                id="DashboardSelector"
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
-                onClose={handleClose}
+                onClose={closeMenu}
             >
-                <MenuItem key={0} onClick={onNewDashboardClick}>Create new dashboard</MenuItem>
-                <Query<DashboardSelectorQuery> query={gql`query DashboardSelectorQuery { dashboards { id, name } }`} >
-                    {({ loading, error, data }) => {
-                        if (loading) return <p>Loading...</p>;
-                        if (error) return <p>Error :(</p>;
-                        return (
-                            <React.Fragment>
-                                {data.dashboards.length ? <Divider/> : null}
-                                {data.dashboards.map(d =>
-                                    <MenuItem key={d.id} onClick={chooseMenu.bind(this, d.id)}>
-                                        <ListItemIcon>
-                                            {parseInt(d.id) == props.currentDashboardId ? <FontAwesomeIcon icon="check" /> : <span/>}
-                                        </ListItemIcon>
-                                        {d.name}
-                                    </MenuItem>
-                                )}
-                            </React.Fragment>
-                        )
-                    }}
-                </Query>
+                <MenuItem key={0} onClick={openDialog}>Create new dashboard</MenuItem>
+                {dashboards.length ? <Divider /> : null}
+                {dashboards.map(d =>
+                    <MenuItem key={d.id} onClick={chooseMenu.bind(this, d.id)}>
+                        <ListItemIcon>
+                            {d.id == props.currentDashboardId ? <FontAwesomeIcon icon="check" /> : <span />}
+                        </ListItemIcon>
+                        {d.name}
+                    </MenuItem>
+                )}
             </Menu>
+            <Dialog
+                open={createDashboardDialogIsShown}
+                onClose={closeDialog}
+                aria-labelledby="form-dialog-title"
+                // TransitionComponent={dialogTransition}
+            >
+                <DialogTitle id="form-dialog-title">Create new dashboard</DialogTitle>
+                <form onSubmit={submit}>
+                    <DialogContent>
+                        <TextField autoFocus margin="dense" id="name" label="Name" type="text" required fullWidth
+                            value={name}
+                            onChange={ev => setName(ev.target.value)}
+                        />
+                        <TextField autoFocus margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
+                            value={stepSize}
+                            onChange={ev => setStepSize(parseInt(ev.target.value))}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={closeDialog} color="primary">Cancel</Button>
+                        <Button type="submit" color="primary">Submit</Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
         </React.Fragment>
     )
 }

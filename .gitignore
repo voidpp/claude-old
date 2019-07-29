@@ -67,4 +67,3 @@ claude.db
 __generated__
 schema.graphql
 claude.yaml
-apollo.config.js

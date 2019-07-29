@@ -2,10 +2,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { colors, createMuiTheme, CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import * as React from "react";
-import { ApolloProvider } from "react-apollo";
 import * as ReactDOM from "react-dom";
 import { Provider } from 'react-redux';
-import client from "./client";
 import App from "./containers/App";
 import configureStore from "./store";
 
@@ -26,9 +24,7 @@ ReactDOM.render(
         <CssBaseline />
         <Provider store={store}>
             <MuiThemeProvider theme={darkTheme}>
-                <ApolloProvider client={client}>
-                    <App/>
-                </ApolloProvider>
+                <App/>
             </MuiThemeProvider>
         </Provider>
     </React.Fragment>,

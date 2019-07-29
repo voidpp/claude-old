@@ -1,13 +1,19 @@
 import { connect } from 'react-redux';
-import { ThunkDispatcher } from '../types';
+import { State } from '../types';
 
-import DashboardSelector, {DispatchProps} from '../components/DashboardSelector';
-import { selectDashboard } from '../actions';
+import DashboardSelector, {DispatchProps, StateProps} from '../components/DashboardSelector';
+import { selectDashboard, addDashboard } from '../actions';
+import { bindActionCreators } from 'redux';
 
-const mapDispatchToProps = (dispatch: ThunkDispatcher): DispatchProps => {
+function mapStateToProps(state: State): StateProps {
+    const { currentDashboardId, dashboards } = state;
     return {
-        selectDashboard: id => dispatch(selectDashboard(id))
+        currentDashboardId,
+        dashboards,
     }
 }
 
-export default connect<{}, DispatchProps>(null, mapDispatchToProps)(DashboardSelector);
+// TODO: typize
+const mapDispatchToProps = dispatch => bindActionCreators({selectDashboard, addDashboard}, dispatch)
+
+export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(DashboardSelector);

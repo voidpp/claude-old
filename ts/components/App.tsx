@@ -1,7 +1,8 @@
 import * as React from "react";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import WidgetList from "./WidgetList";
+import Dashboard from "./Dashboard";
 import ControlBar from "../containers/ControlBar";
+import { DashboardConfig } from "../types";
 
 const styles = () => createStyles({
     root: {
@@ -10,13 +11,12 @@ const styles = () => createStyles({
 });
 
 export type StateProps = {
-    currentDashboardId: number,
+    currentDashboard: DashboardConfig,
 }
 
 export default withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
-    const id = props.currentDashboardId;
     return <div className={props.classes.root}>
-        <ControlBar dashboardId={id} />
-        {id ? <WidgetList dashboardId={id} /> : null}
+        <ControlBar />
+        {props.currentDashboard ? <Dashboard config={props.currentDashboard} /> : null}
     </div>
 }))

@@ -20,13 +20,24 @@ export type CommonWidgetProps<T = any> = {
 }
 
 export type WidgetConfigList = Array<WidgetConfig>;
+export type WidgetConfigMap = { [n: number]: WidgetConfig };
 
 export class LocalStorageSchema {
     currentDashboardId: number = 0;
 }
 
+export interface DashboardConfig {
+    id: number,
+    name: string,
+    stepSize: number,
+    widgets: WidgetConfigMap,
+}
+
+export type DashboardConfigMap = { [n: number]: DashboardConfig };
+
 export interface State {
     currentDashboardId: number,
+    dashboards: DashboardConfigMap,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;
