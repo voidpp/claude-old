@@ -10,8 +10,9 @@ export interface BaseWidgetConfig {
 }
 
 export interface WidgetConfig extends BaseWidgetConfig {
-    id: number,
+    id: string,
     type: string,
+    dashboardId: string,
 }
 
 export type CommonWidgetProps<T = any> = {
@@ -20,24 +21,24 @@ export type CommonWidgetProps<T = any> = {
 }
 
 export type WidgetConfigList = Array<WidgetConfig>;
-export type WidgetConfigMap = { [n: number]: WidgetConfig };
+export type WidgetConfigMap = { [s: string]: WidgetConfig };
 
 export class LocalStorageSchema {
-    currentDashboardId: number = 0;
+    currentDashboardId: string = '';
 }
 
 export interface DashboardConfig {
-    id: number,
+    id: string,
     name: string,
     stepSize: number,
-    widgets: WidgetConfigMap,
 }
 
-export type DashboardConfigMap = { [n: number]: DashboardConfig };
+export type DashboardConfigMap = { [s: string]: DashboardConfig };
 
 export interface State {
-    currentDashboardId: number,
+    currentDashboardId: string,
     dashboards: DashboardConfigMap,
+    widgets: WidgetConfigMap,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

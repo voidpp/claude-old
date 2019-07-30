@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 // import { State, AppConfig, LocalStorageSchema } from './types';
 import { claudeLocalStorage } from './tools';
 import widgetRegistry from "./widgetRegistry";
+const uuid = require('uuid/v4');
+import * as objectAssignDeep from 'object-assign-deep';
 
-import { State, DashboardConfigMap} from './types';
+import { State, DashboardConfigMap, WidgetConfigMap} from './types';
 
 
-import {addWidget, Action, updateWidgetConfig, selectDashboard, addDashboard} from './actions'
+import {addWidget, Action, updateWidgetConfig, selectDashboard, addDashboard, removeWidget} from './actions'
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
@@ -53,30 +55,47 @@ type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidge
 //     return state;
 // }
 
-function getNextId(map: {[n: number] : any}): number {
-    const keys = Object.keys(map).map(parseInt);
-    return (keys.length ? Math.max(...keys) : 0) + 1;
-}
 
 // [key in Action] is a mapped object type
-type DashboardHandlerMap = {[key in Action]?: (state: DashboardConfigMap, action: any) => DashboardConfigMap}
+type HandlerMap<T> = {[key in Action]?: (state: T, action: any) => T}
 
-function mergeDashboard(old: DashboardConfigMap, new_: DashboardConfigMap): DashboardConfigMap {
-    return Object.assign<{}, DashboardConfigMap, DashboardConfigMap>({}, old, new_);
+function mergeResource<T>(old: T, new_: T): T {
+    return Object.assign<{}, T, T>({}, old, new_);
 }
 
-const dashboardHandlers: DashboardHandlerMap = {
+const dashboardHandlers: HandlerMap<DashboardConfigMap> = {
     [Action.ADD_DASHBOARD]: (state: DashboardConfigMap, action: ReturnType<typeof addDashboard>): DashboardConfigMap => {
-        const id = getNextId(state);
-        return mergeDashboard(state, {
+        const id = uuid();
+        return mergeResource<DashboardConfigMap>(state, {
             [id]: {
                 id,
                 name: action.name,
                 stepSize: action.stepSize,
-                widgets: {},
             }
         });
     }
+}
+
+const widgetHandlers: HandlerMap<WidgetConfigMap> = {
+    [Action.ADD_WIDGET]: (state: WidgetConfigMap, action: ReturnType<typeof addWidget>): WidgetConfigMap => {
+        const id = uuid();
+        return mergeResource<WidgetConfigMap>(state, {
+            [id]: {
+                id,
+                type: action.widgetType,
+                ...widgetRegistry[action.widgetType].default,
+                dashboardId: action.dashboardId,
+            }
+        });
+    },
+    [Action.UPDATE_WIDGET_CONFIG]: (state: WidgetConfigMap, action: ReturnType<typeof updateWidgetConfig>): WidgetConfigMap => {
+        return objectAssignDeep({}, state, {[action.widgetId]: action.config});
+    },
+    [Action.REMOVE_WIDGET]: (state: WidgetConfigMap, action: ReturnType<typeof removeWidget>): WidgetConfigMap => {
+        let newState = Object.assign({}, state);
+        delete newState[action.widgetId];
+        return newState;
+    },
 }
 
 function currentDashboardId(state = claudeLocalStorage.currentDashboardId, action: ReturnType<typeof selectDashboard>) {
@@ -93,9 +112,17 @@ function dashboards(state = {}, action: {type: Action}): DashboardConfigMap {
     return state;
 }
 
+function widgets(state = {}, action: {type: Action}): WidgetConfigMap {
+    if (action.type in widgetHandlers)
+        return widgetHandlers[action.type](state, action);
+
+    return state;
+}
+
 const rootReducer = combineReducers<State>({
     currentDashboardId,
     dashboards,
+    widgets,
 });
 
 export default rootReducer;

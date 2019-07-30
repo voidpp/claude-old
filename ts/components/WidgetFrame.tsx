@@ -27,7 +27,7 @@ const styles = () => createStyles({
 });
 
 export type DispatchProps = {
-    updateWidgetConfig: (id: number, config: Partial<BaseWidgetConfig>) => void,
+    updateWidgetConfig: (id: string, config: Partial<BaseWidgetConfig>) => void,
 }
 
 export interface OwnProps {

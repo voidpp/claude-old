@@ -16,26 +16,24 @@ export const addDashboard = (name: string, stepSize: number) => ({
 })
 
 
-export const addWidget = (dashboardId: number, widgetType: string) => ({
+export const addWidget = (dashboardId: string, widgetType: string) => ({
     type: Action.ADD_WIDGET,
     dashboardId,
     widgetType,
 })
 
-export const updateWidgetConfig = (dashboardId: number, widgetId: number, config: Partial<BaseWidgetConfig>) => ({
+export const updateWidgetConfig = (widgetId: string, config: Partial<BaseWidgetConfig>) => ({
     type: Action.UPDATE_WIDGET_CONFIG,
-    dashboardId,
     widgetId,
     config,
 })
 
-export const removeWidget = (dashboardId: number, widgetId: number) => ({
+export const removeWidget = (widgetId: string) => ({
     type: Action.REMOVE_WIDGET,
-    dashboardId,
     widgetId,
 })
 
-export const selectDashboard = (id: number) => {
+export const selectDashboard = (id: string) => {
     // claudeLocalStorage.currentDashboardId = id;
     return {
         type: Action.SELECT_DASHBOARD,

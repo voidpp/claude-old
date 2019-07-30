@@ -26,13 +26,16 @@
     "deepcopy": "^2.0.0",
     "graphql": "^14.4.2",
     "moment": "^2.24.0",
+    "object-assign-deep": "^0.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "react-rnd": "^10.0.0",
     "redux": "^4.0.4",
+    "redux-localstorage-simple": "^2.1.6",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "uuid": "^3.3.2",
     "webpack-livereload-plugin": "^2.2.0"
   },
   "devDependencies": {

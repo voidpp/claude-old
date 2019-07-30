@@ -11,11 +11,11 @@ const styles = () => createStyles({
 });
 
 export interface DispatchProps {
-    removeWidget: (id: number) => void
+    removeWidget: (id: string) => void
 }
 
 export interface OwnProps {
-    id: number,
+    id: string,
 }
 
 export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & WithStyles<typeof styles>) => {

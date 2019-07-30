@@ -5,12 +5,12 @@ import { DashboardConfigMap } from "../types";
 // import { dialogTransition } from "./tools";
 
 export type DispatchProps = {
-    selectDashboard: (id: number) => void,
+    selectDashboard: (id: string) => void,
     addDashboard: (name: string, stepSize: number) => void,
 }
 
 export type StateProps = {
-    currentDashboardId: number,
+    currentDashboardId: string,
     dashboards: DashboardConfigMap,
 }
 
@@ -29,7 +29,7 @@ export default function DashboardSelector(props: StateProps & DispatchProps) {
     }
 
     function chooseMenu(id: string) {
-        props.selectDashboard(parseInt(id))
+        props.selectDashboard(id)
         closeMenu()
     }
 

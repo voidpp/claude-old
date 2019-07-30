@@ -5,9 +5,10 @@ import App, {StateProps} from '../components/App';
 import { State } from '../types';
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, dashboards } = state;
+    const { currentDashboardId, dashboards, widgets } = state;
     return {
-        currentDashboard: dashboards[currentDashboardId],
+        dashboardConfig: dashboards[currentDashboardId],
+        widgetConfigs: Object.values(widgets).filter(w => w.dashboardId == currentDashboardId),
     }
 }
 

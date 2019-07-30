@@ -9,11 +9,12 @@ import { State, ThunkDispatcher } from '../types';
 import DashboardSelector from "./DashboardSelector";
 
 type DispatchProps = {
-    addWidget: (dashboardId: number, type: string) => void,
+    addWidget: (dashboardId: string, type: string) => void,
 }
 
 type StateProps = {
-    currentDashboardId: number,
+    currentDashboardId: string,
+    currentDashboardHasWidget: boolean,
 }
 
 const styles = () => createStyles({
@@ -40,7 +41,7 @@ const styles = () => createStyles({
 const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof styles> & DispatchProps) => {
     const [opened, setOpened] = useState(false);
 
-    const {classes, currentDashboardId} = props;
+    const {classes, currentDashboardId, currentDashboardHasWidget} = props;
 
     function onAddWidget(type: string) {
         props.addWidget(currentDashboardId, type);
@@ -51,9 +52,11 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
         return <div className={classes.spacer} />
     }
 
+    const openDrawer = opened || currentDashboardId == '' || !currentDashboardHasWidget;
+
     return (<div>
         <div className={classes.opener} onClick={() => setOpened(true)} />
-        <Drawer anchor="top" open={opened || currentDashboardId == 0} onClose={() => setOpened(false)}>
+        <Drawer anchor="top" open={openDrawer} onClose={() => setOpened(false)}>
             <div className={classes.menubar}>
                 <span className={classes.title}>Zsomapell Klod!</span>
 
@@ -70,9 +73,10 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 });
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId } = state;
+    const { currentDashboardId, widgets } = state;
     return {
         currentDashboardId,
+        currentDashboardHasWidget: Object.values(widgets).find(w => w.dashboardId == currentDashboardId) != undefined,
     }
 }
 
