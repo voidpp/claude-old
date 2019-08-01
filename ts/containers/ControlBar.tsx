@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
 import { addWidget } from '../actions';
 import AddWidgetMenu from '../components/AddWidgetMenu';
-import { State, ThunkDispatcher } from '../types';
+import { State } from '../types';
 import DashboardSelector from "./DashboardSelector";
 
 type DispatchProps = {
@@ -80,6 +80,6 @@ function mapStateToProps(state: State): StateProps {
     }
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatcher) => bindActionCreators({addWidget}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({addWidget}, dispatch);
 
 export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(ControlBar);

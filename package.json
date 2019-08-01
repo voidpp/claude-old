@@ -23,6 +23,7 @@
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.1.1",
+    "deep-object-diff": "^1.1.0",
     "deepcopy": "^2.0.0",
     "graphql": "^14.4.2",
     "moment": "^2.24.0",
@@ -31,6 +32,7 @@
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "react-rnd": "^10.0.0",
+    "reconnectingwebsocket": "^1.0.0",
     "redux": "^4.0.4",
     "redux-localstorage-simple": "^2.1.6",
     "redux-logger": "^3.0.6",
@@ -39,6 +41,7 @@
     "webpack-livereload-plugin": "^2.2.0"
   },
   "devDependencies": {
+    "@types/redux-logger": "^3.0.7",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",

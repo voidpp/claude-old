@@ -59,7 +59,6 @@ target/
 .vscode
 .pytest_cache/
 node_modules
-alembic.ini
 pip-wheel-metadata
 package-lock.json
 claude/static/
@@ -67,3 +66,6 @@ claude.db
 __generated__
 schema.graphql
 claude.yaml
+app.yaml
+logger.yaml
+dashboards.json

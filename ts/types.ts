@@ -1,5 +1,6 @@
 import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
+import { Dispatch } from "react";
 
 export interface BaseWidgetConfig {
     x: number,
@@ -42,3 +43,4 @@ export interface State {
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;
+export type Dispatcher = Dispatch<Action>;

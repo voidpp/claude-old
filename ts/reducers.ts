@@ -1,60 +1,11 @@
-import { combineReducers } from 'redux';
-// import { State, AppConfig, LocalStorageSchema } from './types';
-import { claudeLocalStorage } from './tools';
-import widgetRegistry from "./widgetRegistry";
-const uuid = require('uuid/v4');
 import * as objectAssignDeep from 'object-assign-deep';
-
-import { State, DashboardConfigMap, WidgetConfigMap} from './types';
-
-
-import {addWidget, Action, updateWidgetConfig, selectDashboard, addDashboard, removeWidget} from './actions'
+import { combineReducers } from 'redux';
+import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig } from './actions';
+import { claudeLocalStorage } from './tools';
+import { DashboardConfigMap, State, WidgetConfigMap } from './types';
+import widgetRegistry from "./widgetRegistry";
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
-
-// function localStorageAsDict(): LocalStorageSchema {
-//     let res = new LocalStorageSchema();
-//     for (let k of Object.keys(claudeLocalStorage)) {
-//         res[k] = claudeLocalStorage[k];
-//     }
-//     return res;
-// }
-
-// function config(state: AppConfig = localStorageAsDict(), action: ConfigAction): AppConfig {
-
-//     // 'widgetType' in action only for the Typescript ...
-//     if ('widgetType' in action && action.type == Action.ADD_WIDGET) {
-
-//         let newState =  Object.assign({}, state, {
-//             widgets: state.widgets.concat([{
-//                 id: (state.widgets.length ? Math.max(...state.widgets.map(w => w.id)) : 0) + 1,
-//                 ...widgetRegistry[action.widgetType].default,
-//                 type: action.widgetType,
-//             }])
-//         })
-//         claudeLocalStorage.widgets = newState.widgets;
-//         return newState;
-
-//     } else if('config' in action && action.type == Action.UPDATE_WIDGET_CONFIG) {
-
-//         let newState: AppConfig = JSON.parse(JSON.stringify(state)); // TODO: slice the original array instead of full copy...
-//         Object.assign(newState.widgets.find(i => i.id == action.id), action.config);
-//         claudeLocalStorage.widgets = newState.widgets;
-//         return newState;
-
-//     } else if('id' in action && action.type == Action.REMOVE_WIDGET) {
-
-//         let widgets = [...state.widgets]
-//         widgets.splice(state.widgets.findIndex(i => i.id == action.id), 1);
-//         let newState = Object.assign({}, state, {widgets});
-//         claudeLocalStorage.widgets = newState.widgets;
-//         return newState;
-
-//     }
-
-//     return state;
-// }
-
 
 // [key in Action] is a mapped object type
 type HandlerMap<T> = {[key in Action]?: (state: T, action: any) => T}
@@ -65,10 +16,9 @@ function mergeResource<T>(old: T, new_: T): T {
 
 const dashboardHandlers: HandlerMap<DashboardConfigMap> = {
     [Action.ADD_DASHBOARD]: (state: DashboardConfigMap, action: ReturnType<typeof addDashboard>): DashboardConfigMap => {
-        const id = uuid();
         return mergeResource<DashboardConfigMap>(state, {
-            [id]: {
-                id,
+            [action.id]: {
+                id: action.id,
                 name: action.name,
                 stepSize: action.stepSize,
             }
@@ -78,10 +28,9 @@ const dashboardHandlers: HandlerMap<DashboardConfigMap> = {
 
 const widgetHandlers: HandlerMap<WidgetConfigMap> = {
     [Action.ADD_WIDGET]: (state: WidgetConfigMap, action: ReturnType<typeof addWidget>): WidgetConfigMap => {
-        const id = uuid();
         return mergeResource<WidgetConfigMap>(state, {
-            [id]: {
-                id,
+            [action.id]: {
+                id: action.id,
                 type: action.widgetType,
                 ...widgetRegistry[action.widgetType].default,
                 dashboardId: action.dashboardId,

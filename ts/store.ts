@@ -1,11 +1,15 @@
 import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware, {ThunkMiddleware} from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import rootReducer from './reducers';
-import { save, load } from "redux-localstorage-simple"
+import client from './client';
 
 const loggerMiddleware = createLogger();
 
+const initalData = window['initalData'];
+
 export default function configureStore() {
-    return createStore(rootReducer, load(), applyMiddleware(thunkMiddleware as ThunkMiddleware, loggerMiddleware, save()))
+    console.debug("Store initial data", initalData)
+    let store = createStore(rootReducer, initalData, applyMiddleware(client.createReduxMiddleware(), loggerMiddleware))
+    client.dispatcher = store.dispatch;
+    return store;
 }
