@@ -6,6 +6,7 @@ import { State, DashboardConfig } from '../types';
 import AddWidgetMenu from './AddWidgetMenu';
 import DashboardSelector from "./DashboardSelector";
 import DashboardSettingsButton from './DashboardSettingsButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type StateProps = {
     currentDashboardHasWidget: boolean,
@@ -15,11 +16,12 @@ type StateProps = {
 const styles = () => createStyles({
     opener: {
         position: 'fixed',
-        x: 0,
-        y: 0,
-        width: 10,
-        height: 10,
-        backgroundColor: 'red',
+        left: 0,
+        top: -4,
+        width: 30,
+        height: 30,
+        fontSize: 20,
+        cursor: 'pointer',
     },
     title: {
         padding: 15,
@@ -60,7 +62,9 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
     const openDrawer = opened || currentDashboard == undefined || !currentDashboardHasWidget;
 
     return (<div>
-        <div className={classes.opener} onClick={() => setOpened(true)} />
+        <div className={classes.opener} onClick={() => setOpened(true)}>
+            <FontAwesomeIcon icon="cog" />
+        </div>
         <Drawer anchor="top" open={openDrawer} onClose={() => setOpened(false)}>
             <div className={classes.menubar}>
                 <span className={classes.title}>Zsomapell Klod!</span>
