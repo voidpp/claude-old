@@ -27,7 +27,7 @@ class Client {
             let result = next(action);
             const newState = store.getState();
 
-            if (action.type != Action.SELECT_DASHBOARD && !action.isRemote) {
+            if (action.type != Action.SELECT_DASHBOARD && !action.time) {
                 this.ws.send(JSON.stringify({
                     action,
                     diff: detailedDiff(oldState, newState),
@@ -55,7 +55,6 @@ class Client {
 
     private onMessage(event) {
         const actionData = JSON.parse(event.data);
-        actionData.isRemote = true;
         this._dispatcher(actionData);
     }
 }

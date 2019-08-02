@@ -56,20 +56,21 @@ def listen(ws: WebSocket):
             for id in node:
                 del dashboard_config_loader.data[key][id]
 
+        # TODO: delay with some sec (and add if new trigger)
         dashboard_config_loader.dump()
 
         dispatch_listeners = list(filter(lambda l: l != listener, listeners))
 
-        action_time = str(time())
-        action['time'] = action_time
-        action_msg = json.dumps(action)
+        # TODO: implement throttling file write
 
-        with open(action_log_filename, 'a+') as f:
-            f.write("%s %s\n" % (action_time, action_msg))
+        if dispatch_listeners:
 
-        logger.debug("Action dispatch to %s listener(s)", len(dispatch_listeners))
-        for listn in dispatch_listeners:
-            listn.send(action_msg)
+            action['time'] = time()
+            action_msg = json.dumps(action)
+
+            logger.debug("Action dispatch to %s listener(s)", len(dispatch_listeners))
+            for listn in dispatch_listeners:
+                listn.send(action_msg)
 
     listeners.remove(listener)
     logger.info("websocket client from %s has been disconnected. Remaining listeners: %s", listener.remote_addr, len(listeners))

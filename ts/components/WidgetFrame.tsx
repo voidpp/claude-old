@@ -38,27 +38,64 @@ export interface OwnProps {
     onResize?: RndResizeCallback,
 }
 
-export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & WithStyles<typeof styles>) => {
-    const {config, stepSize, updateWidgetConfig, classes, removeButton = true, onResize} = props;
+function isEquals(o1: Object, o2: Object): boolean {
+    for (const k of Object.keys(o1)) {
+        if (o1[k] !== o2[k])
+            return false
+    }
+    return true
+}
+
+export default withStyles(styles)((props: OwnProps & DispatchProps & WithStyles<typeof styles>) => {
+    const {config, stepSize, updateWidgetConfig, classes, removeButton = true} = props;
+    const [position, setPosition] = React.useState({
+        x: config.x,
+        y: config.y,
+    })
+    const [size, setSize] = React.useState({
+        width: config.width,
+        height: config.height,
+    })
+
+    const updatePosition = (newData: typeof position) => {
+        if (isEquals(newData, position))
+            return
+        setPosition(newData)
+        updateWidgetConfig(config.id, newData)
+    }
 
     const onDragStop = (e: DraggableEvent, data: DraggableData) => {
-        if (data.deltaX == 0 && data.deltaY == 0)
-            return;
-        updateWidgetConfig(config.id, {
+        updatePosition({
             x: data.lastX,
             y: data.lastY,
         })
     }
 
-    const onResizeStop = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, position: Position) => {
-        if (delta.width == 0 && delta.height == 0)
-            return;
-        updateWidgetConfig(config.id, {
-            x: position.x,
-            y: position.y,
-            width: config.width + delta.width,
-            height: config.height + delta.height,
+    const onDrag = (e: DraggableEvent, data: DraggableData) => {
+        updatePosition( {
+            x: data.x,
+            y: data.y,
         })
+    }
+
+    const onResizeStop = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, newPosition: Position) => {
+        onResize(e, dir, elementRef, delta, newPosition);
+    }
+
+    const onResize = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, newPosition: Position) => {
+        const newData = {
+            x: newPosition.x,
+            y: newPosition.y,
+            width: elementRef.offsetWidth,
+            height: elementRef.offsetHeight,
+        }
+        if (isEquals(newData, {...position, ...size}))
+            return
+
+        updateWidgetConfig(config.id, newData);
+
+        setPosition({...newData});
+        setSize({...newData});
     }
 
     return <Rnd
@@ -74,6 +111,7 @@ export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & 
         resizeGrid={[stepSize, stepSize]}
         onDragStop={onDragStop}
         onResizeStop={onResizeStop}
+        onDrag={onDrag}
         onResize={onResize}
     >
         <div className={props.classes.body}>
@@ -81,4 +119,4 @@ export default withStyles(styles)(React.memo((props: OwnProps & DispatchProps & 
             { removeButton ? <div className={classes.removeButtonContainer}><WidgetRemoveButton id={config.id} /></div> : null }
         </div>
     </Rnd>
-}))
+})
