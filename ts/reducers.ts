@@ -1,6 +1,6 @@
 import * as objectAssignDeep from 'object-assign-deep';
 import { combineReducers } from 'redux';
-import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig } from './actions';
+import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard } from './actions';
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
 import widgetRegistry from "./widgetRegistry";
@@ -23,7 +23,10 @@ const dashboardHandlers: HandlerMap<DashboardConfigMap> = {
                 stepSize: action.stepSize,
             }
         });
-    }
+    },
+    [Action.UPDATE_DASHBOARD]: (state: DashboardConfigMap, action: ReturnType<typeof updateDashboard>): DashboardConfigMap => {
+        return mergeResource<DashboardConfigMap>(state, {[action.data.id]: action.data})
+    },
 }
 
 const widgetHandlers: HandlerMap<WidgetConfigMap> = {

@@ -1,7 +1,11 @@
-import { Button, Menu, MenuItem, Divider, ListItemIcon, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@material-ui/core";
-import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DashboardConfigMap } from "../types";
+import { Button, Divider, ListItemIcon, Menu, MenuItem } from "@material-ui/core";
+import * as React from "react";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addDashboard, selectDashboard } from '../actions';
+import DashboardConfigDialog from "../components/DashboardConfigDialog";
+import { DashboardConfig, DashboardConfigMap, State } from "../types";
 // import { dialogTransition } from "./tools";
 
 export type DispatchProps = {
@@ -14,9 +18,9 @@ export type StateProps = {
     dashboards: DashboardConfigMap,
 }
 
-export default function DashboardSelector(props: StateProps & DispatchProps) {
+function DashboardSelector(props: StateProps & DispatchProps) {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [createDashboardDialogIsShown, showCreateDashboardDialog] = React.useState(false);
+    const [isDialogShown, showDialog] = React.useState(false);
     const [name, setName] = React.useState('');
     const [stepSize, setStepSize] = React.useState(10);
 
@@ -34,19 +38,20 @@ export default function DashboardSelector(props: StateProps & DispatchProps) {
     }
 
     function closeDialog() {
-        showCreateDashboardDialog(false)
+        showDialog(false)
         setName('')
         setStepSize(10)
     }
 
     function openDialog() {
-        showCreateDashboardDialog(true)
+        showDialog(true)
         closeMenu()
     }
 
-    const submit = (ev: React.SyntheticEvent) => {
-        ev.preventDefault();
-        props.addDashboard(name, stepSize);
+    // const submit = (ev: React.SyntheticEvent) => {
+        // ev.preventDefault();
+    const submit = (data: DashboardConfig) => {
+        props.addDashboard(data.name, data.stepSize);
         closeDialog();
     }
 
@@ -76,30 +81,23 @@ export default function DashboardSelector(props: StateProps & DispatchProps) {
                     </MenuItem>
                 )}
             </Menu>
-            <Dialog
-                open={createDashboardDialogIsShown}
-                onClose={closeDialog}
-                aria-labelledby="form-dialog-title"
-                // TransitionComponent={dialogTransition}
-            >
-                <DialogTitle id="form-dialog-title">Create new dashboard</DialogTitle>
-                <form onSubmit={submit}>
-                    <DialogContent>
-                        <TextField autoFocus margin="dense" id="name" label="Name" type="text" required fullWidth
-                            value={name}
-                            onChange={ev => setName(ev.target.value)}
-                        />
-                        <TextField autoFocus margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
-                            value={stepSize}
-                            onChange={ev => setStepSize(parseInt(ev.target.value))}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={closeDialog} color="primary">Cancel</Button>
-                        <Button type="submit" color="primary">Submit</Button>
-                    </DialogActions>
-                </form>
-            </Dialog>
+
+            <DashboardConfigDialog show={isDialogShown} title="Dashboard settings" onClose={closeDialog} submit={submit}  />
+
         </React.Fragment>
     )
 }
+
+function mapStateToProps(state: State): StateProps {
+    const { currentDashboardId, dashboards } = state;
+    return {
+        currentDashboardId,
+        dashboards,
+    }
+}
+
+// TODO: typize
+const mapDispatchToProps = dispatch => bindActionCreators({selectDashboard, addDashboard}, dispatch)
+
+export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(DashboardSelector);
+

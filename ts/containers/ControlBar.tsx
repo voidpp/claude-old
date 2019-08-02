@@ -2,19 +2,14 @@ import { createStyles, Drawer, withStyles, WithStyles } from '@material-ui/core'
 import * as React from "react";
 import { useState } from "react";
 import { connect } from 'react-redux';
-import { bindActionCreators } from "redux";
-import { addWidget } from '../actions';
-import AddWidgetMenu from '../components/AddWidgetMenu';
-import { State } from '../types';
+import { State, DashboardConfig } from '../types';
+import AddWidgetMenu from './AddWidgetMenu';
 import DashboardSelector from "./DashboardSelector";
-
-type DispatchProps = {
-    addWidget: (dashboardId: string, type: string) => void,
-}
+import DashboardSettingsButton from './DashboardSettingsButton';
 
 type StateProps = {
-    currentDashboardId: string,
     currentDashboardHasWidget: boolean,
+    currentDashboard: DashboardConfig,
 }
 
 const styles = () => createStyles({
@@ -35,24 +30,34 @@ const styles = () => createStyles({
     },
     spacer: {
         width: 15,
-    }
+    },
+    separator: {
+        width: 1,
+        borderRight: '1px solid #777',
+        marginLeft: 15,
+        marginRight: 15,
+        height: 25,
+    },
+    currentDashboard: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
 });
 
-const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof styles> & DispatchProps) => {
+const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof styles>) => {
     const [opened, setOpened] = useState(false);
 
-    const {classes, currentDashboardId, currentDashboardHasWidget} = props;
-
-    function onAddWidget(type: string) {
-        props.addWidget(currentDashboardId, type);
-        setOpened(false);
-    }
+    const {classes, currentDashboard, currentDashboardHasWidget} = props;
 
     function Spacer() {
         return <div className={classes.spacer} />
     }
 
-    const openDrawer = opened || currentDashboardId == '' || !currentDashboardHasWidget;
+    function Separator() {
+        return <div className={classes.separator} />
+    }
+
+    const openDrawer = opened || currentDashboard == undefined || !currentDashboardHasWidget;
 
     return (<div>
         <div className={classes.opener} onClick={() => setOpened(true)} />
@@ -62,10 +67,14 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 
                 <DashboardSelector />
 
-                {currentDashboardId ?
+                {currentDashboard ?
                     <React.Fragment>
+                        <Separator />
+                        <div>{currentDashboard.name}</div>
                         <Spacer />
-                        <AddWidgetMenu addWidget={onAddWidget} />
+                        <DashboardSettingsButton />
+                        <Spacer />
+                        <AddWidgetMenu />
                     </React.Fragment> : null}
             </div>
         </Drawer>
@@ -73,13 +82,11 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 });
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, widgets } = state;
+    const { currentDashboardId, widgets, dashboards } = state;
     return {
-        currentDashboardId,
+        currentDashboard: dashboards[currentDashboardId],
         currentDashboardHasWidget: Object.values(widgets).find(w => w.dashboardId == currentDashboardId) != undefined,
     }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({addWidget}, dispatch);
-
-export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(ControlBar);
+export default connect<StateProps>(mapStateToProps)(ControlBar);

@@ -1,10 +1,11 @@
-import { BaseWidgetConfig } from "./types";
+import { BaseWidgetConfig, DashboardConfig } from "./types";
 import { claudeLocalStorage } from "./tools";
 const uuid = require('uuid/v4');
 
 export enum Action {
     ADD_WIDGET = 'ADD_WIDGET',
     ADD_DASHBOARD = 'ADD_DASHBOARD',
+    UPDATE_DASHBOARD = 'UPDATE_DASHBOARD',
     REMOVE_WIDGET = 'REMOVE_WIDGET',
     UPDATE_WIDGET_CONFIG = 'UPDATE_WIDGET_CONFIG',
     SELECT_DASHBOARD = 'SELECT_DASHBOARD',
@@ -17,6 +18,10 @@ export const addDashboard = (name: string, stepSize: number) => ({
     id: uuid(),
 })
 
+export const updateDashboard = (data: DashboardConfig) => ({
+    type: Action.UPDATE_DASHBOARD,
+    data,
+})
 
 export const addWidget = (dashboardId: string, widgetType: string) => ({
     type: Action.ADD_WIDGET,
