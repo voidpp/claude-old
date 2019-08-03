@@ -1,11 +1,11 @@
-import * as React from "react";
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import { CommonWidgetProps } from "../types";
-import WidgetFrame from "../containers/WidgetFrame";
-import { ResizableDelta, Position } from "react-rnd";
-import { ResizeDirection } from "re-resizable";
-
+import { createStyles, Link, withStyles, WithStyles } from '@material-ui/core';
 import * as moment from 'moment';
+import { ResizeDirection } from "re-resizable";
+import * as React from "react";
+import { Position, ResizableDelta } from "react-rnd";
+import { CommonWidgetProps } from "../types";
+import WidgetFrame from "./WidgetFrame";
+import WidgetMenu from "./WidgetMenu";
 
 const styles = () => createStyles({
     body: {
@@ -24,7 +24,7 @@ const styles = () => createStyles({
         textAlign: 'center',
         lineHeight: '95%',
         fontWeight: 'bold',
-    }
+    },
 });
 
 type Settings = {
@@ -34,7 +34,7 @@ type Settings = {
 }
 
 type State = {
-    time: number,
+    time: string,
 }
 
 class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyles<typeof styles>, State> {
@@ -51,12 +51,20 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
         this.lastHeight = this.props.config.height - 1;
         this.timerId = 0;
         this.state = {
-            time: new Date().getTime(),
+            time: this.now,
         }
     }
 
+    private get now(): string {
+        return moment(new Date().getTime()).format(this.props.config.settings.timeFormat);
+    }
+
     componentDidMount() {
-        this.timerId = window.setInterval(() => this.setState({time: new Date().getTime()}), 1000);
+        this.timerId = window.setInterval(() => {
+            const now = this.now;
+            if (now != this.state.time)
+                this.setState({time: this.now})
+        }, 1000);
     }
 
     componentWillUnmount() {
@@ -64,7 +72,7 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
     }
 
     render() {
-        const {config, classes, stepSize} = this.props;
+        const {config, classes, stepSize, updateWidgetConfig} = this.props;
 
         const onResize = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, position: Position) => {
             if (delta.height || delta.width)
@@ -89,19 +97,39 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
         const dateComp = () => {
             return (
                 <div className={classes.date} ref={r => {this.dateElement = r}}>
-                    {moment(this.state.time).format(config.settings.dateFormat)}
+                    {moment(new Date().getTime()).format(config.settings.dateFormat)}
                 </div>
             )
         }
 
+        const settingsDialogText = <span>
+            For more info about date & time formats<br/>see the <Link href="https://momentjs.com/docs/#/displaying/format/"
+            target="blank">Moment.js</Link> documentation.
+        </span>
+
         return (
-            <WidgetFrame config={config} stepSize={stepSize} onResize={onResize}>
+            <WidgetFrame
+                config={config}
+                stepSize={stepSize}
+                onResize={onResize}
+                updateWidgetConfig={updateWidgetConfig}
+            >
                 <div className={classes.body} ref={setFontSize}>
                     <div className={classes.clock} ref={r => {this.clockElement = r}}>
-                        {moment(this.state.time).format(config.settings.timeFormat)}
+                        {this.state.time}
                     </div>
                     {config.settings.showDate ? dateComp() : null}
                 </div>
+                <WidgetMenu id={config.id} settings={config.settings} dialogText={settingsDialogText} settingsFormFields={[{
+                    name: "timeFormat",
+                    label: "Time format",
+                }, {
+                    name: "dateFormat",
+                    label: "Date format",
+                }, {
+                    name: "showDate",
+                    label: "Show date",
+                }]} />
             </WidgetFrame>
         )
     }

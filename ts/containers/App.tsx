@@ -1,8 +1,11 @@
-import * as React from "react";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import * as React from "react";
+import { connect } from 'react-redux';
+import { bindActionCreators } from "redux";
+import { updateWidgetConfig } from '../actions';
 import Dashboard from "../components/Dashboard";
+import { DashboardConfig, State, UpdateWidgetConfigAction, WidgetConfigList } from "../types";
 import ControlBar from "./ControlBar";
-import { DashboardConfig, WidgetConfigList } from "../types";
 
 const styles = () => createStyles({
     root: {
@@ -15,17 +18,19 @@ type StateProps = {
     widgetConfigs: WidgetConfigList,
 }
 
-const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
+type DispatchProps = {
+    updateWidgetConfig: UpdateWidgetConfigAction,
+}
+
+const App = withStyles(styles)(React.memo((props: StateProps & DispatchProps & WithStyles<typeof styles>) => {
+
+    const {dashboardConfig, widgetConfigs, updateWidgetConfig} = props;
+
     return <div className={props.classes.root}>
         <ControlBar />
-        {props.dashboardConfig ? <Dashboard config={props.dashboardConfig} widgets={props.widgetConfigs} /> : null}
+        {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} updateWidgetConfig={updateWidgetConfig} /> : null}
     </div>
 }))
-
-import { connect } from 'react-redux';
-
-
-import { State } from '../types';
 
 function mapStateToProps(state: State): StateProps {
     const { currentDashboardId, dashboards, widgets } = state;
@@ -35,4 +40,6 @@ function mapStateToProps(state: State): StateProps {
     }
 }
 
-export default connect<StateProps>(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => bindActionCreators({updateWidgetConfig}, dispatch)
+
+export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(App);

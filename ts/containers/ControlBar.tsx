@@ -16,8 +16,8 @@ type StateProps = {
 const styles = () => createStyles({
     opener: {
         position: 'fixed',
-        left: 0,
-        top: -4,
+        left: 5,
+        top: 0,
         width: 30,
         height: 30,
         fontSize: 20,
@@ -63,7 +63,7 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 
     return (<div>
         <div className={classes.opener} onClick={() => setOpened(true)}>
-            <FontAwesomeIcon icon="cog" />
+            <FontAwesomeIcon icon="bars" />
         </div>
         <Drawer anchor="top" open={openDrawer} onClose={() => setOpened(false)}>
             <div className={classes.menubar}>

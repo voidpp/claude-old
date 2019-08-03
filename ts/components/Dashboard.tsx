@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import { WidgetConfig, DashboardConfig, WidgetConfigList } from "../types";
+import { WidgetConfig, DashboardConfig, WidgetConfigList, UpdateWidgetConfigAction } from "../types";
 import widgetRegistry from '../widgetRegistry'
 
 const styles = () => createStyles({
@@ -10,15 +10,17 @@ const styles = () => createStyles({
 export interface Props {
     config: DashboardConfig,
     widgets: WidgetConfigList,
+    updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
 export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof styles>) => {
 
     function factory(wconf: WidgetConfig) {
-        return React.createElement(widgetRegistry[wconf.type].factory, {
+        return React.createElement(widgetRegistry[wconf.type].factory, { // TODO: factory type is 'any'
             config: wconf,
             stepSize: props.config.stepSize,
             key: wconf.id,
+            updateWidgetConfig: props.updateWidgetConfig,
         });
     }
 

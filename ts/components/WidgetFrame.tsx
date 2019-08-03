@@ -1,11 +1,9 @@
-import * as React from "react";
-import { Rnd, DraggableData, ResizableDelta, Position, RndResizeCallback } from "react-rnd";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
-import { WidgetConfig, BaseWidgetConfig } from "../types";
-
-import { DraggableEvent } from "react-draggable";
 import { ResizeDirection } from "re-resizable";
-import WidgetRemoveButton from "../containers/WidgetRemoveButton";
+import * as React from "react";
+import { DraggableEvent } from "react-draggable";
+import { DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback } from "react-rnd";
+import { UpdateWidgetConfigAction, WidgetConfig } from "../types";
 
 const styles = () => createStyles({
     body: {
@@ -13,22 +11,11 @@ const styles = () => createStyles({
         borderRadius: 5,
         height: '100%',
         position: 'relative',
-        '&:hover $removeButtonContainer': {
+        '&:hover .widget-menu': {
             opacity: 1,
         }
     },
-    removeButtonContainer: {
-        position: 'absolute',
-        top: 0,
-        right: 5,
-        opacity: 0.1,
-        transition: '0.3s opacity',
-    },
 });
-
-export type DispatchProps = {
-    updateWidgetConfig: (id: string, config: Partial<BaseWidgetConfig>) => void,
-}
 
 export interface OwnProps {
     config: WidgetConfig,
@@ -36,6 +23,7 @@ export interface OwnProps {
     children: React.ReactNode,
     removeButton?: boolean,
     onResize?: RndResizeCallback,
+    updateWidgetConfig: UpdateWidgetConfigAction
 }
 
 function isEquals(o1: Object, o2: Object): boolean {
@@ -46,8 +34,8 @@ function isEquals(o1: Object, o2: Object): boolean {
     return true
 }
 
-export default withStyles(styles)((props: OwnProps & DispatchProps & WithStyles<typeof styles>) => {
-    const {config, stepSize, updateWidgetConfig, classes, removeButton = true} = props;
+function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
+    const {config, stepSize, updateWidgetConfig, classes} = props;
     const [position, setPosition] = React.useState({
         x: config.x,
         y: config.y,
@@ -113,10 +101,12 @@ export default withStyles(styles)((props: OwnProps & DispatchProps & WithStyles<
         onResizeStop={onResizeStop}
         onDrag={onDrag}
         onResize={onResize}
+        enableUserSelectHack={false}
     >
-        <div className={props.classes.body}>
+        <div className={classes.body}>
             { props.children }
-            { removeButton ? <div className={classes.removeButtonContainer}><WidgetRemoveButton id={config.id} /></div> : null }
         </div>
     </Rnd>
-})
+}
+
+export default withStyles(styles)(WidgetFrame)

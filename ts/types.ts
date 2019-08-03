@@ -19,6 +19,7 @@ export interface WidgetConfig extends BaseWidgetConfig {
 export type CommonWidgetProps<T = any> = {
     config: Omit<WidgetConfig, 'settings'> & {settings: T},
     stepSize: number,
+    updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
 export type WidgetConfigList = Array<WidgetConfig>;
@@ -44,3 +45,4 @@ export interface State {
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;
 export type Dispatcher = Dispatch<Action>;
+export type UpdateWidgetConfigAction = (widgetId: string, config: Partial<BaseWidgetConfig>) => void;

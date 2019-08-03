@@ -17,7 +17,7 @@ let reg: WidgetRegistryType = {
         default: {
             x: 10,
             y: 10,
-            width: 300,
+            width: 500,
             height: 200,
             settings: {
                 showDate: true,
