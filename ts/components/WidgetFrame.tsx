@@ -11,6 +11,7 @@ const styles = () => createStyles({
         borderRadius: 5,
         height: '100%',
         position: 'relative',
+        overflow: 'hidden',
         '&:hover .widget-menu': {
             opacity: 1,
         }

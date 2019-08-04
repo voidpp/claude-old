@@ -1,17 +1,19 @@
 import logging
 from typing import List
 
-from geventwebsocket.websocket import WebSocket
+from websockets import WebSocketServerProtocol
+from cached_property import cached_property
+
 
 logger = logging.getLogger(__name__)
 
 class WebsocketListener:
 
-    def __init__(self, websocket: WebSocket):
+    def __init__(self, websocket: WebSocketServerProtocol):
         self._websocket = websocket
-        self._remote_addr = websocket.environ.get('REMOTE_ADDR')
+        self._remote_addr = websocket.remote_address[0]
 
-    @property
+    @cached_property
     def remote_addr(self) -> str:
         return self._remote_addr
 

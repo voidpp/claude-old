@@ -20,7 +20,7 @@ const styles = () => createStyles({
 export interface OwnProps<SettingsType> {
     id: string,
     settings: SettingsType,
-    settingsFormFields?: Array<FormFieldDescriptor<SettingsType>>,
+    settingsFormFields?: Array<FormFieldDescriptor>,
     dialogTitle?: string,
     dialogText?: React.ReactNode,
 }
@@ -46,6 +46,11 @@ function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typ
         setMenuAnchorEl(null);
     }
 
+    function openDialog() {
+        showSettingDialog(true);
+        closeMenu();
+    }
+
     return <div className={classes.body + ' widget-menu'}>
         <span aria-controls="widget-menu" aria-haspopup="true" onClick={openMenu}>
             <FontAwesomeIcon icon="ellipsis-h" />
@@ -58,10 +63,7 @@ function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typ
             open={Boolean(menuAnchorEl)}
             onClose={closeMenu}
         >
-            <MenuItem onClick={() => {
-                showSettingDialog(true);
-                closeMenu();
-            }}>Settings</MenuItem>
+            {settingsFormFields.length ? <MenuItem onClick={openDialog}>Settings</MenuItem>: null}
             <MenuItem onClick={() => store.dispatch(removeWidget(props.id))}>Remove</MenuItem>
         </Menu>
 

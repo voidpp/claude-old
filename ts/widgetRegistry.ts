@@ -1,6 +1,7 @@
 
 import ClockWidget from './components/ClockWidget';
 import { BaseWidgetConfig } from './types';
+import ServerStatusWidget from './components/ServerStatusWidget';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -26,6 +27,20 @@ let reg: WidgetRegistryType = {
             },
         },
     },
+    serverStatus: {
+        factory: ServerStatusWidget,
+        title: 'Server status',
+        default: {
+            x: 10,
+            y: 10,
+            width: 400,
+            height: 200,
+            settings: {
+                pollInterval: 60,
+                servers: {},
+            },
+        },
+    }
 }
 
 export default reg;

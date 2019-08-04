@@ -61,7 +61,9 @@ target/
 node_modules
 pip-wheel-metadata
 package-lock.json
-claude/static/
+claude/static/*.js
+claude/static/*.map
+claude/static/*.otf
 claude.db
 __generated__
 schema.graphql

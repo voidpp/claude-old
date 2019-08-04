@@ -13,3 +13,7 @@ const localStorageHandler = {
 }
 
 export const claudeLocalStorage = new Proxy<LocalStorageSchema>(new LocalStorageSchema(), localStorageHandler);
+
+export function copy<T>(data: T): T {
+    return JSON.parse(JSON.stringify(data))
+}

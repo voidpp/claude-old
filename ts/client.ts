@@ -4,7 +4,6 @@ import { AnyAction, Dispatch } from 'redux';
 import { detailedDiff } from 'deep-object-diff';
 import { Action } from './actions';
 
-
 class Client {
 
     public url: string;
@@ -13,7 +12,7 @@ class Client {
     private _dispatcher: Dispatch<AnyAction>;
 
     constructor() {
-        this.url = `ws://${window.location.host}/listen`;
+        this.url = `ws://${window.location.hostname}:5001/listen`;
         this.ws = new ReconnectingWebSocket(this.url);
 
         this.ws.onopen = this.onOpen.bind(this);

@@ -12,8 +12,10 @@ tree = Tree(Settings(convert_underscores_to_hypens = True))
 @tree.root()
 class AppConfig:
 
-    port: int
-    host = '0.0.0.0'
+    @tree.node()
+    class sync_server:
+        port: int
+
     sync_log_size: str
 
 dashboard_config_loader = GroupMember('dashboards.json', mandatory = False)

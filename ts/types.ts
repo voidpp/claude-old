@@ -46,3 +46,29 @@ export interface State {
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;
 export type Dispatcher = Dispatch<Action>;
 export type UpdateWidgetConfigAction = (widgetId: string, config: Partial<BaseWidgetConfig>) => void;
+
+export interface ServerStatusData {
+    cpu: {
+        cores: number,
+    },
+    hdd: Array<{
+        device: string,
+        free: number,
+        label: string,
+        mount: string,
+        percent: number,
+        total: number,
+        used: number,
+    }>,
+    load: [number, number, number],
+    memory: {
+        available: number,
+        free: number,
+        percent: number,
+        total: number,
+        used: number,
+    },
+    uptime: number,
+    ping: number,
+}
+

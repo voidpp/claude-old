@@ -13,14 +13,13 @@ setup(
     install_requires = [
         "flask~=1.1",
         "transmissionrpc~=0.11",
-        "Flask-Sockets~=0.2",
+        "websockets~=8.0",
+        "requests~=2.22",
+        "cached-property~=1.5",
         "configpp~=0.3",
     ],
     include_package_data = True,
     packages = [],
     extras_require = {},
-    scripts = [
-        "bin/run-claude-server"
-    ],
     classifiers = [],
 )
