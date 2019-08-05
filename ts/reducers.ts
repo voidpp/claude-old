@@ -4,6 +4,7 @@ import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateW
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
 import widgetRegistry from "./widgetRegistry";
+import {act} from "react-dom/test-utils";
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
@@ -41,7 +42,10 @@ const widgetHandlers: HandlerMap<WidgetConfigMap> = {
         });
     },
     [Action.UPDATE_WIDGET_CONFIG]: (state: WidgetConfigMap, action: ReturnType<typeof updateWidgetConfig>): WidgetConfigMap => {
-        return objectAssignDeep({}, state, {[action.widgetId]: action.config});
+        let newState:WidgetConfigMap = objectAssignDeep({}, state, {[action.widgetId]: action.config});
+        if (action.config.settings)
+            newState[action.widgetId].settings = action.config.settings;
+        return newState;
     },
     [Action.REMOVE_WIDGET]: (state: WidgetConfigMap, action: ReturnType<typeof removeWidget>): WidgetConfigMap => {
         let newState = Object.assign({}, state);

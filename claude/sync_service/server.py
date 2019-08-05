@@ -46,9 +46,15 @@ class Server:
 
                 dict_merge(diff['added'], self._dashboard_config_loader.data)
                 dict_merge(diff['updated'], self._dashboard_config_loader.data)
-                for key, node in diff['deleted'].items():
-                    for id in node:
-                        del self._dashboard_config_loader.data[key][id]
+
+                def find_removed_node(node: dict, data: dict):
+                    for key, value in node.items():
+                        if value is None:
+                            del data[key]
+                        else:
+                            find_removed_node(value, data[key])
+
+                find_removed_node(diff['deleted'], self._dashboard_config_loader.data)
 
                 # TODO: delay with some sec (and add if new trigger)
                 self._dashboard_config_loader.dump()
