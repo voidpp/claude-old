@@ -12,7 +12,7 @@ class Client {
     private _dispatcher: Dispatch<AnyAction>;
 
     constructor() {
-        this.url = `ws://${window.location.hostname}:5001/listen`;
+        this.url = `ws://${window.location.hostname}:${window['syncServerPort']}/listen`;
         this.ws = new ReconnectingWebSocket(this.url);
 
         this.ws.onopen = this.onOpen.bind(this);

@@ -1,9 +1,15 @@
 import logging
 import logging.config
 
-from dataclasses import dataclass
-from configpp.tree import Tree, Settings, NodeBase, DatabaseLeaf
+from enum import Enum
+
+from configpp.tree import Tree, Settings
 from configpp.soil import Group, GroupMember
+
+class Mode(Enum):
+
+    DEVELOPMENT = 'development'
+    PRODUCTION = 'production'
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +27,11 @@ class AppConfig:
 dashboard_config_loader = GroupMember('dashboards.json', mandatory = False)
 app_config_loader = GroupMember('app.yaml')
 logger_config_loader = GroupMember('logger.yaml')
+
+default_dashboard_data = {
+    'dashboards': {},
+    'widgets': {},
+}
 
 config_loader = Group('claude', [app_config_loader, dashboard_config_loader, logger_config_loader])
 

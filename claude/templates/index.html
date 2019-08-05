@@ -8,11 +8,11 @@
         <style>
             @font-face {
                 font-family: Digital7;
-                src: url('/static/digital7.otf');
+                src: url('/static/fonts/digital7.otf');
             }
             @font-face {
                 font-family: Futura;
-                src: url('/static/hfutura2.otf');
+                src: url('/static/fonts/hfutura2.otf');
             }
             html, body, #body {
                 margin: 0;
@@ -23,16 +23,13 @@
         </style>
         <div id="body"></div>
 
-        <script src="/static/react.development.js"></script>
-        <script src="/static/react-dom.development.js"></script>
-        <script src="/static/material-ui.development.js"></script>
-        <script src="/static/fontawesome-svg-core.js"></script>
-        <script src="/static/fontawesome-free-solid-svg-icons.js"></script>
-        <script src="/static/moment.min.js"></script>
-        <script src="/static/react-draggable.min.js"></script>
+        {% for desc in javascript_libraries %}
+            <script src="{{desc['url']}}" crossorigin="anonymous" integrity="{{desc['hash']}}"></script>
+        {% endfor %}
 
         <script>
             window['initalData'] = {{initial_data|tojson|safe}};
+            window['syncServerPort'] = {{ sync_server_port }}
         </script>
 
         <script src="/static/bundle.js?v={{version}}"></script>

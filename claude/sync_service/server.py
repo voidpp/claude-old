@@ -4,10 +4,10 @@ import asyncio
 import websockets
 import json
 from time import time
-from urllib.parse import parse_qs, urlparse
 from configpp.soil import GroupMember
 
 from claude.tools import dict_merge
+from claude.config import default_dashboard_data
 from .listener import WebsocketListener
 
 logger = logging.getLogger(__name__)
@@ -40,6 +40,9 @@ class Server:
 
                 action = message['action']
                 diff = message['diff']
+
+                if not self._dashboard_config_loader.is_loaded:
+                    self._dashboard_config_loader.data = default_dashboard_data
 
                 dict_merge(diff['added'], self._dashboard_config_loader.data)
                 dict_merge(diff['updated'], self._dashboard_config_loader.data)
