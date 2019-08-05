@@ -1,11 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, DialogContentText, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, DialogContentText, Checkbox, FormControlLabel, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import * as React from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { copy } from '../tools';
 const uuid = require('uuid/v4');
 
-export type FieldType = 'string' | 'list' | 'boolean';
+export type FieldType = 'string' | 'list' | 'boolean' | 'select';
 
 export interface FormFieldDescriptor {
     name: string,
@@ -13,7 +13,6 @@ export interface FormFieldDescriptor {
     type?: FieldType,
     required?: boolean,
     default?: any,
-    options?: Array<{label: string, value: string}>,
 }
 
 export interface FormNumberFieldDescriptor extends FormFieldDescriptor {
@@ -23,7 +22,10 @@ export interface FormNumberFieldDescriptor extends FormFieldDescriptor {
 
 export interface FormListFieldDescriptor extends FormFieldDescriptor {
     fields: Array<FormFieldDescriptor>,
-    addButtonLabel: string,
+}
+
+export interface FormSelectFieldDescriptor extends FormFieldDescriptor {
+    options: Array<{value: string, label: string}>,
 }
 
 export type Props = {
@@ -41,7 +43,7 @@ type ListData = {
     rank: number,
 }
 
-type ListDataMap = {[s:string]: ListData};
+type ListDataMap = { [s: string]: ListData };
 
 type ListFieldProps = {
     desc: FormListFieldDescriptor,
@@ -51,15 +53,15 @@ type ListFieldProps = {
 
 function ListField(props: ListFieldProps) {
 
-    const {desc, data, onChange} = props;
-    const {fields, addButtonLabel} = desc;
-    const defaultRowData = fields.reduce((obj, field) => {obj[field.name] = field.default; return obj;}, {});
+    const { desc, data, onChange } = props;
+    const { fields } = desc;
+    const defaultRowData = fields.reduce((obj, field) => { obj[field.name] = field.default; return obj; }, {});
 
     const addRow = () => {
         const id = uuid();
         const dataList = Object.values(data);
         const rank = dataList.length ? Math.max(...dataList.map(r => r.rank)) + 1 : 0;
-        onChange(Object.assign({}, data, {[id]: {id, rank, ...defaultRowData}}))
+        onChange(Object.assign({}, data, { [id]: { id, rank, ...defaultRowData } }))
     }
 
     const delRow = (rowId: string) => _ => {
@@ -83,13 +85,16 @@ function ListField(props: ListFieldProps) {
     const renderRow = (rowData: ListData) => {
         return <tr key={rowData.id}>
             {fields.map(desc => renderCell(rowData, desc))}
-            <td><div onClick={delRow(rowData.id)}><FontAwesomeIcon icon="times" /></div></td>
+            <td style={{ padding: "0 5px", fontSize: 18, cursor: 'pointer' }}>
+                <div onClick={delRow(rowData.id)}><FontAwesomeIcon icon="times" /></div>
+            </td>
         </tr>
     }
 
     return (
-        <div>
-            <Button variant="contained" size="small" onClick={addRow}>{addButtonLabel}</Button>
+        <div style={{ margin: '10px 0' }}>
+            <Typography component="span" variant="subtitle1" style={{ marginRight: 10 }}>{desc.label}: </Typography>
+            <Button variant="contained" size="small" onClick={addRow}>Add</Button>
             <table>
                 <tbody>
                     {Object.values(data).sort((s1, s2) => s1.rank - s2.rank).map(renderRow)}
@@ -103,11 +108,19 @@ function ListField(props: ListFieldProps) {
 
 type FieldGeneratorCallbackType = (desc: FormFieldDescriptor, value: any, onChange: (val: any) => void) => React.ReactNode;
 
-const fieldGenerator: {[s: string]: FieldGeneratorCallbackType} = {
+const fieldGenerator: { [s: string]: FieldGeneratorCallbackType } = {
+    select: (desc: FormSelectFieldDescriptor, value: string, onChange: (val: string) => void) => {
+        return (
+            <FormControl>
+                <InputLabel>{desc.label}</InputLabel>
+                <Select value={value} onChange={v => onChange(v.target.value as string)} >
+                    {desc.options.map(op => <MenuItem key={op.value} value={op.value}>{op.label}</MenuItem>)}
+                </Select>
+            </FormControl>
+        )
+    },
     list: (desc: FormListFieldDescriptor, value: ListDataMap, onChange: (val: ListDataMap) => void) => {
-        return <div key={desc.name as string}>
-            <ListField desc={desc} data={value} onChange={onChange} />
-        </div>
+        return <ListField desc={desc} data={value} onChange={onChange} key={desc.name as string} />
     },
     string: (desc: FormFieldDescriptor, value: string, onChange: (val: string) => void) => {
         return <TextField
@@ -128,7 +141,7 @@ const fieldGenerator: {[s: string]: FieldGeneratorCallbackType} = {
                 checked={value} // eh...
                 onChange={ev => onChange(ev.target.checked)}
                 color="primary"
-                inputProps={{'aria-label': 'secondary checkbox'}}
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
             />}
         />
     },
@@ -149,9 +162,9 @@ const fieldGenerator: {[s: string]: FieldGeneratorCallbackType} = {
 }
 
 
-export default function(props: Props) {
+export default function (props: Props) {
 
-    const {show, onClose, title = 'Widget settings', submit, data, introText} = props;
+    const { show, onClose, title = 'Widget settings', submit, data, introText } = props;
     const [formData, setFormData] = useState(Object.assign({}, data))
 
     const onSubmit = (ev: React.SyntheticEvent) => {

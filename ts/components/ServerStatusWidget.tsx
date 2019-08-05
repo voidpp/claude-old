@@ -6,11 +6,11 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import api from "../api";
 import { CommonWidgetProps, ServerStatusData } from "../types";
-import FlagIcon from "./FlagIcon";
+import FlagIcon, { countries } from "./FlagIcon";
 import { useInterval } from "./tools";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
-import { FormListFieldDescriptor, FormNumberFieldDescriptor } from "./WidgetSettingsDialog";
+import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor } from "./WidgetSettingsDialog";
 
 const styles = () => createStyles({
     body: {
@@ -43,14 +43,13 @@ export type ServerConfig = {
     rank: number,
 }
 
-type Settings = {
+export type Column = 'name' | 'ping' | 'load' | 'memory' | 'uptime';
+
+export type Settings = {
     servers: {[s: string]: ServerConfig},
+    columns: {[key in Column]: boolean},
     pollInterval: number,
 }
-
-/**
- * configure which columns want to see
- */
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
@@ -59,31 +58,6 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     const { settings } = config;
 
     const [serverInfo, setServerInfo] = useState({} as {[s: string]: ServerStatusData});
-
-    // const settings: Settings = {
-    //     pollInterval: 60,
-    //     servers: [{
-    //         ip: '5.9.138.178',
-    //         name: 'Kvasir',
-    //         location: 'de',
-    //         systemStatusServerPort: 35280,
-    //     }, {
-    //         ip: '88.151.99.138',
-    //         name: 'Yggdrasil',
-    //         location: 'hu',
-    //         systemStatusServerPort: 35280,
-    //     }, {
-    //         ip: '192.168.1.213',
-    //         name: 'Manfred',
-    //         location: 'private',
-    //         systemStatusServerPort: 35280,
-    //     }, {
-    //         ip: '192.168.0.100',
-    //         name: 'nonexists',
-    //         location: 'localhost',
-    //         systemStatusServerPort: 35280,
-    //     }]
-    // };
 
     const fetchServerInfo = () => {
         for (let desc of Object.values(settings.servers)) {
@@ -187,7 +161,10 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                     name: 'location',
                     label: 'Location',
                     default: 'hu',
-                },{
+                    type: 'select',
+                    // options: [{value: 'hu', label: 'Hungary'}, {value: 'de', label: 'Germany'}]
+                    options: Object.keys(countries).map(code => {return {value: code, label: countries[code]}})
+                } as FormSelectFieldDescriptor ,{
                     name: 'systemStatusServerPort',
                     label: 'Status port',
                     default: 35280,
