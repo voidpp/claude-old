@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { copy } from '../tools';
 const uuid = require('uuid/v4');
 
-export type FieldType = 'string' | 'list' | 'boolean' | 'select';
+export type FieldType = 'string' | 'list' | 'boolean' | 'select' | 'checkboxList';
 
 export interface FormFieldDescriptor {
     name: string,
@@ -26,6 +26,9 @@ export interface FormListFieldDescriptor extends FormFieldDescriptor {
 
 export interface FormSelectFieldDescriptor extends FormFieldDescriptor {
     options: Array<{value: string, label: string}>,
+}
+
+export interface FormCheckboxListFieldDescriptor extends FormSelectFieldDescriptor {
 }
 
 export type Props = {
@@ -108,7 +111,26 @@ function ListField(props: ListFieldProps) {
 
 type FieldGeneratorCallbackType = (desc: FormFieldDescriptor, value: any, onChange: (val: any) => void) => React.ReactNode;
 
+type CheckboxListValue = {[s: string]: boolean};
+
 const fieldGenerator: { [s: string]: FieldGeneratorCallbackType } = {
+    checkboxList: (desc: FormCheckboxListFieldDescriptor, value: CheckboxListValue, onChange: (val: CheckboxListValue) => void) => {
+        return (
+            <div key={desc.name as string}>
+                <Typography variant="subtitle1">{desc.label}: </Typography>
+                {desc.options.map(op => (
+                    <FormControlLabel label={op.label} key={op.value}
+                        control={<Checkbox
+                            checked={value[op.value]}
+                            onChange={ev => onChange(Object.assign({}, value, {[op.value]: ev.target.checked}))}
+                            color="primary"
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                        />}
+                    />)
+                )}
+            </div>
+        )
+    },
     select: (desc: FormSelectFieldDescriptor, value: string, onChange: (val: string) => void) => {
         return (
             <FormControl>
@@ -138,7 +160,7 @@ const fieldGenerator: { [s: string]: FieldGeneratorCallbackType } = {
     boolean: (desc: FormFieldDescriptor, value: boolean, onChange: (val: boolean) => void) => {
         return <FormControlLabel label={desc.label} key={desc.name as string}
             control={<Checkbox
-                checked={value} // eh...
+                checked={value}
                 onChange={ev => onChange(ev.target.checked)}
                 color="primary"
                 inputProps={{ 'aria-label': 'secondary checkbox' }}

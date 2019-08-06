@@ -10,7 +10,7 @@ import FlagIcon, { countries } from "./FlagIcon";
 import { useInterval } from "./tools";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
-import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor } from "./WidgetSettingsDialog";
+import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor, FormCheckboxListFieldDescriptor } from "./WidgetSettingsDialog";
 
 const styles = () => createStyles({
     body: {
@@ -93,27 +93,35 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         return <FontAwesomeIcon icon={icon} style={{color: color}} />
     }
 
+    const ConditionalRender = (props: {cond: boolean, children: React.ReactNode}) => {
+        return <React.Fragment>{props.cond ? props.children : null}</React.Fragment>
+    }
+
+    const cols = settings.columns;
+
     const renderRow = (cfg: ServerConfig) => {
 
         const info = serverInfo[cfg.ip];
 
-        const baseCols = <React.Fragment>
+        const baseCols = <ConditionalRender cond={cols.name}>
             <td><Status ip={cfg.ip} /></td>
             <td>{cfg.name}</td>
             <td style={{maxWidth: 30}}><FlagIcon name={cfg.location} /></td>
-        </React.Fragment>
+        </ConditionalRender>
 
         if (!info)
             return <tr className={classes.nodata} key={cfg.name}>{baseCols}</tr>;
 
         return <tr key={cfg.name}>
             {baseCols}
-            <td style={{textAlign: 'right'}}>{info.ping != null ? `${info.ping} ms` : null}</td>
-            <td className={classes.loadCol}>{info.load ? info.load[0].toFixed(2): null}</td>
-            <td className={classes.loadCol}>{info.load ? info.load[1].toFixed(2): null}</td>
-            <td className={classes.loadCol}>{info.load ? info.load[2].toFixed(2): null}</td>
-            <td style={{textAlign: 'right'}}>{info.memory ? `${info.memory.percent.toFixed(1)}%` : null}</td>
-            <td>{info.uptime ? moment.duration(info.uptime * 1000).humanize() : null}</td>
+            <ConditionalRender cond={cols.ping}><td style={{textAlign: 'right'}}>{info.ping != null ? `${info.ping} ms` : null}</td></ConditionalRender>
+            <ConditionalRender cond={cols.load}>
+                <td className={classes.loadCol}>{info.load ? info.load[0].toFixed(2): null}</td>
+                <td className={classes.loadCol}>{info.load ? info.load[1].toFixed(2): null}</td>
+                <td className={classes.loadCol}>{info.load ? info.load[2].toFixed(2): null}</td>
+            </ConditionalRender>
+            <ConditionalRender cond={cols.memory}><td style={{textAlign: 'right'}}>{info.memory ? `${info.memory.percent.toFixed(1)}%` : null}</td></ConditionalRender>
+            <ConditionalRender cond={cols.uptime}><td>{info.uptime ? moment.duration(info.uptime * 1000).humanize() : null}</td></ConditionalRender>
         </tr>
     }
 
@@ -127,11 +135,11 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 <table>
                     <thead>
                         <tr>
-                            <th colSpan={3}>Name</th>
-                            <th>Ping</th>
-                            <th colSpan={3}>Load</th>
-                            <th>Mem</th>
-                            <th>Uptime</th>
+                            <ConditionalRender cond={cols.name}><th colSpan={3}>Name</th></ConditionalRender>
+                            <ConditionalRender cond={cols.ping}><th>Ping</th></ConditionalRender>
+                            <ConditionalRender cond={cols.load}><th colSpan={3}>Load</th></ConditionalRender>
+                            <ConditionalRender cond={cols.memory}><th>Mem</th></ConditionalRender>
+                            <ConditionalRender cond={cols.uptime}><th>Uptime</th></ConditionalRender>
                         </tr>
                     </thead>
                     <tbody>
@@ -162,14 +170,24 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                     label: 'Location',
                     default: 'hu',
                     type: 'select',
-                    // options: [{value: 'hu', label: 'Hungary'}, {value: 'de', label: 'Germany'}]
-                    options: Object.keys(countries).map(code => {return {value: code, label: countries[code]}})
+                    options: Object.keys(countries).map(code => ({value: code, label: countries[code]}))
                 } as FormSelectFieldDescriptor ,{
                     name: 'systemStatusServerPort',
                     label: 'Status port',
                     default: 35280,
                 }]
-            } as FormListFieldDescriptor]} />
+            } as FormListFieldDescriptor, {
+                type: 'checkboxList',
+                name: 'columns',
+                label: 'Columns',
+                options: [
+                    {value: 'name', label: 'Name'},
+                    {value: 'ping', label: 'Ping'},
+                    {value: 'load', label: 'Load'},
+                    {value: 'memory', label: 'Memory'},
+                    {value: 'uptime', label: 'Uptime'},
+                ]
+            } as FormCheckboxListFieldDescriptor ]} />
         </WidgetFrame>
     )
 });
