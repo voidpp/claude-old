@@ -1,12 +1,13 @@
 import { createStyles, Drawer, withStyles, WithStyles } from '@material-ui/core';
 import * as React from "react";
 import { useState } from "react";
-import { connect } from 'react-redux';
+import {connect, useStore} from 'react-redux';
 import { State, DashboardConfig } from '../types';
 import AddWidgetMenu from './AddWidgetMenu';
 import DashboardSelector from "./DashboardSelector";
 import DashboardSettingsButton from './DashboardSettingsButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {addWidget} from "../actions";
 
 type StateProps = {
     currentDashboardHasWidget: boolean,
@@ -48,6 +49,7 @@ const styles = () => createStyles({
 
 const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof styles>) => {
     const [opened, setOpened] = useState(false);
+    const store = useStore();
 
     const {classes, currentDashboard, currentDashboardHasWidget} = props;
 
@@ -60,6 +62,11 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
     }
 
     const openDrawer = opened || currentDashboard == undefined || !currentDashboardHasWidget;
+
+    const onAddWidget = (type: string) => {
+        store.dispatch(addWidget(currentDashboard.id, type))
+        setOpened(false);
+    }
 
     return (<div>
         <div className={classes.opener} onClick={() => setOpened(true)}>
@@ -78,7 +85,7 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
                         <Spacer />
                         <DashboardSettingsButton />
                         <Spacer />
-                        <AddWidgetMenu />
+                        <AddWidgetMenu addWidget={onAddWidget} />
                     </React.Fragment> : null}
             </div>
         </Drawer>
