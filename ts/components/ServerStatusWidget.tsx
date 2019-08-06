@@ -45,8 +45,10 @@ export type ServerConfig = {
 
 export type Column = 'name' | 'ping' | 'load' | 'memory' | 'uptime';
 
+type ServerConfigMap = {[s: string]: ServerConfig};
+
 export type Settings = {
-    servers: {[s: string]: ServerConfig},
+    servers: ServerConfigMap,
     columns: {[key in Column]: boolean},
     pollInterval: number,
 }
@@ -54,13 +56,12 @@ export type Settings = {
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
     const { config, classes, stepSize, updateWidgetConfig } = props;
-
     const { settings } = config;
-
     const [serverInfo, setServerInfo] = useState({} as {[s: string]: ServerStatusData});
 
-    const fetchServerInfo = () => {
-        for (let desc of Object.values(settings.servers)) {
+
+    const fetchServerInfo = (servers: ServerConfigMap = null) => {
+        for (let desc of Object.values(servers || settings.servers)) {
             api.getServerStatus(desc.ip, desc.systemStatusServerPort).then(d => {
                 setServerInfo(info => Object.assign({}, info, {[desc.ip]: d}))
             });
@@ -72,6 +73,11 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     useInterval(() => {
         fetchServerInfo()
     }, settings.pollInterval * 1000);
+
+    const onBeforeSettingsSubmit = (data: Settings) => {
+        // TODO: check if was a new server added (search for new ips)
+        fetchServerInfo(data.servers)
+    }
 
     const Status = (props: {ip: string}) => {
         const info = serverInfo[props.ip];
@@ -147,7 +153,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                     </tbody>
                 </table>
             </div>
-            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[{
+            <WidgetMenu id={config.id} onBeforeSubmit={onBeforeSettingsSubmit} settings={config.settings} settingsFormFields={[{
                 name: 'pollInterval',
                 label: 'Polling interval',
                 min: 0,

@@ -23,6 +23,7 @@ export interface OwnProps<SettingsType> {
     settingsFormFields?: Array<FormFieldDescriptor>,
     dialogTitle?: string,
     dialogText?: React.ReactNode,
+    onBeforeSubmit?: (data: SettingsType) => void;
 }
 
 function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typeof styles>) {
@@ -35,6 +36,8 @@ function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typ
     const store = useStore();
 
     const submitSettings = (data: SettingsType) => {
+        if (props.onBeforeSubmit)
+            props.onBeforeSubmit(data);
         store.dispatch(updateWidgetConfig(props.id, {settings: data}));
     }
 
