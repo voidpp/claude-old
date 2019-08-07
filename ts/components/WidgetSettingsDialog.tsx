@@ -3,6 +3,7 @@ import * as React from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { copy } from '../tools';
+import {Simulate} from "react-dom/test-utils";
 const uuid = require('uuid/v4');
 
 export type FieldType = 'string' | 'list' | 'boolean' | 'select' | 'checkboxList';

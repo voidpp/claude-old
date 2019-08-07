@@ -2,6 +2,7 @@
 import ClockWidget from './components/ClockWidget';
 import { BaseWidgetConfig } from './types';
 import ServerStatusWidget, { Settings as ServerStatusWidgetSettings } from './components/ServerStatusWidget';
+import CalendarWidget from "./components/CalendarWidget";
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -47,7 +48,18 @@ let reg: WidgetRegistryType = {
                 }
             } as ServerStatusWidgetSettings,
         },
+    },
+    calendar: {
+        factory: CalendarWidget,
+        title: 'Calendar',
+        default: {
+            x: 10,
+            y: 10,
+            width: 200,
+            height: 200,
+            settings: {}
+        }
     }
-}
+};
 
 export default reg;

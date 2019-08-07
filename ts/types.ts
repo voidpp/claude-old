@@ -33,6 +33,7 @@ export interface DashboardConfig {
     id: string,
     name: string,
     stepSize: number,
+    // locale: 'hu' | 'en'
 }
 
 export type DashboardConfigMap = { [s: string]: DashboardConfig };

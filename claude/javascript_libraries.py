@@ -17,8 +17,8 @@ javascript_libraries = {
             'url': 'https://cdn.jsdelivr.net/npm/@fortawesome/free-solid-svg-icons@5.10.1/index.js',
             'hash': 'sha256-oSkdBl+Zjb67LV7yVUSCgWSMq3bfHzJ9Jz5l+Te4Y6s=',
         }, {
-            'url': 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js',
-            'hash': 'sha256-H9jAz//QLkDOy/nzE9G4aYijQtkLt9FvGmdUTwBk6gs=',
+            'url': 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.js',
+            'hash': 'sha256-dgFbqbQVzjkZPQxWd8PBtzGiRBhChc4I2wO/q/s+Xeo=',
         }, {
             'url': 'https://cdn.jsdelivr.net/npm/react-draggable@3.3.0/dist/react-draggable.js',
             'hash': 'sha256-dx6xPZVJdlAEbit+OnKSKb1JOwcJ7vyMdwatshRtm/U=',

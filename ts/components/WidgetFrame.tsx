@@ -102,6 +102,7 @@ function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
         onResizeStop={onResizeStop}
         onDrag={onDrag}
         onResize={onResize}
+        style={{userSelect: 'none'}}
         enableUserSelectHack={false}
     >
         <div className={classes.body}>
