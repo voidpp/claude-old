@@ -3,6 +3,7 @@ import ClockWidget from './components/ClockWidget';
 import { BaseWidgetConfig } from './types';
 import ServerStatusWidget, { Settings as ServerStatusWidgetSettings } from './components/ServerStatusWidget';
 import CalendarWidget from "./components/CalendarWidget";
+import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './components/StorageStatusWidget';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -13,6 +14,21 @@ export type WidgetRegistryType = {
 }
 
 let reg: WidgetRegistryType = {
+    storages: {
+        factory: StorageStatusWidget,
+        title: 'Storage status',
+        default: {
+            x: 10,
+            y: 10,
+            width: 300,
+            height: 150,
+            settings: {
+                host: '',
+                pollInterval: 10*60,
+                title: '',
+            } as StorageStatusWidgetSettings,
+        },
+    },
     clock: {
         factory: ClockWidget,
         title: 'Clock',

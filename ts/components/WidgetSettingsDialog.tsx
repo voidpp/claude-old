@@ -133,8 +133,9 @@ const fieldGenerator: { [s: string]: FieldGeneratorCallbackType } = {
         )
     },
     select: (desc: FormSelectFieldDescriptor, value: string, onChange: (val: string) => void) => {
+        console.log(desc.options)
         return (
-            <FormControl>
+            <FormControl key={desc.name}>
                 <InputLabel>{desc.label}</InputLabel>
                 <Select value={value} onChange={v => onChange(v.target.value as string)} >
                     {desc.options.map(op => <MenuItem key={op.value} value={op.value}>{op.label}</MenuItem>)}
