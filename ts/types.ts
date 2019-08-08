@@ -1,6 +1,7 @@
 import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
 import { Dispatch } from "react";
+import {ClaudeThemeType} from "./tools";
 
 export interface BaseWidgetConfig {
     x: number,
@@ -34,6 +35,8 @@ export interface DashboardConfig {
     name: string,
     stepSize: number,
     // locale: 'hu' | 'en'
+    background: string,
+    theme: ClaudeThemeType,
 }
 
 export type DashboardConfigMap = { [s: string]: DashboardConfig };

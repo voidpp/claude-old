@@ -4,7 +4,9 @@ import { WidgetConfig, DashboardConfig, WidgetConfigList, UpdateWidgetConfigActi
 import widgetRegistry from '../widgetRegistry'
 
 const styles = () => createStyles({
-
+    body: {
+        height: '100%',
+    }
 });
 
 export interface Props {
@@ -24,5 +26,9 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
         });
     }
 
-    return (<div>{props.widgets.map(factory)}</div>)
+    return (
+        <div className={props.classes.body} style={{background: props.config.background || ''}} >
+            {props.widgets.map(factory)}
+        </div>
+    )
 }))

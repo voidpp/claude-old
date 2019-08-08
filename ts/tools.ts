@@ -10,10 +10,28 @@ const localStorageHandler = {
         window.localStorage.setItem(name, JSON.stringify(value));
         return true;
     },
-}
+};
 
 export const claudeLocalStorage = new Proxy<LocalStorageSchema>(new LocalStorageSchema(), localStorageHandler);
 
 export function copy<T>(data: T): T {
     return JSON.parse(JSON.stringify(data))
 }
+
+export type ClaudeThemeType = 'light' | 'dark';
+
+export type ClaudeTheme = {
+    backgroundColor: string,
+    color: string,
+}
+
+export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
+    dark: {
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        color: 'white',
+    },
+    light: {
+        backgroundColor: '',
+        color: '',
+    },
+};

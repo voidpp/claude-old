@@ -1,13 +1,16 @@
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import {createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import { ResizeDirection } from "re-resizable";
 import * as React from "react";
 import { DraggableEvent } from "react-draggable";
 import { DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback } from "react-rnd";
 import { UpdateWidgetConfigAction, WidgetConfig } from "../types";
+import {claudeThemes} from "../tools";
 
-const styles = () => createStyles({
+
+const styles = (theme: Theme) => createStyles({
     body: {
-        backgroundColor: 'rgba(0,0,0,0.2)',
+        color: claudeThemes.dark.color,
+        backgroundColor: claudeThemes.dark.backgroundColor,
         borderRadius: 5,
         height: '100%',
         position: 'relative',
@@ -40,36 +43,36 @@ function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
     const [position, setPosition] = React.useState({
         x: config.x,
         y: config.y,
-    })
+    });
     const [size, setSize] = React.useState({
         width: config.width,
         height: config.height,
-    })
+    });
 
     const updatePosition = (newData: typeof position) => {
         if (isEquals(newData, position))
-            return
-        setPosition(newData)
+            return;
+        setPosition(newData);
         updateWidgetConfig(config.id, newData)
-    }
+    };
 
     const onDragStop = (e: DraggableEvent, data: DraggableData) => {
         updatePosition({
             x: data.lastX,
             y: data.lastY,
         })
-    }
+    };
 
     const onDrag = (e: DraggableEvent, data: DraggableData) => {
         updatePosition( {
             x: data.x,
             y: data.y,
         })
-    }
+    };
 
     const onResizeStop = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, newPosition: Position) => {
         onResize(e, dir, elementRef, delta, newPosition);
-    }
+    };
 
     const onResize = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, newPosition: Position) => {
         const newData = {
@@ -77,15 +80,15 @@ function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
             y: newPosition.y,
             width: elementRef.offsetWidth,
             height: elementRef.offsetHeight,
-        }
+        };
         if (isEquals(newData, {...position, ...size}))
-            return
+            return;
 
         updateWidgetConfig(config.id, newData);
 
         setPosition({...newData});
         setSize({...newData});
-    }
+    };
 
     return <Rnd
         position={{

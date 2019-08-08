@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } 
 import * as React from "react";
 import { useState } from "react";
 import { DashboardConfig } from '../types';
+import {ClaudeThemeType} from "../tools";
 
 export type Props = {
     show: boolean,
@@ -18,16 +19,18 @@ export default (props: Props) => {
     const [data, setData] = useState(props.data || {
         name: '',
         stepSize: 10,
-    } as DashboardConfig)
+        background: '',
+        theme: 'dark',
+    } as DashboardConfig);
 
     const onSubmit = (ev: React.SyntheticEvent) => {
         ev.preventDefault();
         submit(data);
-    }
+    };
 
     const updateData = (partialData: Partial<DashboardConfig>) => {
         setData(Object.assign({}, data, partialData))
-    }
+    };
 
     return <Dialog
             open={show}
@@ -41,6 +44,10 @@ export default (props: Props) => {
                         value={data.name} onChange={ev => updateData({name: ev.target.value})} />
                     <TextField margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
                         value={data.stepSize} onChange={ev => updateData({stepSize: parseInt(ev.target.value)})} />
+                    <TextField margin="dense" id="background" label="Background css" type="text" fullWidth
+                        value={data.background} onChange={ev => updateData({background: ev.target.value})} />
+                    <TextField margin="dense" id="theme" label="Theme" type="text" fullWidth required
+                        value={data.background} onChange={ev => updateData({theme: ev.target.value as ClaudeThemeType})} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} color="primary">Cancel</Button>

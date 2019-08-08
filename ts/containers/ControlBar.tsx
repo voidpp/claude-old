@@ -8,6 +8,7 @@ import DashboardSelector from "./DashboardSelector";
 import DashboardSettingsButton from './DashboardSettingsButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {addWidget} from "../actions";
+import Typography from "@material-ui/core/Typography";
 
 type StateProps = {
     currentDashboardHasWidget: boolean,
