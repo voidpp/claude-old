@@ -1,8 +1,6 @@
 import { createStyles, Link, withStyles, WithStyles } from '@material-ui/core';
 import * as moment from 'moment';
-import { ResizeDirection } from "re-resizable";
 import * as React from "react";
-import { Position, ResizableDelta } from "react-rnd";
 import { CommonWidgetProps } from "../types";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
@@ -19,11 +17,13 @@ const styles = () => createStyles({
         textAlign: 'center',
         lineHeight: '90%',
         fontFamily: 'Digital7',
+        fontSize: (props: CommonWidgetProps<Settings>) => props.config.height * 0.8,
     },
     date: {
         textAlign: 'center',
         lineHeight: '95%',
         fontWeight: 'bold',
+        fontSize: (props: CommonWidgetProps<Settings>) => props.config.height * 0.17,
     },
 });
 
@@ -39,16 +39,10 @@ type State = {
 
 class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyles<typeof styles>, State> {
 
-    private clockElement: HTMLElement;
-    private dateElement: HTMLElement;
-    private lastWidth: number;
-    private lastHeight: number;
     private timerId: number;
 
     constructor(props) {
         super(props);
-        this.lastWidth = this.props.config.width - 1;
-        this.lastHeight = this.props.config.height - 1;
         this.timerId = 0;
         this.state = {
             time: this.now,
@@ -74,29 +68,9 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
     render() {
         const {config, classes, dashboardConfig, updateWidgetConfig} = this.props;
 
-        const onResize = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, position: Position) => {
-            if (delta.height || delta.width)
-                setFontSize(elementRef);
-        }
-
-        const setFontSize = (elementRef: HTMLElement) => {
-            if (!elementRef || !this.clockElement)
-                return
-
-            if (this.lastWidth == elementRef.clientWidth && this.lastHeight == elementRef.clientHeight)
-                return;
-
-            this.clockElement.style.fontSize = `${elementRef.clientHeight * 0.8}px`;
-            if (this.dateElement)
-                this.dateElement.style.fontSize = `${elementRef.clientHeight * 0.17}px`;
-
-            this.lastWidth = elementRef.clientWidth;
-            this.lastHeight = elementRef.clientHeight;
-        }
-
         const dateComp = () => {
             return (
-                <div className={classes.date} ref={r => {this.dateElement = r}}>
+                <div className={classes.date}>
                     {moment(new Date().getTime()).format(config.settings.dateFormat)}
                 </div>
             )
@@ -111,11 +85,10 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
             <WidgetFrame
                 config={config}
                 dashboardConfig={dashboardConfig}
-                onResize={onResize}
                 updateWidgetConfig={updateWidgetConfig}
             >
-                <div className={classes.body} ref={setFontSize}>
-                    <div className={classes.clock} ref={r => {this.clockElement = r}}>
+                <div className={classes.body}>
+                    <div className={classes.clock}>
                         {this.state.time}
                     </div>
                     {config.settings.showDate ? dateComp() : null}

@@ -10,6 +10,8 @@ import * as moment from 'moment';
 import {Moment} from "moment";
 import * as classNames from 'classnames';
 
+const getFontSize = (ratio: number) => (props: CommonWidgetProps<Settings>) => props.config.width * ratio;
+
 
 const styles = () => createStyles({
     body: {
@@ -17,9 +19,11 @@ const styles = () => createStyles({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        fontSize: getFontSize(0.06),
     },
     currentDateRow: {
         textAlign: 'center',
+        paddingBottom: '0.5em',
     },
     weekRow: {
         display: 'grid',
@@ -36,14 +40,13 @@ const styles = () => createStyles({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-        }
+        },
     },
     notCurrentMonthDay: {
         opacity: 0.2,
     },
     currentDay: {
         borderRadius: 5,
-
     }
 });
 
