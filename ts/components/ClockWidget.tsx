@@ -72,7 +72,7 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
     }
 
     render() {
-        const {config, classes, stepSize, updateWidgetConfig} = this.props;
+        const {config, classes, dashboardConfig, updateWidgetConfig} = this.props;
 
         const onResize = (e: MouseEvent, dir: ResizeDirection, elementRef: HTMLDivElement, delta: ResizableDelta, position: Position) => {
             if (delta.height || delta.width)
@@ -110,7 +110,7 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
         return (
             <WidgetFrame
                 config={config}
-                stepSize={stepSize}
+                dashboardConfig={dashboardConfig}
                 onResize={onResize}
                 updateWidgetConfig={updateWidgetConfig}
             >

@@ -32,7 +32,6 @@ const styles = () => createStyles({
         gridTemplateColumns: 'repeat(7, 1fr)',
         justifyItems: 'stretch',
         alignItems: 'stretch',
-        // justifyContent: 'stretch',
         '& > div': {
             display: 'flex',
             justifyContent: 'center',
@@ -64,7 +63,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         return now.format('YYYY-MM-DD');
     };
 
-    const { config, classes, stepSize, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
     const [currentDate, setCurrentDate] = useState(today());
 
     useInterval(() => {
@@ -105,7 +104,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     };
 
     return (
-        <WidgetFrame config={config} stepSize={stepSize} updateWidgetConfig={updateWidgetConfig}>
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
             <div className={classes.body}>
                 <div className={classes.currentDateRow}>{now.format('MMMM')}</div>
                 <div className={classes.weekRow}>

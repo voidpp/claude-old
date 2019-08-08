@@ -19,7 +19,7 @@ export interface WidgetConfig extends BaseWidgetConfig {
 
 export type CommonWidgetProps<T = any> = {
     config: Omit<WidgetConfig, 'settings'> & {settings: T},
-    stepSize: number,
+    dashboardConfig: DashboardConfig,
     updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
@@ -27,7 +27,7 @@ export type WidgetConfigList = Array<WidgetConfig>;
 export type WidgetConfigMap = { [s: string]: WidgetConfig };
 
 export class LocalStorageSchema {
-    currentDashboardId: string = '';
+    currentDashboardId: string = ''; // move to url?
 }
 
 export interface DashboardConfig {

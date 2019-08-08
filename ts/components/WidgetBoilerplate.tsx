@@ -17,10 +17,10 @@ export type Settings = {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, stepSize, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
 
     return (
-        <WidgetFrame config={config} stepSize={stepSize} updateWidgetConfig={updateWidgetConfig}>
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
             <div className={classes.body}>
                 das widget body
             </div>

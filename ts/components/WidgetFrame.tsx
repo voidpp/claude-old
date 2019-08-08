@@ -3,14 +3,14 @@ import { ResizeDirection } from "re-resizable";
 import * as React from "react";
 import { DraggableEvent } from "react-draggable";
 import { DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback } from "react-rnd";
-import { UpdateWidgetConfigAction, WidgetConfig } from "../types";
+import { UpdateWidgetConfigAction, WidgetConfig, DashboardConfig } from "../types";
 import {claudeThemes} from "../tools";
 
 
-const styles = (theme: Theme) => createStyles({
+const styles = () => createStyles({
     body: {
-        color: claudeThemes.dark.color,
-        backgroundColor: claudeThemes.dark.backgroundColor,
+        color: (props: OwnProps) => claudeThemes[props.dashboardConfig.theme].color,
+        backgroundColor: (props: OwnProps) => claudeThemes[props.dashboardConfig.theme].backgroundColor,
         borderRadius: 5,
         height: '100%',
         position: 'relative',
@@ -23,11 +23,11 @@ const styles = (theme: Theme) => createStyles({
 
 export interface OwnProps {
     config: WidgetConfig,
-    stepSize: number,
     children: React.ReactNode,
     removeButton?: boolean,
     onResize?: RndResizeCallback,
-    updateWidgetConfig: UpdateWidgetConfigAction
+    updateWidgetConfig: UpdateWidgetConfigAction,
+    dashboardConfig: DashboardConfig,
 }
 
 function isEquals(o1: Object, o2: Object): boolean {
@@ -39,7 +39,7 @@ function isEquals(o1: Object, o2: Object): boolean {
 }
 
 function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
-    const {config, stepSize, updateWidgetConfig, classes} = props;
+    const {config, dashboardConfig, updateWidgetConfig, classes} = props;
     const [position, setPosition] = React.useState({
         x: config.x,
         y: config.y,
@@ -99,8 +99,8 @@ function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
             width: config.width,
             height: config.height,
         }}
-        dragGrid={[stepSize, stepSize]}
-        resizeGrid={[stepSize, stepSize]}
+        dragGrid={[dashboardConfig.stepSize, dashboardConfig.stepSize]}
+        resizeGrid={[dashboardConfig.stepSize, dashboardConfig.stepSize]}
         onDragStop={onDragStop}
         onResizeStop={onResizeStop}
         onDrag={onDrag}

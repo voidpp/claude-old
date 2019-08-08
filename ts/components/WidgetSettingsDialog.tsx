@@ -3,10 +3,14 @@ import * as React from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { copy } from '../tools';
-import {Simulate} from "react-dom/test-utils";
 const uuid = require('uuid/v4');
 
 export type FieldType = 'string' | 'list' | 'boolean' | 'select' | 'checkboxList';
+
+/**
+ * TODO: rename to FormDialog
+ */
+
 
 export interface FormFieldDescriptor {
     name: string,
@@ -133,7 +137,6 @@ const fieldGenerator: { [s: string]: FieldGeneratorCallbackType } = {
         )
     },
     select: (desc: FormSelectFieldDescriptor, value: string, onChange: (val: string) => void) => {
-        console.log(desc.options)
         return (
             <FormControl key={desc.name}>
                 <InputLabel>{desc.label}</InputLabel>

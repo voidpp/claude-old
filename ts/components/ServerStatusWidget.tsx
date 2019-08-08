@@ -55,7 +55,7 @@ export type Settings = {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, stepSize, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
     const { settings } = config;
     const [serverInfo, setServerInfo] = useState({} as {[s: string]: ServerStatusData});
 
@@ -134,7 +134,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     return (
         <WidgetFrame
             config={config}
-            stepSize={stepSize}
+            dashboardConfig={dashboardConfig}
             updateWidgetConfig={updateWidgetConfig}
         >
             <div className={classes.body}>

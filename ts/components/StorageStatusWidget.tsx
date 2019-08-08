@@ -53,7 +53,7 @@ type StorageInfo = {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, stepSize, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
     const { settings } = config;
     const [storageInfo, setStorageInfo] = useState([] as Array<StorageInfo>);
 
@@ -104,7 +104,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     return (
         <WidgetFrame
             config={config}
-            stepSize={stepSize}
+            dashboardConfig={dashboardConfig}
             updateWidgetConfig={updateWidgetConfig}
         >
             {renderBody()}

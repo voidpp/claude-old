@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import * as React from "react";
 import { useState } from "react";
 import { DashboardConfig } from '../types';
@@ -39,15 +39,20 @@ export default (props: Props) => {
         >
             <DialogTitle>{title}</DialogTitle>
             <form onSubmit={onSubmit}>
-                <DialogContent>
+                <DialogContent style={{maxWidth: 300}}>
                     <TextField autoFocus margin="dense" id="name" label="Name" type="text" required fullWidth
                         value={data.name} onChange={ev => updateData({name: ev.target.value})} />
                     <TextField margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
                         value={data.stepSize} onChange={ev => updateData({stepSize: parseInt(ev.target.value)})} />
                     <TextField margin="dense" id="background" label="Background css" type="text" fullWidth
                         value={data.background} onChange={ev => updateData({background: ev.target.value})} />
-                    <TextField margin="dense" id="theme" label="Theme" type="text" fullWidth required
-                        value={data.background} onChange={ev => updateData({theme: ev.target.value as ClaudeThemeType})} />
+                    <FormControl fullWidth>
+                        <InputLabel>Theme</InputLabel>
+                        <Select fullWidth value={data.theme} onChange={ev => updateData({theme: ev.target.value as ClaudeThemeType})} >
+                            <MenuItem value="dark">Dark</MenuItem>
+                            <MenuItem value="light">Light</MenuItem>
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} color="primary">Cancel</Button>

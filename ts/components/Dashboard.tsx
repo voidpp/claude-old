@@ -20,7 +20,7 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
     function factory(wconf: WidgetConfig) {
         return React.createElement(widgetRegistry[wconf.type].factory, { // TODO: factory type is 'any'
             config: wconf,
-            stepSize: props.config.stepSize,
+            dashboardConfig: props.config,
             key: wconf.id,
             updateWidgetConfig: props.updateWidgetConfig,
         });
