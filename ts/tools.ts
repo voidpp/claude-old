@@ -23,19 +23,16 @@ export type ClaudeThemeType = 'light' | 'dark';
 export type ClaudeTheme = {
     backgroundColor: string,
     color: string,
-    highlightColor: string,
 }
 
 export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
     dark: {
         backgroundColor: 'rgba(255,255,255,0.1)',
         color: 'white',
-        highlightColor: 'red',
     },
     light: {
         backgroundColor: '',
         color: '',
-        highlightColor: '',
     },
 };
 

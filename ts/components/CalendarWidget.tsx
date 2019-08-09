@@ -10,13 +10,14 @@ import * as moment from 'moment';
 import {Moment} from "moment";
 import * as classNames from 'classnames';
 import {WidgetStyle} from "../tools";
+import { FormSelectFieldDescriptor } from './WidgetSettingsDialog';
 
 type Props = CommonWidgetProps<Settings>;
 
 const bodyPadding = 5;
 
-const gridTemplateRows = (props: Props) => {
-    return `repeat(7, ${(props.config.width - 2 * bodyPadding) / 7}px)`;
+const gridAutoRows = ({config}: Props) => {
+    return config.settings.months == 'rolling' ? `${(config.width - 2 * bodyPadding) / 7}px` : '';
 }
 
 const styles = () => createStyles({
@@ -36,13 +37,19 @@ const styles = () => createStyles({
         gridTemplateColumns: 'repeat(7, 1fr)',
         justifyItems: 'center',
     },
-    daysGrid: {
+    daysGridContainer: {
+        overflow: 'hidden',
         flexGrow: 1,
+        position: 'relative',
+    },
+    daysGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
-        // gridTemplateRows: gridTemplateRows,
+        gridAutoRows: gridAutoRows,
         justifyItems: 'stretch',
         alignItems: 'stretch',
+        position: 'relative',
+        height: ({config}: Props) => config.settings.months == 'fixed' ? '100%' : '',
         '& > div': {
             display: 'flex',
             justifyContent: 'center',
@@ -59,74 +66,87 @@ const styles = () => createStyles({
     }
 });
 
-
 export type Settings = {
-    dateFormat: string, // for currentDateRow
-    locale: string, // use a list...
+    months: 'fixed' | 'rolling',
 }
 
 export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => {
 
     moment.locale('en-gb');
 
-    const now = moment(new Date().getTime())
-
-    const today = () => {
-        return now.format('YYYY-MM-DD');
-    };
+    const today = () => moment(new Date().getTime()).startOf('day');
 
     const { config, classes, dashboardConfig, updateWidgetConfig } = props;
     const [currentDate, setCurrentDate] = useState(today());
 
     useInterval(() => {
         const newVal = today();
-        if (currentDate != newVal)
+        if (!currentDate.isSame(newVal))
             setCurrentDate(newVal);
     }, 1000);
 
-    const firstDayOfWeekForMonth = parseInt(now.clone().startOf('month').format('E'))
+    const dayPadding = config.settings.months == 'rolling' ? 28 : 0;
 
-    let cyc = now.clone().startOf('month');
-    cyc.subtract(firstDayOfWeekForMonth-1, 'd');
+    const firstDayOfWeekForMonth = parseInt(currentDate.clone().startOf('month').format('E'))
+
+    let cyc = currentDate.clone().startOf('month').subtract(firstDayOfWeekForMonth-1, 'd').subtract(dayPadding, 'd');
 
     let days = [];
-    let nextMonthStart = now.clone().add(1, 'M').startOf('month');
 
-    while(days.length < 100) {
-        if (cyc.isAfter(nextMonthStart) && cyc.format('E') == '1')
+    let end = currentDate.clone().add(1, 'month').startOf('month')
+    end.add(end.isoWeekday() + dayPadding, 'd')
+
+    while(1) {
+        if (cyc.isAfter(end))
             break;
 
         days.push(cyc.clone());
-        cyc.add(1, 'd')
-
+        cyc.add(1, 'd');
     }
 
-    const currentMonth = now.format('M');
+    const currentMonth = currentDate.format('M');
 
     const renderDay = (day: Moment) => {
         const month = day.format('M');
         const dayNumber = day.format('D');
         const className = classNames({
             [classes.notCurrentMonthDay]: currentMonth != month,
-            [classes.currentDay]: dayNumber == now.format('D'),
+            [classes.currentDay]: day.isSame(today()),
         });
         return (
             <div className={className} key={`${month}.${dayNumber}`}>{dayNumber}</div>
         )
     };
 
+    const daysGridContainerRef = (ref: HTMLElement) => {
+        if (!ref || config.settings.months == 'fixed')
+            return;
+        let daysGrid = ref.childNodes[0] as HTMLElement;
+        daysGrid.style.top = `${(ref.offsetHeight - daysGrid.scrollHeight) / 2}px`;
+    }
+
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
             <div className={classes.body}>
-                <div className={classes.currentDateRow}>{now.format('MMMM')}</div>
+                <div className={classes.currentDateRow}>{currentDate.format('MMMM')}</div>
                 <div className={classes.weekRow}>
                     {moment.weekdaysShort(true).map(name => <div key={name}>{name}</div>)}
                 </div>
-                <div className={classes.daysGrid}>
-                    {days.map(renderDay)}
+                <div className={classes.daysGridContainer} ref={daysGridContainerRef}>
+                    <div className={classes.daysGrid}>
+                        {days.map(renderDay)}
+                    </div>
                 </div>
             </div>
-            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[]} />
+            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[{
+                name: 'months',
+                label: 'Months',
+                type: "select",
+                options: [
+                    {value: 'fixed', label: 'Fixed'},
+                    {value: 'rolling', label: 'Rolling'},
+                ],
+            } as FormSelectFieldDescriptor ]} />
         </WidgetFrame>
     )
 });

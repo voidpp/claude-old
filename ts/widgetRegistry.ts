@@ -2,7 +2,7 @@
 import ClockWidget from './components/ClockWidget';
 import { BaseWidgetConfig } from './types';
 import ServerStatusWidget, { Settings as ServerStatusWidgetSettings } from './components/ServerStatusWidget';
-import CalendarWidget from "./components/CalendarWidget";
+import CalendarWidget, { Settings as CalendarWidgetSettings } from "./components/CalendarWidget";
 import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './components/StorageStatusWidget';
 
 export type WidgetRegistryType = {
@@ -73,7 +73,9 @@ let reg: WidgetRegistryType = {
             y: 10,
             width: 200,
             height: 200,
-            settings: {}
+            settings: {
+                months: 'fixed',
+            } as CalendarWidgetSettings,
         }
     }
 };
