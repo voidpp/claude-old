@@ -18,13 +18,13 @@ const styles = () => createStyles({
         textAlign: 'center',
         lineHeight: '90%',
         fontFamily: 'Digital7',
-        fontSize: WidgetStyle.getRelativeSize(0.8, 'height'),
+        fontSize: WidgetStyle.getRelativeSize(0.8).height,
     },
     date: {
         textAlign: 'center',
         lineHeight: '95%',
         fontWeight: 'bold',
-        fontSize: WidgetStyle.getRelativeSize(0.17, 'height'),
+        fontSize: WidgetStyle.getRelativeSize(0.17).height,
     },
 });
 

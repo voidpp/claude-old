@@ -26,7 +26,7 @@ const styles = () => createStyles({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        fontSize: WidgetStyle.getRelativeSize(0.06),
+        fontSize: WidgetStyle.getRelativeSize(0.06).width,
     },
     currentDateRow: {
         textAlign: 'center',
@@ -36,6 +36,7 @@ const styles = () => createStyles({
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
         justifyItems: 'center',
+        paddingBottom: '0.5em',
     },
     daysGridContainer: {
         overflow: 'hidden',
@@ -49,12 +50,12 @@ const styles = () => createStyles({
         justifyItems: 'stretch',
         alignItems: 'stretch',
         position: 'relative',
-        height: ({config}: Props) => config.settings.months == 'fixed' ? '100%' : '',
+        height: ({config}: Props) => config.settings.months == 'fixed' ? '100%' : 'auto',
         '& > div': {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            fontSize: WidgetStyle.getRelativeSize(0.06),
+            fontSize: WidgetStyle.getRelativeSize(0.06).width,
         },
     },
     notCurrentMonthDay: {
@@ -70,9 +71,15 @@ export type Settings = {
     months: 'fixed' | 'rolling',
 }
 
+function roundTo(val: number, to: number): number {
+    return Math.round(val / to) * to;
+}
+
 export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => {
 
     moment.locale('en-gb');
+
+    let daysGridContainerElement: HTMLElement = null;
 
     const today = () => moment(new Date().getTime()).startOf('day');
 
@@ -85,7 +92,14 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
             setCurrentDate(newVal);
     }, 1000);
 
-    const dayPadding = config.settings.months == 'rolling' ? 28 : 0;
+    React.useEffect(() => alignDaysGrid());
+
+    const calcDayPadding = () => {
+        const {width, height} = config;
+        return roundTo((height - width) / (width * 0.04), 7)
+    }
+
+    const dayPadding = config.settings.months == 'rolling' ? calcDayPadding() : 0;
 
     const firstDayOfWeekForMonth = parseInt(currentDate.clone().startOf('month').format('E'))
 
@@ -118,11 +132,12 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
         )
     };
 
-    const daysGridContainerRef = (ref: HTMLElement) => {
-        if (!ref || config.settings.months == 'fixed')
+    const alignDaysGrid = () => {
+        if (!daysGridContainerElement)
             return;
-        let daysGrid = ref.childNodes[0] as HTMLElement;
-        daysGrid.style.top = `${(ref.offsetHeight - daysGrid.scrollHeight) / 2}px`;
+        let daysGrid = daysGridContainerElement.childNodes[0] as HTMLElement;
+        daysGrid.style.top = config.settings.months == 'fixed' ? '0px' :
+                                `${(daysGridContainerElement.offsetHeight - daysGrid.scrollHeight) / 2}px`;
     }
 
     return (
@@ -132,7 +147,7 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
                 <div className={classes.weekRow}>
                     {moment.weekdaysShort(true).map(name => <div key={name}>{name}</div>)}
                 </div>
-                <div className={classes.daysGridContainer} ref={daysGridContainerRef}>
+                <div className={classes.daysGridContainer} ref={r => daysGridContainerElement = r}>
                     <div className={classes.daysGrid}>
                         {days.map(renderDay)}
                     </div>

@@ -36,9 +36,14 @@ export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
     },
 };
 
+type WidgetStyleCallback<T = any> = (props: CommonWidgetProps<{}>) => T;
+
 export namespace WidgetStyle {
-    export function getRelativeSize<T = {}>(ratio: number, ref: 'width' | 'height' = 'width'): (p: CommonWidgetProps<T>) => number {
-        return (props: CommonWidgetProps<T>) => props.config[ref] * ratio;
+    export function getRelativeSize(ratio: number): {width: WidgetStyleCallback<number>, height: WidgetStyleCallback<number>} {
+        return {
+            width: (props: CommonWidgetProps<{}>) => props.config.width * ratio,
+            height: (props: CommonWidgetProps<{}>) => props.config.height * ratio,
+        }
     }
 
     export function getThemeProp<T = {}>(propName: keyof ClaudeTheme) {
