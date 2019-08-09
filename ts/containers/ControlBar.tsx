@@ -24,7 +24,7 @@ const styles = () => createStyles({
         height: 30,
         fontSize: 20,
         cursor: 'pointer',
-        color: (props: StateProps) => claudeThemes[props.currentDashboard.theme].color
+        color: (props: StateProps) => props.currentDashboard ? claudeThemes[props.currentDashboard.theme].color : 'grey',
     },
     title: {
         padding: 15,

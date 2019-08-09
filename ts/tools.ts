@@ -1,5 +1,5 @@
 
-import { LocalStorageSchema } from "./types";
+import {CommonWidgetProps, LocalStorageSchema} from "./types";
 
 const localStorageHandler = {
     get: (target: LocalStorageSchema, name: string) => {
@@ -23,15 +23,29 @@ export type ClaudeThemeType = 'light' | 'dark';
 export type ClaudeTheme = {
     backgroundColor: string,
     color: string,
+    highlightColor: string,
 }
 
 export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
     dark: {
         backgroundColor: 'rgba(255,255,255,0.1)',
         color: 'white',
+        highlightColor: 'red',
     },
     light: {
         backgroundColor: '',
         color: '',
+        highlightColor: '',
     },
 };
+
+export namespace WidgetStyle {
+    export function getRelativeSize<T = {}>(ratio: number, ref: 'width' | 'height' = 'width'): (p: CommonWidgetProps<T>) => number {
+        return (props: CommonWidgetProps<T>) => props.config[ref] * ratio;
+    }
+
+    export function getThemeProp<T = {}>(propName: keyof ClaudeTheme) {
+        return (props: CommonWidgetProps<T>) => claudeThemes[props.dashboardConfig.theme][propName];
+    }
+}
+

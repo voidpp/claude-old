@@ -1,16 +1,16 @@
-import {createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
-import { ResizeDirection } from "re-resizable";
+import {createStyles, withStyles, WithStyles} from '@material-ui/core';
+import {ResizeDirection} from "re-resizable";
 import * as React from "react";
-import { DraggableEvent } from "react-draggable";
-import { DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback } from "react-rnd";
-import { UpdateWidgetConfigAction, WidgetConfig, DashboardConfig } from "../types";
-import {claudeThemes} from "../tools";
+import {DraggableEvent} from "react-draggable";
+import {DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback} from "react-rnd";
+import {DashboardConfig, UpdateWidgetConfigAction, WidgetConfig} from "../types";
+import {WidgetStyle} from "../tools";
 
 
 const styles = () => createStyles({
     body: {
-        color: (props: OwnProps) => claudeThemes[props.dashboardConfig.theme].color,
-        backgroundColor: (props: OwnProps) => claudeThemes[props.dashboardConfig.theme].backgroundColor,
+        color: WidgetStyle.getThemeProp('color'),
+        backgroundColor: WidgetStyle.getThemeProp('backgroundColor'),
         borderRadius: 5,
         height: '100%',
         position: 'relative',

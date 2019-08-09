@@ -9,17 +9,23 @@ import {useState} from "react";
 import * as moment from 'moment';
 import {Moment} from "moment";
 import * as classNames from 'classnames';
+import {WidgetStyle} from "../tools";
 
-const getFontSize = (ratio: number) => (props: CommonWidgetProps<Settings>) => props.config.width * ratio;
+type Props = CommonWidgetProps<Settings>;
 
+const bodyPadding = 5;
+
+const gridTemplateRows = (props: Props) => {
+    return `repeat(7, ${(props.config.width - 2 * bodyPadding) / 7}px)`;
+}
 
 const styles = () => createStyles({
     body: {
-        padding: 5,
+        padding: bodyPadding,
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        fontSize: getFontSize(0.06),
+        fontSize: WidgetStyle.getRelativeSize(0.06),
     },
     currentDateRow: {
         textAlign: 'center',
@@ -34,12 +40,14 @@ const styles = () => createStyles({
         flexGrow: 1,
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
+        // gridTemplateRows: gridTemplateRows,
         justifyItems: 'stretch',
         alignItems: 'stretch',
         '& > div': {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            fontSize: WidgetStyle.getRelativeSize(0.06),
         },
     },
     notCurrentMonthDay: {
@@ -47,6 +55,7 @@ const styles = () => createStyles({
     },
     currentDay: {
         borderRadius: 5,
+        backgroundColor: WidgetStyle.getThemeProp('backgroundColor'),
     }
 });
 
@@ -56,7 +65,7 @@ export type Settings = {
     locale: string, // use a list...
 }
 
-export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
+export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => {
 
     moment.locale('en-gb');
 

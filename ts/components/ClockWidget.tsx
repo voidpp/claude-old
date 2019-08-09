@@ -4,6 +4,7 @@ import * as React from "react";
 import { CommonWidgetProps } from "../types";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
+import {WidgetStyle} from "../tools";
 
 const styles = () => createStyles({
     body: {
@@ -17,13 +18,13 @@ const styles = () => createStyles({
         textAlign: 'center',
         lineHeight: '90%',
         fontFamily: 'Digital7',
-        fontSize: (props: CommonWidgetProps<Settings>) => props.config.height * 0.8,
+        fontSize: WidgetStyle.getRelativeSize(0.8, 'height'),
     },
     date: {
         textAlign: 'center',
         lineHeight: '95%',
         fontWeight: 'bold',
-        fontSize: (props: CommonWidgetProps<Settings>) => props.config.height * 0.17,
+        fontSize: WidgetStyle.getRelativeSize(0.17, 'height'),
     },
 });
 
