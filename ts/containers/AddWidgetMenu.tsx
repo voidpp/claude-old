@@ -38,7 +38,7 @@ function AddWidgetMenu(props: StateProps & OwnProps ) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                {Object.keys(widgetRegistry).map(k => (
+                {Object.keys(widgetRegistry).sort().map(k => (
                     <MenuItem key={k} onClick={props.addWidget.bind(this, k)}>{widgetRegistry[k].title}</MenuItem>
                 ))}
             </Menu>
