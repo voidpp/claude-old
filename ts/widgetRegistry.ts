@@ -4,6 +4,7 @@ import { BaseWidgetConfig } from './types';
 import ServerStatusWidget, { Settings as ServerStatusWidgetSettings } from './components/ServerStatusWidget';
 import CalendarWidget, { Settings as CalendarWidgetSettings } from "./components/CalendarWidget";
 import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './components/StorageStatusWidget';
+import InfluxTable from './components/InfluxTable';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -77,7 +78,24 @@ let reg: WidgetRegistryType = {
                 months: 'fixed',
             } as CalendarWidgetSettings,
         }
-    }
+    },
+    influxTable: {
+        factory: InfluxTable,
+        title: 'Influx table',
+        default: {
+            x: 10,
+            y: 10,
+            width: 300,
+            height: 200,
+            settings: {
+                title: '',
+                url: '',
+                query: '',
+                columns: '',
+                interval: 60,
+            },
+        }
+    },
 };
 
 export default reg;

@@ -1,0 +1,8 @@
+
+
+
+SELECT value FROM "magrathea"."autogen"."temperature" GROUP BY "name" limit 1
+
+
+
+SELECT last(value), max(value), min(value) FROM "magrathea"."autogen"."temperature" where time > now()-1d GROUP BY "name"
