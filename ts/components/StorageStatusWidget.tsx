@@ -34,11 +34,11 @@ const styles = () => createStyles({
     },
 });
 
-export type Settings = {
-    host: string,
-    pollInterval: number,
-    title: string,
-    sortBy: 'name' | 'usedPercent' | 'freeBytes',
+export class Settings {
+    host: string = '';
+    pollInterval: number = 600;
+    title: string = '';
+    sortBy: 'name' | 'usedPercent' | 'freeBytes' = 'name';
 }
 
 type StorageInfo = {

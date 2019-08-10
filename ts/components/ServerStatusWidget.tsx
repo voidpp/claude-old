@@ -47,10 +47,10 @@ export type Column = 'name' | 'ping' | 'load' | 'memory' | 'uptime';
 
 type ServerConfigMap = {[s: string]: ServerConfig};
 
-export type Settings = {
-    servers: ServerConfigMap,
-    columns: {[key in Column]: boolean},
-    pollInterval: number,
+export class Settings {
+    servers: ServerConfigMap = {};
+    columns: {[key in Column]: boolean} = {load: true, memory: true, name: true, ping: true, uptime: true};
+    pollInterval: number = 60;
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {

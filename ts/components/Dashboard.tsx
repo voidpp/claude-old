@@ -18,8 +18,9 @@ export interface Props {
 export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof styles>) => {
 
     function factory(wconf: WidgetConfig) {
+        const settingsType = widgetRegistry[wconf.type].settingsType;
         return React.createElement(widgetRegistry[wconf.type].factory, { // TODO: factory type is 'any'
-            config: wconf,
+            config: {...wconf, settings: Object.assign({}, new settingsType(), wconf.settings)} ,
             dashboardConfig: props.config,
             key: wconf.id,
             updateWidgetConfig: props.updateWidgetConfig,

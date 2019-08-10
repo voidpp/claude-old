@@ -28,10 +28,10 @@ const styles = () => createStyles({
     },
 });
 
-type Settings = {
-    showDate: boolean,
-    timeFormat: string,
-    dateFormat: string,
+export class Settings {
+    showDate: boolean = true;
+    timeFormat: string = 'HH:mm';
+    dateFormat: string = 'YYYY. MMMM D. dddd';
 }
 
 type State = {

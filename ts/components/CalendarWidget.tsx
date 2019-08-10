@@ -1,7 +1,7 @@
 
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
-import {CommonWidgetProps} from "../types";
+import {CommonWidgetProps, BaseWidgetSettings} from "../types";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import {useInterval} from "./tools";
@@ -67,8 +67,8 @@ const styles = () => createStyles({
     }
 });
 
-export type Settings = {
-    months: 'fixed' | 'rolling',
+export class Settings extends BaseWidgetSettings {
+    months: 'fixed' | 'rolling' = 'fixed';
 }
 
 function roundTo(val: number, to: number): number {

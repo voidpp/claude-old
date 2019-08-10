@@ -3,12 +3,14 @@ import { Action } from "redux";
 import { Dispatch } from "react";
 import {ClaudeThemeType} from "./tools";
 
+export class BaseWidgetSettings {}
+
 export interface BaseWidgetConfig {
     x: number,
     y: number,
     width: number,
     height: number,
-    settings: any, // this is widget specific
+    settings: BaseWidgetSettings,
 }
 
 export interface WidgetConfig extends BaseWidgetConfig {

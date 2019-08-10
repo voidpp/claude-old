@@ -3,8 +3,6 @@ import { combineReducers } from 'redux';
 import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard } from './actions';
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
-import widgetRegistry from "./widgetRegistry";
-import {act} from "react-dom/test-utils";
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
@@ -38,7 +36,11 @@ const widgetHandlers: HandlerMap<WidgetConfigMap> = {
             [action.id]: {
                 id: action.id,
                 type: action.widgetType,
-                ...widgetRegistry[action.widgetType].default,
+                x: 10,
+                y: 10,
+                width: 300,
+                height: 200,
+                settings: {},
                 dashboardId: action.dashboardId,
             }
         });
