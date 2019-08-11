@@ -12,17 +12,38 @@ import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor, FormCheckboxListFieldDescriptor } from "./WidgetSettingsDialog";
 
+export type Column = 'name' | 'ping' | 'load' | 'memory' | 'uptime';
+
+const colRatioRef: {[key in Column]: (props: CommonWidgetProps<Settings>) => number} = {
+    name: p => 0.85 - (Math.max(...Object.values(p.config.settings.servers).map(s => s.name.length)) - 7) / 70,
+    ping: p => 0.95,
+    load: p => 0.75,
+    memory: p => 0.95,
+    uptime: p => 0.90,
+}
+
 const styles = () => createStyles({
     body: {
-        fontSize: 18,
-        padding: 10,
+        fontSize: (props: CommonWidgetProps<Settings>) => {
+            let baseSize = props.config.width * 0.062;
+            for (let [col, enabled] of Object.entries(props.config.settings.columns)) {
+                if (enabled)
+                    baseSize *= colRatioRef[col](props)
+            }
+            return baseSize;
+        },
+        padding: '0.5em',
         '& table': {
+            borderSpacing: 0,
             width: '100%',
-            '& td': {
-                padding: '2px 6px',
+            '& td, & th': {
+                padding: '0.2em 0.4em',
             },
             '& tr': {
                 transition: 'opacity 1s',
+            },
+            '& th': {
+                borderBottom: '1px solid rgba(255,255,255,0.5)'
             }
         },
     },
@@ -43,8 +64,6 @@ export type ServerConfig = {
     rank: number,
 }
 
-export type Column = 'name' | 'ping' | 'load' | 'memory' | 'uptime';
-
 type ServerConfigMap = {[s: string]: ServerConfig};
 
 export class Settings {
@@ -60,8 +79,8 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     const [serverInfo, setServerInfo] = useState({} as {[s: string]: ServerStatusData});
 
 
-    const fetchServerInfo = (servers: ServerConfigMap = null) => {
-        for (let desc of Object.values(servers || settings.servers)) {
+    const fetchServerInfo = (servers: ServerConfigMap = settings.servers) => {
+        for (let desc of Object.values(servers)) {
             api.getServerStatus(desc.ip, desc.systemStatusServerPort).then(d => {
                 setServerInfo(info => Object.assign({}, info, {[desc.ip]: d}))
             });
@@ -99,7 +118,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         return <FontAwesomeIcon icon={icon} style={{color: color}} />
     }
 
-    const ConditionalRender = (props: {cond: boolean, children: React.ReactNode}) => {
+    const IfComp = (props: {cond: boolean, children: React.ReactNode}) => {
         return <React.Fragment>{props.cond ? props.children : null}</React.Fragment>
     }
 
@@ -109,25 +128,25 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
         const info = serverInfo[cfg.ip];
 
-        const baseCols = <ConditionalRender cond={cols.name}>
+        const baseCols = <IfComp cond={cols.name}>
             <td><Status ip={cfg.ip} /></td>
             <td>{cfg.name}</td>
             <td style={{maxWidth: 30}}><FlagIcon name={cfg.location} /></td>
-        </ConditionalRender>
+        </IfComp>
 
         if (!info)
             return <tr className={classes.nodata} key={cfg.name}>{baseCols}</tr>;
 
         return <tr key={cfg.name}>
             {baseCols}
-            <ConditionalRender cond={cols.ping}><td style={{textAlign: 'right'}}>{info.ping != null ? `${info.ping} ms` : null}</td></ConditionalRender>
-            <ConditionalRender cond={cols.load}>
+            <IfComp cond={cols.ping}><td style={{textAlign: 'right'}}>{info.ping != null ? `${info.ping} ms` : null}</td></IfComp>
+            <IfComp cond={cols.load}>
                 <td className={classes.loadCol}>{info.load ? info.load[0].toFixed(2): null}</td>
                 <td className={classes.loadCol}>{info.load ? info.load[1].toFixed(2): null}</td>
                 <td className={classes.loadCol}>{info.load ? info.load[2].toFixed(2): null}</td>
-            </ConditionalRender>
-            <ConditionalRender cond={cols.memory}><td style={{textAlign: 'right'}}>{info.memory ? `${info.memory.percent.toFixed(1)}%` : null}</td></ConditionalRender>
-            <ConditionalRender cond={cols.uptime}><td>{info.uptime ? moment.duration(info.uptime * 1000).humanize() : null}</td></ConditionalRender>
+            </IfComp>
+            <IfComp cond={cols.memory}><td style={{textAlign: 'right'}}>{info.memory ? `${info.memory.percent.toFixed(1)}%` : null}</td></IfComp>
+            <IfComp cond={cols.uptime}><td>{info.uptime ? moment.duration(info.uptime * 1000).humanize() : null}</td></IfComp>
         </tr>
     }
 
@@ -137,11 +156,11 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 <table>
                     <thead>
                         <tr>
-                            <ConditionalRender cond={cols.name}><th colSpan={3}>Name</th></ConditionalRender>
-                            <ConditionalRender cond={cols.ping}><th>Ping</th></ConditionalRender>
-                            <ConditionalRender cond={cols.load}><th colSpan={3}>Load</th></ConditionalRender>
-                            <ConditionalRender cond={cols.memory}><th>Mem</th></ConditionalRender>
-                            <ConditionalRender cond={cols.uptime}><th>Uptime</th></ConditionalRender>
+                            <IfComp cond={cols.name}><th colSpan={3}>Name</th></IfComp>
+                            <IfComp cond={cols.ping}><th>Ping</th></IfComp>
+                            <IfComp cond={cols.load}><th colSpan={3}>Load</th></IfComp>
+                            <IfComp cond={cols.memory}><th>Mem</th></IfComp>
+                            <IfComp cond={cols.uptime}><th>Uptime</th></IfComp>
                         </tr>
                     </thead>
                     <tbody>

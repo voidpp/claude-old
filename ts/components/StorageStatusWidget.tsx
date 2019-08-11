@@ -16,7 +16,7 @@ const styles = () => createStyles({
         '& table': {
             width: '100%',
             '& td': {
-                padding: '0.12em 0.2em',
+                padding: '0.15em 0.3em',
             }
         }
     },
