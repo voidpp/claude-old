@@ -30,7 +30,8 @@ const styles = () => createStyles({
                 if (enabled)
                     baseSize *= colRatioRef[col](props)
             }
-            return baseSize;
+
+            return baseSize > 100 ? 16 : (baseSize < 5 ? 10 : baseSize);
         },
         padding: '0.5em',
         '& table': {

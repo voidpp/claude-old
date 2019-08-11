@@ -24,6 +24,8 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
 }))
 
 export const countries = {
+    localhost: 'Localhost',
+    private: 'Local network',
     af: 'Afghanistan',
     al: 'Albania',
     dz: 'Algeria',
