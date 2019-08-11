@@ -1,3 +1,5 @@
+from lxml.cssselect import CSSSelector
+from lxml import etree
 
 def dict_merge(source, destination):
     """
@@ -17,3 +19,25 @@ def dict_merge(source, destination):
             destination[key] = value
 
     return destination
+
+
+def parse_temp(temp: str) -> int:
+    """This magnificent function iterates throught the string and if found a non int char, breaks"""
+
+    number = ""
+    for char in temp:
+        try:
+            int(char)
+            number += char
+        except:
+            break
+    return number if int(number) else None
+
+
+def tree_search(selector, tree, return_first = True):
+    sel = CSSSelector(selector)
+    res = sel(tree)
+    if not len(res):
+        raise Exception("Error during fetch weather data: '{}' not found".format(selector))
+    return res[0] if return_first else res
+

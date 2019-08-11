@@ -1,6 +1,6 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
-import {CommonWidgetProps} from "../types";
+import {CommonWidgetProps, BaseWidgetSettings} from "../types";
 import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 
@@ -11,7 +11,7 @@ const styles = () => createStyles({
 });
 
 
-export type Settings = {
+export class Settings extends BaseWidgetSettings {
 
 }
 

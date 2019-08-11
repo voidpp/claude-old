@@ -1,16 +1,16 @@
-import { ServerStatusData } from "./types";
+import { ServerStatusData, IdokepCurrentResponse } from "./types";
 
 class ApiFetcher {
 
     public url: string;
 
-    private async fetch(endpoint: string, data: any) {
+    private async fetch(endpoint: string, data: any, method: 'POST' | 'GET' = 'POST') {
         const resp = await fetch(`/api/${endpoint}`, {
-            method: 'post',
+            method: method,
             headers: {
                 'Content-type': 'application/json'
             },
-            body: JSON.stringify(data),
+            body: data ? JSON.stringify(data) : undefined,
         })
 
         const response_data = await resp.json();
@@ -20,6 +20,10 @@ class ApiFetcher {
 
     async getServerStatus(ip: string, statusServerPort: number): Promise<ServerStatusData> {
         return this.fetch('server-status', {ip, statusServerPort})
+    }
+
+    async getIdokepCurrent(city: string): Promise<IdokepCurrentResponse> {
+        return this.fetch(`idokep/current/${city}`, null, 'GET')
     }
 }
 

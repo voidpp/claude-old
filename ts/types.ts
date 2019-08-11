@@ -78,3 +78,7 @@ export interface ServerStatusData {
     ping: number,
 }
 
+export type IdokepCurrentResponse = {
+    img: string,
+    value: number,
+}

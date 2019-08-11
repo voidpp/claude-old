@@ -1,10 +1,12 @@
 
+import { BaseWidgetSettings } from './types';
+
 import ClockWidget, { Settings as ClockWidgetSettings } from './components/ClockWidget';
 import ServerStatusWidget, { Settings as ServerStatusWidgetSettings } from './components/ServerStatusWidget';
 import CalendarWidget, { Settings as CalendarWidgetSettings } from "./components/CalendarWidget";
 import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './components/StorageStatusWidget';
 import InfluxTable, { Settings as InfluxTableSettings } from './components/InfluxTable';
-import { BaseWidgetSettings } from './types';
+import IdokepCurrent, { Settings as IdokepCurrentSetting } from './components/IdokepCurrent';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -41,6 +43,11 @@ let reg: WidgetRegistryType = {
         title: 'Influx table',
         settingsType: InfluxTableSettings,
     },
+    idokepCurrent: {
+        factory: IdokepCurrent,
+        title: 'Idokep / Current',
+        settingsType: IdokepCurrentSetting,
+    }
 };
 
 export default reg;

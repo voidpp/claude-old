@@ -17,6 +17,8 @@ setup(
         "requests~=2.22",
         "cached-property~=1.5",
         "configpp~=0.3",
+        "lxml~=4.4",
+        "cssselect~=1.1",
     ],
     include_package_data = True,
     packages = [],
