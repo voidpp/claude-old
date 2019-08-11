@@ -6,17 +6,17 @@ import { useInterval } from "./tools";
 import WidgetFrame from "./WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { FormSelectFieldDescriptor } from './WidgetSettingsDialog';
-
+import { WidgetStyle } from '../tools';
 // import * as prettyBytes from 'pretty-bytes';
-
 
 const styles = () => createStyles({
     body: {
-        padding: 5,
+        fontSize: WidgetStyle.getRelativeSize(0.05).width,
+        padding: '0.4em',
         '& table': {
             width: '100%',
             '& td': {
-                padding: '2px 4px',
+                padding: '0.12em 0.2em',
             }
         }
     },
@@ -25,30 +25,30 @@ const styles = () => createStyles({
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
+        fontSize: WidgetStyle.getRelativeSize(0.07).width,
     },
     title: {
         textAlign: 'center',
-    },
-    usageBar: {
-
+        fontSize: '1.1em',
+        padding: '0.2em',
     },
 });
+
+type StorageInfo = {
+    device: string,
+    label: string,
+    mount: string,
+    free: number,
+    percent: number,
+    total: number,
+    used: number,
+}
 
 export class Settings {
     host: string = '';
     pollInterval: number = 600;
     title: string = '';
-    sortBy: 'name' | 'usedPercent' | 'freeBytes' = 'name';
-}
-
-type StorageInfo = {
-    device: string,
-    free: number,
-    label: string,
-    mount: string,
-    percent: number,
-    total: number,
-    used: number,
+    sortBy: keyof StorageInfo = 'device';
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
@@ -57,9 +57,9 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     const { settings } = config;
     const [storageInfo, setStorageInfo] = useState([] as Array<StorageInfo>);
 
-    const fetchStorageInfo = () => {
-        if (settings.host) {
-            fetch(`http://${settings.host}:35280/`).then(rd => rd.json()).then(d => {
+    const fetchStorageInfo = (host: string = null) => {
+        if (host || settings.host) {
+            fetch(`http://${host || settings.host}:35280/`).then(rd => rd.json()).then(d => {
                 setStorageInfo(d.hdd)
             })
         }
@@ -67,12 +67,10 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
     useEffect(fetchStorageInfo, [])
 
-    useInterval(() => {
-        fetchStorageInfo()
-    }, settings.pollInterval * 1000);
+    useInterval(fetchStorageInfo, settings.pollInterval * 1000);
 
     const onBeforeSettingsSubmit = (data: Settings) => {
-
+        fetchStorageInfo(data.host);
     }
 
     const gigabytize = (val: number) => {
@@ -80,6 +78,11 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         return gb.toFixed(1) + ' GiB'
     }
 
+    const comparator = (a: any, b: any) => {
+        if (a < b) return -1;
+        if (b < a) return 1;
+        return 0;
+    }
 
     const renderBody = () => {
         if (!settings.host)
@@ -87,10 +90,10 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
         return (
             <div className={classes.body}>
-                <div className={classes.title}>{settings.title}</div>
+                {settings.title ? <div className={classes.title}>{settings.title}</div> : null}
                 <table>
                     <tbody>
-                    {storageInfo.map(s => <tr key={s.mount}>
+                    {storageInfo.sort((a, b) => comparator(a[settings.sortBy], b[settings.sortBy])).map(s => <tr key={s.mount}>
                         <td>{s.label}</td>
                         <td style={{textAlign: 'right'}}>{s.percent.toFixed(1)} %</td>
                         <td style={{textAlign: 'right'}}>{gigabytize(s.free)}</td>
@@ -122,9 +125,13 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 label: 'Sort',
                 type: 'select',
                 options: [
-                    {value: 'name', label: 'Name'},
-                    {value: 'usedPercent', label: 'Used percent'},
-                    {value: 'freeBytes', label: 'Free bytes'},
+                    {value: 'device', label: 'Device name'},
+                    {value: 'free', label: 'Free bytes'},
+                    {value: 'label', label: 'Label'},
+                    {value: 'mount', label: 'Mount point'},
+                    {value: 'percent', label: 'Used percent'},
+                    {value: 'total', label: 'Total bytes'},
+                    {value: 'used', label: 'Used bytes'},
                 ],
             } as FormSelectFieldDescriptor ]} />
         </WidgetFrame>
