@@ -65,17 +65,17 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
     const { config, classes, dashboardConfig } = props;
 
-    const fetchData = () => {
-        if (!config.settings.url)
+    function fetchData(settings: Settings = config.settings) {
+        if (!settings.url)
             return;
 
-        fetch(config.settings.url, {
+        fetch(settings.url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
             },
-            body: `q=${encodeURIComponent(config.settings.query)}`,
+            body: `q=${encodeURIComponent(settings.query)}`,
         }).then(res => res.json()).then((data: InfluxResponse) => {
             if (data.error) {
                 console.error(data.error)
@@ -127,7 +127,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                     </table>
                 </div>
             </div>
-            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[
+            <WidgetMenu id={config.id} settings={config.settings} onBeforeSubmit={fetchData} settingsFormFields={[
                 {name: 'title', label: 'Title'},
                 {name: 'url', label: 'URL'},
                 {name: 'query', label: 'Query'},
