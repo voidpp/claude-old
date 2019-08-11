@@ -1,7 +1,7 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
 import {CommonWidgetProps} from "../types";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { useInterval } from './tools';
 import { WidgetStyle } from '../tools';
@@ -63,7 +63,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
     const [data, setData] = React.useState([]);
 
-    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig } = props;
 
     const fetchData = () => {
         if (!config.settings.url)
@@ -112,7 +112,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     }
 
     return (
-        <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig}>
             <div className={classes.body}>
                 {config.settings.title ? <div className={classes.title}>{config.settings.title}</div> : null}
                 {config.settings.url ? null : <div className={classes.noConfig}>No config.</div>}

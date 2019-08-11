@@ -12,7 +12,6 @@ const styles = () => createStyles({
 export interface Props {
     config: DashboardConfig,
     widgets: WidgetConfigList,
-    updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
 export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof styles>) => {
@@ -23,7 +22,6 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
             config: {...wconf, settings: Object.assign({}, new settingsType(), wconf.settings)} ,
             dashboardConfig: props.config,
             key: wconf.id,
-            updateWidgetConfig: props.updateWidgetConfig,
         });
     }
 

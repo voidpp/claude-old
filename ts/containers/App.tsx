@@ -1,10 +1,8 @@
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import * as React from "react";
 import { connect } from 'react-redux';
-import { bindActionCreators } from "redux";
-import { updateWidgetConfig } from '../actions';
 import Dashboard from "../components/Dashboard";
-import { DashboardConfig, State, UpdateWidgetConfigAction, WidgetConfigList } from "../types";
+import { DashboardConfig, State, WidgetConfigList } from "../types";
 import ControlBar from "./ControlBar";
 
 const styles = () => createStyles({
@@ -18,17 +16,13 @@ type StateProps = {
     widgetConfigs: WidgetConfigList,
 }
 
-type DispatchProps = {
-    updateWidgetConfig: UpdateWidgetConfigAction,
-}
+const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
 
-const App = withStyles(styles)(React.memo((props: StateProps & DispatchProps & WithStyles<typeof styles>) => {
-
-    const {dashboardConfig, widgetConfigs, updateWidgetConfig} = props;
+    const {dashboardConfig, widgetConfigs} = props;
 
     return <div className={props.classes.root}>
         <ControlBar />
-        {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} updateWidgetConfig={updateWidgetConfig} /> : null}
+        {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} /> : null}
     </div>
 }))
 
@@ -40,6 +34,4 @@ function mapStateToProps(state: State): StateProps {
     }
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({updateWidgetConfig}, dispatch)
-
-export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(App);
+export default connect<StateProps>(mapStateToProps)(App);

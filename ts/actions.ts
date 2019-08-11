@@ -9,6 +9,7 @@ export enum Action {
     REMOVE_WIDGET = 'REMOVE_WIDGET',
     UPDATE_WIDGET_CONFIG = 'UPDATE_WIDGET_CONFIG',
     SELECT_DASHBOARD = 'SELECT_DASHBOARD',
+    IS_DALOG_OPEN = 'IS_DALOG_OPEN',
 }
 
 export const addDashboard = (name: string, stepSize: number) => ({
@@ -46,5 +47,12 @@ export const selectDashboard = (id: string) => {
     return {
         type: Action.SELECT_DASHBOARD,
         id,
+    }
+}
+
+export const setIsDalogOpen = (isOpen: boolean) => {
+    return {
+        type: Action.IS_DALOG_OPEN,
+        isOpen,
     }
 }

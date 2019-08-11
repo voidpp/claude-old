@@ -3,7 +3,7 @@ import { createStyles, withStyles, WithStyles, Menu, MenuItem } from '@material-
 import * as React from "react";
 import WidgetSettingsDialog, { FormFieldDescriptor } from "./WidgetSettingsDialog";
 import { useStore } from "react-redux";
-import { removeWidget, updateWidgetConfig } from "../actions";
+import { removeWidget, updateWidgetConfig, setIsDalogOpen } from "../actions";
 
 const styles = () => createStyles({
     body: {
@@ -52,6 +52,7 @@ function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typ
     function openDialog() {
         showSettingDialog(true);
         closeMenu();
+        store.dispatch(setIsDalogOpen(true));
     }
 
     return <div className={classes.body + ' widget-menu'}>
@@ -73,7 +74,10 @@ function WidgetMenu<SettingsType>(props: OwnProps<SettingsType> & WithStyles<typ
         <WidgetSettingsDialog
             data={settings}
             show={isSettingsDialogShown}
-            onClose={() => showSettingDialog(false)}
+            onClose={() => {
+                showSettingDialog(false);
+                store.dispatch(setIsDalogOpen(false));
+            }}
             submit={submitSettings}
             fields={settingsFormFields}
             title={props.dialogTitle}

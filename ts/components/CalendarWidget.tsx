@@ -2,7 +2,7 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
 import {CommonWidgetProps, BaseWidgetSettings} from "../types";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import {useInterval} from "./tools";
 import {useState} from "react";
@@ -83,7 +83,7 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
 
     const today = () => moment(new Date().getTime()).startOf('day');
 
-    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig } = props;
     const [currentDate, setCurrentDate] = useState(today());
 
     useInterval(() => {
@@ -141,7 +141,7 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
     }
 
     return (
-        <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
                 <div className={classes.currentDateRow}>{currentDate.format('MMMM')}</div>
                 <div className={classes.weekRow}>

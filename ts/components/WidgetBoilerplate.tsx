@@ -1,7 +1,7 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
 import {CommonWidgetProps} from "../types";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 
 const styles = () => createStyles({
@@ -17,10 +17,10 @@ export type Settings = {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig } = props;
 
     return (
-        <WidgetFrame config={config} dashboardConfig={dashboardConfig} updateWidgetConfig={updateWidgetConfig}>
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
                 das widget body
             </div>

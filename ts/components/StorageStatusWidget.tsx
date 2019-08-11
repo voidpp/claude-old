@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { CommonWidgetProps } from "../types";
 import { useInterval } from "./tools";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { FormSelectFieldDescriptor } from './WidgetSettingsDialog';
 import { WidgetStyle } from '../tools';
@@ -53,7 +53,7 @@ export class Settings {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig } = props;
     const { settings } = config;
     const [storageInfo, setStorageInfo] = useState([] as Array<StorageInfo>);
 
@@ -105,11 +105,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     }
 
     return (
-        <WidgetFrame
-            config={config}
-            dashboardConfig={dashboardConfig}
-            updateWidgetConfig={updateWidgetConfig}
-        >
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig}>
             {renderBody()}
             <WidgetMenu id={config.id} onBeforeSubmit={onBeforeSettingsSubmit} settings={config.settings} settingsFormFields={[{
                 name: 'host',

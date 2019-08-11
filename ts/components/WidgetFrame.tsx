@@ -26,8 +26,15 @@ export interface OwnProps {
     children: React.ReactNode,
     removeButton?: boolean,
     onResize?: RndResizeCallback,
-    updateWidgetConfig: UpdateWidgetConfigAction,
     dashboardConfig: DashboardConfig,
+}
+
+export type StateProps = {
+    isDialogOpen: boolean,
+}
+
+export type DispatchProps = {
+    updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
 function isEquals(o1: Object, o2: Object): boolean {
@@ -38,8 +45,8 @@ function isEquals(o1: Object, o2: Object): boolean {
     return true
 }
 
-function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
-    const {config, dashboardConfig, updateWidgetConfig, classes} = props;
+function WidgetFrame(props: OwnProps & StateProps & DispatchProps & WithStyles<typeof styles>) {
+    const {config, dashboardConfig, updateWidgetConfig, classes, isDialogOpen} = props;
     const [position, setPosition] = React.useState({
         x: config.x,
         y: config.y,
@@ -105,6 +112,7 @@ function WidgetFrame(props: OwnProps & WithStyles<typeof styles>) {
         onResizeStop={onResizeStop}
         onDrag={onDrag}
         onResize={onResize}
+        disableDragging={isDialogOpen}
         style={{userSelect: 'none'}}
         enableUserSelectHack={false}
     >

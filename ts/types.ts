@@ -22,7 +22,6 @@ export interface WidgetConfig extends BaseWidgetConfig {
 export type CommonWidgetProps<T = any> = {
     config: Omit<WidgetConfig, 'settings'> & {settings: T},
     dashboardConfig: DashboardConfig,
-    updateWidgetConfig: UpdateWidgetConfigAction,
 }
 
 export type WidgetConfigList = Array<WidgetConfig>;
@@ -47,6 +46,7 @@ export interface State {
     currentDashboardId: string,
     dashboards: DashboardConfigMap,
     widgets: WidgetConfigMap,
+    isDialogOpen: boolean,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

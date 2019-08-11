@@ -8,7 +8,7 @@ import api from "../api";
 import { CommonWidgetProps, ServerStatusData } from "../types";
 import FlagIcon, { countries } from "./FlagIcon";
 import { useInterval } from "./tools";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor, FormCheckboxListFieldDescriptor } from "./WidgetSettingsDialog";
 
@@ -55,7 +55,7 @@ export class Settings {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    const { config, classes, dashboardConfig, updateWidgetConfig } = props;
+    const { config, classes, dashboardConfig } = props;
     const { settings } = config;
     const [serverInfo, setServerInfo] = useState({} as {[s: string]: ServerStatusData});
 
@@ -132,11 +132,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     }
 
     return (
-        <WidgetFrame
-            config={config}
-            dashboardConfig={dashboardConfig}
-            updateWidgetConfig={updateWidgetConfig}
-        >
+        <WidgetFrame config={config} dashboardConfig={dashboardConfig}>
             <div className={classes.body}>
                 <table>
                     <thead>

@@ -2,7 +2,7 @@ import { createStyles, Link, withStyles, WithStyles } from '@material-ui/core';
 import * as moment from 'moment';
 import * as React from "react";
 import { CommonWidgetProps } from "../types";
-import WidgetFrame from "./WidgetFrame";
+import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import {WidgetStyle} from "../tools";
 
@@ -67,7 +67,7 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
     }
 
     render() {
-        const {config, classes, dashboardConfig, updateWidgetConfig} = this.props;
+        const {config, classes, dashboardConfig} = this.props;
 
         const dateComp = () => {
             return (
@@ -86,7 +86,6 @@ class ClockWidget extends React.Component<CommonWidgetProps<Settings> & WithStyl
             <WidgetFrame
                 config={config}
                 dashboardConfig={dashboardConfig}
-                updateWidgetConfig={updateWidgetConfig}
             >
                 <div className={classes.body}>
                     <div className={classes.clock}>
