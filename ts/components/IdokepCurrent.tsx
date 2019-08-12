@@ -16,10 +16,14 @@ const styles = () => createStyles({
     },
     img: {
         textAlign: 'center',
-        marginTop: '-0.2em',
+        margin: '-0.25em 0',
         '& img': {
             width: WidgetStyle.getRelativeSize(0.9).width
         },
+    },
+    city: {
+        fontSize: WidgetStyle.getRelativeSize(0.1).width,
+        textAlign: 'center',
     },
 });
 
@@ -27,6 +31,7 @@ const styles = () => createStyles({
 export class Settings extends BaseWidgetSettings {
     city: string = 'Budapest';
     pollInterval: number = 60*10;
+    showCity: boolean = false;
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
@@ -39,6 +44,11 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         api.getIdokepCurrent(settings.city).then(setData);
     }
 
+    function onBeforeSettingsSubmit(settings: Settings) {
+        if (settings.city != config.settings.city)
+            fetchData(settings)
+    }
+
     useInterval(fetchData, config.settings.pollInterval * 1000);
 
     React.useEffect(fetchData, []);
@@ -47,11 +57,22 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
                 {data ? (<React.Fragment>
+                    {config.settings.showCity ? <div className={classes.city}>{config.settings.city}</div> : null}
                     <div className={classes.value}>{data.value}°C</div>
                     <div className={classes.img}><img src={data.img} /></div>
+
                     </React.Fragment>) : null}
             </div>
-            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[]} />
+            <WidgetMenu id={config.id} onBeforeSubmit={onBeforeSettingsSubmit} settings={config.settings} settingsFormFields={[{
+                name: 'city',
+                label: 'City',
+            }, {
+                name: 'pollInterval',
+                label: 'Interval',
+            }, {
+                name: 'showCity',
+                label: 'Show city name',
+            }]} />
         </WidgetFrame>
     )
 });
