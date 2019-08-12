@@ -6,11 +6,15 @@ from flask import Flask, render_template
 from .config import dashboard_config_loader, load, Mode, default_dashboard_data
 from .api import api
 from .javascript_libraries import javascript_libraries
+from .memcache import create_memcache_client
 
 app = Flask(__name__)
 app.register_blueprint(api)
 
 config = load()
+
+app.config['APP_CONFIG'] = config
+app.config['MEMCACHE'] = create_memcache_client(config.cache.host, config.cache.port) if config.cache.port else None
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +38,3 @@ def index():
                            javascript_libraries = javascript_libraries[Mode.DEVELOPMENT],
                            sync_server_port = config.sync_server.port,
                            )
-
-@app.route('/test')
-def test():
-    print('test start')
-    sleep(5)
-    print('test end')
-    return 'ok'
-

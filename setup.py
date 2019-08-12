@@ -18,6 +18,7 @@ setup(
         "cached-property~=1.5",
         "configpp~=0.3",
         "lxml~=4.4",
+        "pymemcache~=2.2",
         "cssselect~=1.1",
     ],
     include_package_data = True,

@@ -24,6 +24,18 @@ class AppConfig:
 
     sync_log_size: str
 
+    @tree.node()
+    class cache:
+        host: str
+        port: int
+
+        @tree.node()
+        class expiry:
+            idokep_current: int
+            idokep_days: int
+
+
+
 dashboard_config_loader = GroupMember('dashboards.json', mandatory = False)
 app_config_loader = GroupMember('app.yaml')
 logger_config_loader = GroupMember('logger.yaml')

@@ -38,6 +38,6 @@ def tree_search(selector, tree, return_first = True):
     sel = CSSSelector(selector)
     res = sel(tree)
     if not len(res):
-        raise Exception("Error during fetch weather data: '{}' not found".format(selector))
+        return None
     return res[0] if return_first else res
 

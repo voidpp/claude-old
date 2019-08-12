@@ -9,3 +9,7 @@ examples
 
 
 influx table query: `SELECT last(value), max(value), min(value) FROM "magrathea"."autogen"."temperature" where time > now()-1d GROUP BY "name"`
+
+
+
+`memcached` package from memcache
