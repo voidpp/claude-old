@@ -13,6 +13,7 @@ export type WidgetRegistryType = {
         factory: any,
         title: string,
         settingsType: typeof BaseWidgetSettings,
+        defaultSize: {w: number, h: number},
     }
 }
 
@@ -22,31 +23,37 @@ let reg: WidgetRegistryType = {
         factory: StorageStatusWidget,
         title: 'Storage status',
         settingsType: StorageStatusWidgetSettings,
+        defaultSize: {w: 400, h: 200},
     },
     clock: {
         factory: ClockWidget,
         title: 'Clock',
         settingsType: ClockWidgetSettings,
+        defaultSize: {w: 450, h: 200},
     },
     serverStatus: {
         factory: ServerStatusWidget,
         title: 'Server status',
         settingsType: ServerStatusWidgetSettings,
+        defaultSize: {w: 400, h: 200},
     },
     calendar: {
         factory: CalendarWidget,
         title: 'Calendar',
         settingsType: CalendarWidgetSettings,
+        defaultSize: {w: 250, h: 250},
     },
     influxTable: {
         factory: InfluxTable,
         title: 'Influx table',
         settingsType: InfluxTableSettings,
+        defaultSize: {w: 300, h: 150},
     },
     idokepCurrent: {
         factory: IdokepCurrent,
         title: 'Idokep / Current',
         settingsType: IdokepCurrentSetting,
+        defaultSize: {w: 220, h: 280},
     }
 };
 

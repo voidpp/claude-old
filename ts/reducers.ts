@@ -4,6 +4,8 @@ import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateW
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
 
+import widgetRegistry from './widgetRegistry';
+
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
 // [key in Action] is a mapped object type
@@ -38,8 +40,8 @@ const widgetHandlers: HandlerMap<WidgetConfigMap> = {
                 type: action.widgetType,
                 x: 10,
                 y: 10,
-                width: 300,
-                height: 200,
+                width: widgetRegistry[action.widgetType].defaultSize.w,
+                height: widgetRegistry[action.widgetType].defaultSize.h,
                 settings: {},
                 dashboardId: action.dashboardId,
             }
