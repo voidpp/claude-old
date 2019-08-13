@@ -11,15 +11,18 @@ import {PureComponent} from "react";
 
 const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
     body: {
-        padding: 5,
         fontSize: 16,
     },
     header: {
+        paddingTop: 10,
         display: 'grid',
         gridTemplateColumns: p => `repeat(${p.config.settings.days}, 1fr)`,
         '& > div': {
             textAlign: 'center',
-        }
+            '& img': {
+                width: 40,
+            },
+        },
     },
 });
 
@@ -61,7 +64,12 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     const displayData = data.slice(0, config.settings.days);
 
     function DayInfoCell(props: {day: IdokepDayData}) {
-        return <div>{props.day.day}</div>
+        return (
+            <div>
+                <div>{props.day.day}</div>
+                <div><img src={props.day.img} /></div>
+            </div>
+        )
     }
 
 
@@ -73,9 +81,9 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 </div>
                 <LineChart
                     data={displayData}
-                    width={config.width-10}
-                    height={config.height-10}
-                    margin={{ top: 35, right: 30, bottom: 5, left: 30 }}
+                    width={config.width}
+                    height={config.height-90}
+                    margin={{ top: 30, right: 30, bottom: 5, left: 30 }}
                 >
                     <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
                     <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />
