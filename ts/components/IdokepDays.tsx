@@ -1,17 +1,25 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
-import {CommonWidgetProps, BaseWidgetSettings, IdokepDaysResponse} from "../types";
+import {CommonWidgetProps, BaseWidgetSettings, IdokepDaysResponse, IdokepDayData} from "../types";
 import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import {useInterval} from './tools';
 import api from '../api';
 import { WidgetStyle } from '../tools';
-import {LineChart, Line, YAxis} from 'recharts';
+import {LineChart, Line, YAxis, XAxis} from 'recharts';
+import {PureComponent} from "react";
 
-const styles = () => createStyles({
+const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
     body: {
         padding: 5,
-        fontSize: WidgetStyle.getRelativeSize(0.02).width,
+        fontSize: 16,
+    },
+    header: {
+        display: 'grid',
+        gridTemplateColumns: p => `repeat(${p.config.settings.days}, 1fr)`,
+        '& > div': {
+            textAlign: 'center',
+        }
     },
 });
 
@@ -50,14 +58,24 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
     React.useEffect(fetchData, []);
 
+    const displayData = data.slice(0, config.settings.days);
+
+    function DayInfoCell(props: {day: IdokepDayData}) {
+        return <div>{props.day.day}</div>
+    }
+
+
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
+                <div className={classes.header}>
+                    {displayData.map(day => <DayInfoCell key={day.date} day={day} />)}
+                </div>
                 <LineChart
-                    data={data.slice(0, config.settings.days)}
+                    data={displayData}
                     width={config.width-10}
                     height={config.height-10}
-                    margin={{ top: 35, right: 10, bottom: 5, left: 10 }}
+                    margin={{ top: 35, right: 30, bottom: 5, left: 30 }}
                 >
                     <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
                     <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />

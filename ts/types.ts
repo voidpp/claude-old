@@ -85,6 +85,7 @@ export type IdokepCurrentResponse = {
 
 export type IdokepDayData = {
     img: string,
+    date: string,
     day: number,
     max: number,
     min: number
