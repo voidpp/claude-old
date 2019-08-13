@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import { CommonWidgetProps, ServerStatusData } from "../types";
 import FlagIcon, { countries } from "./FlagIcon";
-import { useInterval } from "./tools";
+import {IfComp, useInterval} from "./tools";
 import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import { FormListFieldDescriptor, FormNumberFieldDescriptor, FormSelectFieldDescriptor, FormCheckboxListFieldDescriptor } from "./WidgetSettingsDialog";
@@ -117,10 +117,6 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         }
 
         return <FontAwesomeIcon icon={icon} style={{color: color}} />
-    }
-
-    const IfComp = (props: {cond: boolean, children: React.ReactNode}) => {
-        return <React.Fragment>{props.cond ? props.children : null}</React.Fragment>
     }
 
     const cols = settings.columns;

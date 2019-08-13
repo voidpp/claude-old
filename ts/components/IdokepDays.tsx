@@ -1,15 +1,17 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
 import * as React from "react";
-import {CommonWidgetProps, BaseWidgetSettings, IdokepCurrentResponse} from "../types";
+import {CommonWidgetProps, BaseWidgetSettings, IdokepDaysResponse} from "../types";
 import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
-import { useInterval } from './tools';
+import {useInterval} from './tools';
 import api from '../api';
 import { WidgetStyle } from '../tools';
+import {LineChart, Line, YAxis} from 'recharts';
 
 const styles = () => createStyles({
     body: {
-        fontSize: WidgetStyle.getRelativeSize(0.1).width,
+        padding: 5,
+        fontSize: WidgetStyle.getRelativeSize(0.02).width,
     },
 });
 
@@ -18,16 +20,25 @@ export class Settings extends BaseWidgetSettings {
     city: string = 'Budapest';
     pollInterval: number = 60*10;
     showCity: boolean = false;
+    days: number = 7;
+}
+
+function CustomizedLabel(props) {
+
+    const {x, y, stroke, value} = props;
+
+   	return <text x={x} y={y} dy={-8} fill={"white"} fontSize={16} textAnchor="middle">{value}</text>
+
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
     const { config, classes, dashboardConfig } = props;
 
-    const [data, setData] = React.useState<IdokepCurrentResponse>();
+    const [data, setData] = React.useState<IdokepDaysResponse>([]);
 
     function fetchData(settings: Settings = config.settings) {
-        api.getIdokepCurrent(settings.city).then(setData);
+        api.getIdokepDays(settings.city).then(setData);
     }
 
     function onBeforeSettingsSubmit(settings: Settings) {
@@ -42,16 +53,23 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
-                {data ? (<React.Fragment>
-                    {config.settings.showCity ? <div className={classes.city}>{config.settings.city}</div> : null}
-                    <div className={classes.value}>{data.value}°C</div>
-                    <div className={classes.img}><img src={data.img} /></div>
-
-                    </React.Fragment>) : null}
+                <LineChart
+                    data={data.slice(0, config.settings.days)}
+                    width={config.width-10}
+                    height={config.height-10}
+                    margin={{ top: 35, right: 10, bottom: 5, left: 10 }}
+                >
+                    <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
+                    <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />
+                    <Line type="monotone" dataKey="min" stroke="blue" strokeWidth={3} label={CustomizedLabel} />
+                </LineChart>
             </div>
             <WidgetMenu id={config.id} onBeforeSubmit={onBeforeSettingsSubmit} settings={config.settings} settingsFormFields={[{
                 name: 'city',
                 label: 'City',
+            }, {
+                name: 'days',
+                label: 'Days to show',
             }, {
                 name: 'pollInterval',
                 label: 'Interval',

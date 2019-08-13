@@ -7,6 +7,7 @@ import CalendarWidget, { Settings as CalendarWidgetSettings } from "./components
 import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './components/StorageStatusWidget';
 import InfluxTable, { Settings as InfluxTableSettings } from './components/InfluxTable';
 import IdokepCurrent, { Settings as IdokepCurrentSetting } from './components/IdokepCurrent';
+import IdokepDays, {Settings as IdokepDaysSettings} from "./components/IdokepDays";
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -54,7 +55,13 @@ let reg: WidgetRegistryType = {
         title: 'Idokep / Current',
         settingsType: IdokepCurrentSetting,
         defaultSize: {w: 220, h: 280},
-    }
+    },
+    idokepDays: {
+        factory: IdokepDays,
+        title: 'Idokep / Days',
+        settingsType: IdokepDaysSettings,
+        defaultSize: {w: 400, h: 200},
+    },
 };
 
 export default reg;

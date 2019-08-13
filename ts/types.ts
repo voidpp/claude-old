@@ -82,3 +82,16 @@ export type IdokepCurrentResponse = {
     img: string,
     value: number,
 }
+
+export type IdokepDayData = {
+    img: string,
+    day: number,
+    max: number,
+    min: number
+    precipitation: {
+        value: number,
+        probability: number,
+    }
+}
+
+export type IdokepDaysResponse = Array<IdokepDayData>;

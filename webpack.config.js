@@ -51,6 +51,9 @@ module.exports = {
         "@fortawesome/fontawesome-svg-core": "fontawesome-svg-core",
         "moment": "moment",
         "react-draggable": "ReactDraggable",
+        "recharts": "Recharts",
+
+        // 6.43MB vs 0.36 MB
 
         /** MORE:
          * react-rnd

@@ -20,3 +20,7 @@ export function useInterval(callback: any, delay: number) {
         return () => clearInterval(id);
     }, [delay]);
 }
+
+export function IfComp(props: {cond: boolean, children: React.ReactNode}) {
+    return <React.Fragment>{props.cond ? props.children : null}</React.Fragment>
+};

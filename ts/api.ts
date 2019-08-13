@@ -1,4 +1,4 @@
-import { ServerStatusData, IdokepCurrentResponse } from "./types";
+import {ServerStatusData, IdokepCurrentResponse, IdokepDaysResponse} from "./types";
 
 class ApiFetcher {
 
@@ -24,6 +24,10 @@ class ApiFetcher {
 
     async getIdokepCurrent(city: string): Promise<IdokepCurrentResponse> {
         return this.fetch(`idokep/current/${city}`, null, 'GET')
+    }
+
+    async getIdokepDays(city: string): Promise<IdokepDaysResponse> {
+        return this.fetch(`idokep/days/${city}`, null, 'GET')
     }
 }
 

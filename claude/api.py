@@ -1,6 +1,7 @@
 import logging
 import re
 import subprocess
+from datetime import date, timedelta
 from io import StringIO
 
 from flask import jsonify, request, Blueprint
@@ -83,6 +84,8 @@ def idokep_days(city):
 
     res = []
 
+    col_date = date.today()
+
     for day_column in day_columns:
         day_cell = tree_search('.nap-box > div', day_column)
         if day_cell is None:
@@ -101,6 +104,7 @@ def idokep_days(city):
         day_data = {
             'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
             'day': int(day_cell.text),
+            'date': str(col_date),
             'max': int(tree_search('[class^="max-homerseklet-"]', day_column).text.strip()),
             'min': int(tree_search('[class^="min-homerseklet-"]', day_column).text.strip()),
             'precipitation': {
@@ -109,5 +113,7 @@ def idokep_days(city):
             },
         }
         res.append(day_data)
+
+        col_date = col_date + timedelta(days = 1)
 
     return res
