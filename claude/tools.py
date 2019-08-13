@@ -1,5 +1,13 @@
+import logging
+from functools import wraps
+
+from flask import current_app, request, jsonify
 from lxml.cssselect import CSSSelector
-from lxml import etree
+
+from claude.config import AppConfig
+from claude.memcache import MemcacheClient
+
+logger = logging.getLogger(__name__)
 
 def dict_merge(source, destination):
     """
@@ -41,3 +49,33 @@ def tree_search(selector, tree, return_first = True):
         return None
     return res[0] if return_first else res
 
+
+def get_config() -> AppConfig:
+    return current_app.config['APP_CONFIG']
+
+def get_memcache() -> MemcacheClient:
+    return current_app.config['MEMCACHE']
+
+def cache_result(expiry_config_key):
+    def wrapper(func):
+        @wraps(func)
+        def controller(*args, **kwargs):
+            mc = get_memcache()
+            cache_key = request.path
+            if mc:
+                data = mc.get(cache_key)
+                if data and not request.args.get('force-refetch'):
+                    logger.debug("Data for '%s' comes from cache", cache_key)
+                    return jsonify(data)
+
+            res = func(*args, **kwargs)
+
+            if mc:
+                expiry = getattr(get_config().cache.expiry, expiry_config_key)
+                if expiry:
+                    mc.set(cache_key, res, expiry)
+
+            return jsonify(res)
+
+        return controller
+    return wrapper

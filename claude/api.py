@@ -1,14 +1,13 @@
-from lxml import etree
-import subprocess
-import re
-from flask import jsonify, request, Flask, Blueprint, current_app
 import logging
-from requests import get
+import re
+import subprocess
 from io import StringIO
 
-from .tools import parse_temp, tree_search
-from .config import AppConfig
-from .memcache import MemcacheClient
+from flask import jsonify, request, Blueprint
+from lxml import etree
+from requests import get
+
+from .tools import parse_temp, tree_search, cache_result
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +15,6 @@ ping_pattern = re.compile(r'64 bytes from ([0-9\.]{7,15}): icmp_.eq=([0-9]{1,2})
 
 api = Blueprint('api', __name__)
 
-def get_config() -> AppConfig:
-    return current_app.config['APP_CONFIG']
-
-def get_memcache() -> MemcacheClient:
-    return current_app.config['MEMCACHE']
 
 @api.route('/api/server-status', methods = ['POST'])
 def api_server_status():
@@ -52,12 +46,8 @@ def api_server_status():
     })
 
 @api.route('/api/idokep/current/<city>')
+@cache_result('idokep_current')
 def idokep_current(city):
-    mc = get_memcache()
-    if mc:
-        data = mc.get('idokep-current')
-        if data:
-            return jsonify(data)
 
     base_url = 'https://www.idokep.hu'
 
@@ -75,20 +65,11 @@ def idokep_current(city):
         'value': parse_temp(tree_search('.homerseklet', current_container).text),
     }
 
-    if mc:
-        mc.set('idokep-current', res, get_config().cache.expiry.idokep_current)
-
-    return jsonify(res)
-
-import re
+    return res
 
 @api.route('/api/idokep/days/<city>')
+@cache_result('idokep_days')
 def idokep_days(city):
-    mc = get_memcache()
-    if mc:
-        data = mc.get('idokep-days')  # TODO: some decorator?
-        if data:
-            return jsonify(data)
 
     base_url = 'https://www.idokep.hu'
 
@@ -120,8 +101,8 @@ def idokep_days(city):
         day_data = {
             'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
             'day': int(day_cell.text),
-            'max': int(tree_search('.max-homerseklet-default', day_column).text.strip()),
-            'min': int(tree_search('.min-homerseklet-default', day_column).text.strip()),
+            'max': int(tree_search('[class^="max-homerseklet-"]', day_column).text.strip()),
+            'min': int(tree_search('[class^="min-homerseklet-"]', day_column).text.strip()),
             'precipitation': {
                 'value': int(precipitation_val),
                 'probability': int(precipitation_prob),
@@ -129,7 +110,4 @@ def idokep_days(city):
         }
         res.append(day_data)
 
-    if mc:
-        mc.set('idokep-days', res, get_config().cache.expiry.idokep_days)
-
-    return jsonify(res)
+    return res
