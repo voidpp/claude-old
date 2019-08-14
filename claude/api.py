@@ -84,7 +84,7 @@ def idokep_days(city):
 
     res = []
 
-    col_date = date.today()
+    col_date = None
 
     for day_column in day_columns:
         day_cell = tree_search('.nap-box > div', day_column)
@@ -93,6 +93,13 @@ def idokep_days(city):
 
         precipitation_val = 0
         precipitation_prob = 0
+
+        day = int(day_cell.text)
+
+        if col_date is None:
+            col_date = date.today()
+            while col_date.day != day:
+                col_date = col_date + timedelta(days = 1)
 
         csapadek_tree = tree_search('.csapadek', day_column)
         if csapadek_tree is not None:
@@ -103,7 +110,7 @@ def idokep_days(city):
 
         day_data = {
             'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
-            'day': int(day_cell.text),
+            'day': day,
             'date': str(col_date),
             'max': int(tree_search('[class^="max-homerseklet-"]', day_column).text.strip()),
             'min': int(tree_search('[class^="min-homerseklet-"]', day_column).text.strip()),
