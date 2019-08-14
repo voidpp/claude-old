@@ -1,19 +1,38 @@
-import {createStyles, withStyles, WithStyles} from '@material-ui/core';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import * as moment from 'moment';
 import * as React from "react";
-import {CommonWidgetProps, BaseWidgetSettings, IdokepDaysResponse, IdokepDayData} from "../types";
-import WidgetFrame from "../containers/WidgetFrame";
-import WidgetMenu from "./WidgetMenu";
-import {useInterval} from './tools';
+import { Line, LineChart, YAxis } from 'recharts';
 import api from '../api';
-import { WidgetStyle } from '../tools';
-import {LineChart, Line, YAxis, XAxis} from 'recharts';
+import WidgetFrame from "../containers/WidgetFrame";
+import { BaseWidgetSettings, CommonWidgetProps, IdokepDayData, IdokepDaysResponse } from "../types";
+import { IfComp, useInterval } from './tools';
+import WidgetMenu from "./WidgetMenu";
+import { FormCheckboxListFieldDescriptor } from './WidgetSettingsDialog';
 
-const baseFontRatio = 0.06;
+
+export type ShowableRows = 'dayNumber' | 'dayText' | 'dayImage' | 'precipitationValue' | 'precipitationProbability' | 'temperatureChart';
+
+const dataRowHeightRatio: {[key in ShowableRows]: number} = {
+    dayNumber: 0.09,
+    dayText: 0.09,
+    dayImage: 0.17,
+    precipitationValue: 0.07,
+    precipitationProbability: 0.07,
+    temperatureChart: 0.5,
+}
+
+function getRowShownRatio(baseRatio: number, {config}: CommonWidgetProps<Settings>): number {
+    let ratio = baseRatio;
+    for (const [key, val] of Object.entries(dataRowHeightRatio)) {
+        if (!config.settings.rowsToShow[key])
+            ratio += (baseRatio * 2 * val);
+    }
+    return ratio;
+}
 
 const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
     body: {
-        fontSize: WidgetStyle.getRelativeSize(baseFontRatio).height,
+        fontSize: p => p.config.height * getRowShownRatio(0.06, p),
     },
     header: {
         paddingTop: '0.6em',
@@ -39,6 +58,14 @@ export class Settings extends BaseWidgetSettings {
     pollInterval: number = 60*10;
     showCity: boolean = false;
     days: number = 7;
+    rowsToShow: {[key in ShowableRows]: boolean} = {
+        dayNumber: true,
+        dayText: true,
+        dayImage: true,
+        precipitationValue: true,
+        precipitationProbability: true,
+        temperatureChart: true,
+    };
 }
 
 function CustomizedLabel(props) {
@@ -52,6 +79,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     moment.locale('en-gb');
 
     const { config, classes, dashboardConfig } = props;
+    const { rowsToShow } = config.settings;
 
     const [data, setData] = React.useState<IdokepDaysResponse>([]);
 
@@ -73,18 +101,18 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     function DayInfoCell(props: {day: IdokepDayData}) {
         return (
             <div>
-                <div>{props.day.day}</div>
-                <div>{moment(props.day.date).format('dd')}</div>
-                <div><img className={classes.weatherImage} src={props.day.img} /></div>
+                <IfComp cond={rowsToShow.dayNumber}><div>{props.day.day}</div></IfComp>
+                <IfComp cond={rowsToShow.dayText}><div>{moment(props.day.date).format('dd')}</div></IfComp>
+                <IfComp cond={rowsToShow.dayImage}><div><img className={classes.weatherImage} src={props.day.img} /></div></IfComp>
                 {props.day.precipitation.probability ? <div className={classes.precipitation}>
-                        <div>{`${props.day.precipitation.value}mm`}</div>
-                        <div>{`(${props.day.precipitation.probability}%)`}</div>
+                        <IfComp cond={rowsToShow.precipitationValue}><div>{`${props.day.precipitation.value}mm`}</div></IfComp>
+                        <IfComp cond={rowsToShow.precipitationProbability}><div>{`(${props.day.precipitation.probability}%)`}</div></IfComp>
                     </div> : null}
             </div>
         )
     }
 
-    const baseForMargin = config.height * baseFontRatio;
+    const baseForMargin = config.height * getRowShownRatio(0.06, props);
     const vertMargin = config.width / config.settings.days / 2;
 
     return (
@@ -93,21 +121,23 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 <div className={classes.header}>
                     {displayData.map(day => <DayInfoCell key={day.date} day={day} />)}
                 </div>
-                <LineChart
-                    data={displayData}
-                    width={config.width}
-                    height={config.height - (config.height * 0.53)}
-                    margin={{
-                        top: baseForMargin * 1.3,
-                        right: vertMargin,
-                        bottom: baseForMargin * 0.2,
-                        left: vertMargin,
-                    }}
-                >
-                    <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
-                    <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />
-                    <Line type="monotone" dataKey="min" stroke="blue" strokeWidth={3} label={CustomizedLabel} />
-                </LineChart>
+                <IfComp cond={rowsToShow.temperatureChart}>
+                    <LineChart
+                        data={displayData}
+                        width={config.width}
+                        height={config.height * getRowShownRatio(0.46, props)}
+                        margin={{
+                            top: baseForMargin * 1.3,
+                            right: vertMargin,
+                            bottom: baseForMargin * 0.2,
+                            left: vertMargin,
+                        }}
+                    >
+                        <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
+                        <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />
+                        <Line type="monotone" dataKey="min" stroke="blue" strokeWidth={3} label={CustomizedLabel} />
+                    </LineChart>
+                </IfComp>
             </div>
             <WidgetMenu id={config.id} onBeforeSubmit={onBeforeSettingsSubmit} settings={config.settings} settingsFormFields={[{
                 name: 'city',
@@ -121,7 +151,19 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
             }, {
                 name: 'showCity',
                 label: 'Show city name',
-            }]} />
+            }, {
+                type: 'checkboxList',
+                name: 'rowsToShow',
+                label: 'Show data rows',
+                options: [
+                    {value: 'dayNumber', label: 'Day number'},
+                    {value: 'dayText', label: 'Day text'},
+                    {value: 'dayImage', label: 'Day image'},
+                    {value: 'precipitationValue', label: 'Precipitation value'},
+                    {value: 'precipitationProbability', label: 'Precipitation probability'},
+                    {value: 'temperatureChart', label: 'Temperature chart'},
+                ]
+            } as FormCheckboxListFieldDescriptor ]} />
         </WidgetFrame>
     )
 });
