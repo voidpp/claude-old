@@ -1,4 +1,5 @@
 import {createStyles, withStyles, WithStyles} from '@material-ui/core';
+import * as moment from 'moment';
 import * as React from "react";
 import {CommonWidgetProps, BaseWidgetSettings, IdokepDaysResponse, IdokepDayData} from "../types";
 import WidgetFrame from "../containers/WidgetFrame";
@@ -7,25 +8,31 @@ import {useInterval} from './tools';
 import api from '../api';
 import { WidgetStyle } from '../tools';
 import {LineChart, Line, YAxis, XAxis} from 'recharts';
-import {PureComponent} from "react";
+
+const baseFontRatio = 0.06;
 
 const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
     body: {
-        fontSize: 16,
+        fontSize: WidgetStyle.getRelativeSize(baseFontRatio).height,
     },
     header: {
-        paddingTop: 10,
-        display: 'grid',
-        gridTemplateColumns: p => `repeat(${p.config.settings.days}, 1fr)`,
+        paddingTop: '0.6em',
+        display: 'flex',
+        justifyContent: 'space-around',
         '& > div': {
-            textAlign: 'center',
-            '& img': {
-                width: 40,
-            },
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
         },
     },
+    weatherImage: {
+        width: '2.5em',
+    },
+    precipitation: {
+        fontSize: '0.7em',
+        textAlign: 'center',
+    }
 });
-
 
 export class Settings extends BaseWidgetSettings {
     city: string = 'Budapest';
@@ -35,14 +42,14 @@ export class Settings extends BaseWidgetSettings {
 }
 
 function CustomizedLabel(props) {
-
     const {x, y, stroke, value} = props;
-
-   	return <text x={x} y={y} dy={-8} fill={"white"} fontSize={16} textAnchor="middle">{value}</text>
-
+    // TODO fill color! (use theme)
+    return <text x={x} y={y} dy={'-0.5em'} fill={"white"} textAnchor="middle">{value}</text>
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
+
+    moment.locale('en-gb');
 
     const { config, classes, dashboardConfig } = props;
 
@@ -67,11 +74,18 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         return (
             <div>
                 <div>{props.day.day}</div>
-                <div><img src={props.day.img} /></div>
+                <div>{moment(props.day.date).format('dd')}</div>
+                <div><img className={classes.weatherImage} src={props.day.img} /></div>
+                {props.day.precipitation.probability ? <div className={classes.precipitation}>
+                        <div>{`${props.day.precipitation.value}mm`}</div>
+                        <div>{`(${props.day.precipitation.probability}%)`}</div>
+                    </div> : null}
             </div>
         )
     }
 
+    const baseForMargin = config.height * baseFontRatio;
+    const vertMargin = config.width / config.settings.days / 2;
 
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
@@ -82,8 +96,13 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                 <LineChart
                     data={displayData}
                     width={config.width}
-                    height={config.height-90}
-                    margin={{ top: 30, right: 30, bottom: 5, left: 30 }}
+                    height={config.height - (config.height * 0.53)}
+                    margin={{
+                        top: baseForMargin * 1.3,
+                        right: vertMargin,
+                        bottom: baseForMargin * 0.2,
+                        left: vertMargin,
+                    }}
                 >
                     <YAxis type="number" domain={['dataMin', 'dataMax']} hide />
                     <Line type="monotone" dataKey="max" stroke="red" strokeWidth={3} label={CustomizedLabel} />

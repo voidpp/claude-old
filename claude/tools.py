@@ -65,7 +65,7 @@ def cache_result(expiry_config_key):
             if mc:
                 data = mc.get(cache_key)
                 if data and not request.args.get('force-refetch'):
-                    logger.debug("Data for '%s' comes from cache", cache_key)
+                    logger.debug("Get '%s' data from cache", cache_key)
                     return jsonify(data)
 
             res = func(*args, **kwargs)
