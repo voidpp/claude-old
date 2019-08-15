@@ -149,8 +149,6 @@ def idokep_hours(city):
 
     res = []
 
-    col_date = None
-
     for day_column in day_columns:
         hour_cell = tree_search('.ora', day_column)
         if hour_cell is None:

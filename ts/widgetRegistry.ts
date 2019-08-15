@@ -8,6 +8,7 @@ import StorageStatusWidget, { Settings as StorageStatusWidgetSettings } from './
 import InfluxTable, { Settings as InfluxTableSettings } from './components/InfluxTable';
 import IdokepCurrent, { Settings as IdokepCurrentSetting } from './components/IdokepCurrent';
 import IdokepDays, {Settings as IdokepDaysSettings} from "./components/IdokepDays";
+import IdokepHours, {Settings as IdokepHoursSettings} from "./components/IdokepHours";
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -60,6 +61,12 @@ let reg: WidgetRegistryType = {
         factory: IdokepDays,
         title: 'Idokep / Days',
         settingsType: IdokepDaysSettings,
+        defaultSize: {w: 400, h: 200},
+    },
+    idokepHours: {
+        factory: IdokepHours,
+        title: 'Idokep / Hours',
+        settingsType: IdokepHoursSettings,
         defaultSize: {w: 400, h: 200},
     },
 };

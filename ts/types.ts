@@ -96,3 +96,19 @@ export type IdokepDayData = {
 }
 
 export type IdokepDaysResponse = Array<IdokepDayData>;
+
+export type IdokepHourData = {
+    hour: number,
+    img: string,
+    temp: number,
+    precipitation: {
+        value: number,
+        probability: number,
+    },
+    wind: {
+        img: string,
+        angle: number,
+    }
+}
+
+export type IdokepHoursResponse = Array<IdokepHourData>;
