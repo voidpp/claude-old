@@ -13,12 +13,12 @@ import { FormCheckboxListFieldDescriptor } from './WidgetSettingsDialog';
 export type ShowableRows = 'dayNumber' | 'dayText' | 'dayImage' | 'precipitationValue' | 'precipitationProbability' | 'temperatureChart';
 
 const dataRowHeightRatio: {[key in ShowableRows]: number} = {
-    dayNumber: 0.09,
-    dayText: 0.09,
-    dayImage: 0.17,
-    precipitationValue: 0.07,
-    precipitationProbability: 0.07,
-    temperatureChart: 0.5,
+    dayNumber: 0.06,
+    dayText: 0.06,
+    dayImage: 0.9,
+    precipitationValue: 0.035,
+    precipitationProbability: 0.035,
+    temperatureChart: 0.8,
 }
 
 function getRowShownRatio(baseRatio: number, {config}: CommonWidgetProps<Settings>): number {
@@ -32,7 +32,7 @@ function getRowShownRatio(baseRatio: number, {config}: CommonWidgetProps<Setting
 
 const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
     body: {
-        fontSize: p => p.config.height * getRowShownRatio(0.06, p),
+        fontSize: p => p.config.height * getRowShownRatio(0.05, p),
     },
     header: {
         paddingTop: '0.6em',
@@ -125,7 +125,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
                     <LineChart
                         data={displayData}
                         width={config.width}
-                        height={config.height * getRowShownRatio(0.46, props)}
+                        height={config.height * getRowShownRatio(0.54, props)}
                         margin={{
                             top: baseForMargin * 1.3,
                             right: vertMargin,
