@@ -33,7 +33,7 @@ class AppConfig:
         class expiry:
             idokep_current: int
             idokep_days: int
-
+            idokep_hours: int
 
 
 dashboard_config_loader = GroupMember('dashboards.json', mandatory = False)

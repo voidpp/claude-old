@@ -68,6 +68,7 @@ def idokep_current(city):
 
     return res
 
+
 @api.route('/api/idokep/days/<city>')
 @cache_result('idokep_days')
 def idokep_days(city):
@@ -122,5 +123,66 @@ def idokep_days(city):
         res.append(day_data)
 
         col_date = col_date + timedelta(days = 1)
+
+    return res
+
+
+wind_values = {
+    'mersekelt': 'moderate',
+    'gyenge': 'weak',
+}
+
+@api.route('/api/idokep/hours/<city>')
+@cache_result('idokep_hours')
+def idokep_hours(city):
+
+    base_url = 'https://www.idokep.hu'
+
+    parser = etree.HTMLParser()
+
+    logger.debug("Fetch data from %s", base_url)
+    response = get('%s/elorejelzes/%s' % (base_url, city))
+
+    tree = etree.parse(StringIO(response.text), parser)
+
+    day_columns = tree_search('.tizenket .oszlop', tree, False)
+
+    res = []
+
+    col_date = None
+
+    for day_column in day_columns:
+        hour_cell = tree_search('.ora', day_column)
+        if hour_cell is None:
+            continue
+
+        prec_val_tree = tree_search('.csapadek-text', day_column)
+        prec_prob_tree = tree_search('.valoszinuseg', day_column)
+        precipitation_val = 0
+        precipitation_prob = 0
+
+        if prec_val_tree is not None:
+            precipitation_val = int(re.search(r'Kb\. ([\d]{1,}) mm', prec_val_tree.text).group(1))
+
+        if prec_prob_tree is not None:
+            precipitation_prob = int(re.search(r'.+ ([\d]{1,})%', prec_prob_tree.text).group(1))
+
+        wind_element = tree_search('.szel-icon > img', day_column)
+
+        hour_data = {
+            'hour': int(hour_cell.text[:-1]),
+            'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
+            'temp': int(tree_search('.hoerzet', day_column).text),
+            'precipitation': {
+                'value': precipitation_val,
+                'probability': precipitation_prob,
+            },
+            'wind': {
+                'img': base_url + wind_element.attrib['src'],
+                'angle': int(re.search(r'rotate\(([\d]{1,3})deg\)', wind_element.attrib['style']).group(1)),
+            },
+        }
+
+        res.append(hour_data)
 
     return res

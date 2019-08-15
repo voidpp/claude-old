@@ -56,7 +56,7 @@ def get_config() -> AppConfig:
 def get_memcache() -> MemcacheClient:
     return current_app.config['MEMCACHE']
 
-def cache_result(expiry_config_key):
+def cache_result(expiry_config_key, enabled = True):
     def wrapper(func):
         @wraps(func)
         def controller(*args, **kwargs):
@@ -64,7 +64,7 @@ def cache_result(expiry_config_key):
             cache_key = request.path
             if mc:
                 data = mc.get(cache_key)
-                if data and not request.args.get('force-refetch'):
+                if data and not request.args.get('force-refetch') and enabled:
                     logger.debug("Get '%s' data from cache", cache_key)
                     return jsonify(data)
 
