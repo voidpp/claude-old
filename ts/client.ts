@@ -4,6 +4,11 @@ import { AnyAction, Dispatch } from 'redux';
 import { detailedDiff } from 'deep-object-diff';
 import { Action } from './actions';
 
+const nonSyncableActions = [
+    Action.SELECT_DASHBOARD,
+    Action.IS_DALOG_OPEN,
+]
+
 class Client {
 
     public url: string;
@@ -26,7 +31,7 @@ class Client {
             let result = next(action);
             const newState = store.getState();
 
-            if (action.type != Action.SELECT_DASHBOARD && !action.time) {
+            if (nonSyncableActions.indexOf(action.type) == -1 && !action.time) {
                 this.ws.send(JSON.stringify({
                     action,
                     diff: detailedDiff(oldState, newState),

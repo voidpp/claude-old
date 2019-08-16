@@ -47,3 +47,6 @@ TODO
 * move dashboard id from localstorage to url
 * light theme
 * localization
+    * labels
+    * moment
+    * dashboard settings?
