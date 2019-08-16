@@ -94,13 +94,17 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
     let idx = 0;
 
     for (const hourData of displayData) {
+        const barColorLight = 100 - (30+(hourData.temp - minTemp)/(maxTemp-minTemp)*40);
         cells.push(
             <div key={idx++} className={classes.hour}>{hourData.hour}h</div>,
             <div key={idx++} className={classes.image}><img src={hourData.img}/></div>,
             <div key={idx++} className={classes.temperatureChart}>
                 <div style={{flexGrow: 1}} />
                 <div className="text">{hourData.temp}</div>
-                <div className="bar" style={{height: `${(hourData.temp - minTemp)/(maxTemp-minTemp)*100}%`}}/>
+                <div className="bar" style={{
+                    height: `${(hourData.temp - minTemp)/(maxTemp-minTemp)*100}%`,
+                    backgroundColor: `hsl(350, 62%, ${barColorLight}%)`,
+                }}/>
             </div>,
         )
     }
