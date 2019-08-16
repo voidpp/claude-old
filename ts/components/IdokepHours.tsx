@@ -5,18 +5,36 @@ import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import api from '../api';
 import { IfComp, useInterval } from './tools';
+import { FormCheckboxListFieldDescriptor, FormSelectFieldDescriptor } from './WidgetSettingsDialog';
 
 export type ShowableRows = 'image' | 'precipitationValue' | 'precipitationProbability' | 'temperatureChart';
 
 type Props = CommonWidgetProps<Settings>;
 
+const dataRowHeightRatio: {[key in ShowableRows]: number} = {
+    image: 0.8,
+    precipitationProbability: 0.04,
+    precipitationValue: 0.04,
+    temperatureChart: 0.8,
+}
+
+function getRowShownRatio(baseRatio: number, {config}: Props): number {
+    let ratio = baseRatio;
+    for (const [key, val] of Object.entries(dataRowHeightRatio)) {
+        if (!config.settings.rowsToShow[key])
+            ratio += (baseRatio * 2 * val);
+    }
+    return ratio;
+}
+
 const styles = () => createStyles({
     body: {
+        fontSize: (p: Props) => p.config.height * getRowShownRatio(0.055, p),
         display: 'grid',
         gridTemplateColumns: (p: Props) => `repeat(${p.config.settings.hours/3}, 1fr)`,
         gridTemplateRows: 'repeat(4, min-content) auto',
         justifyItems: 'center',
-        padding: '1em 0',
+        padding: '12px 0',
         height: '100%',
     },
     hour: {
@@ -25,16 +43,19 @@ const styles = () => createStyles({
     image: {
         gridRowStart: 2,
         '& img': {
-            width: 48,
+            width: '2.5em',
         }
     },
     precipitationProbability: {
-        gridRowStart: 3,
+        gridRowStart: 4,
+        fontSize: '0.7em',
     },
     precipitationValue: {
-        gridRowStart: 4,
+        gridRowStart: 3,
+        fontSize: '0.8em',
     },
     temperatureChart: {
+        paddingTop: '0.4em',
         gridRowStart: 5,
         display: 'flex',
         flexDirection: 'column',
@@ -53,7 +74,7 @@ const styles = () => createStyles({
 export class Settings extends BaseWidgetSettings {
     city: string = 'Budapest';
     pollInterval: number = 60*10;
-    showCity: boolean = false;
+    // showCity: boolean = false;
     hours: number = 24;
     rowsToShow: {[key in ShowableRows]: boolean} = {
         image: true,
@@ -97,15 +118,30 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
         const barColorLight = 100 - (30+(hourData.temp - minTemp)/(maxTemp-minTemp)*40);
         cells.push(
             <div key={idx++} className={classes.hour}>{hourData.hour}h</div>,
-            <div key={idx++} className={classes.image}><img src={hourData.img}/></div>,
-            <div key={idx++} className={classes.temperatureChart}>
-                <div style={{flexGrow: 1}} />
-                <div className="text">{hourData.temp}</div>
-                <div className="bar" style={{
-                    height: `${(hourData.temp - minTemp)/(maxTemp-minTemp)*100}%`,
-                    backgroundColor: `hsl(350, 62%, ${barColorLight}%)`,
-                }}/>
-            </div>,
+            <IfComp cond={rowsToShow.image}><div key={idx++} className={classes.image}><img src={hourData.img}/></div></IfComp>,
+
+            <IfComp cond={rowsToShow.precipitationValue}>
+                <div key={idx++} className={classes.precipitationValue}>
+                    {hourData.precipitation.value ? `${hourData.precipitation.value} mm` : null}
+                </div>
+            </IfComp>,
+
+            <IfComp cond={rowsToShow.precipitationProbability}>
+                <div key={idx++} className={classes.precipitationProbability}>
+                    {hourData.precipitation.probability ? `(${hourData.precipitation.probability}%)` : null}
+                </div>
+            </IfComp>,
+
+            <IfComp cond={rowsToShow.temperatureChart}>
+                <div key={idx++} className={classes.temperatureChart}>
+                    <div style={{flexGrow: 1}} />
+                    <div className="text">{hourData.temp}</div>
+                    <div className="bar" style={{
+                        height: `${(hourData.temp - minTemp)/(maxTemp-minTemp)*100}%`,
+                        backgroundColor: `hsl(350, 62%, ${barColorLight}%)`,
+                    }}/>
+                </div>
+            </IfComp>,
         )
     }
 
@@ -114,7 +150,31 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
             <div className={classes.body}>
                 {...cells}
             </div>
-            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[]} />
+            <WidgetMenu id={config.id} settings={config.settings} settingsFormFields={[{
+                name: 'city',
+                label: 'City',
+            }, {
+                name: 'hours',
+                label: 'Hours to show',
+                type: 'select',
+                options: Array.from(Array(11).keys()).map(i => ({value: `${i*3+6}`, label: `${i*3+6}h`})),
+            } as FormSelectFieldDescriptor, {
+                name: 'pollInterval',
+                label: 'Interval',
+            // }, {
+            //     name: 'showCity',
+            //     label: 'Show city name',
+            }, {
+                type: 'checkboxList',
+                name: 'rowsToShow',
+                label: 'Show data rows',
+                options: [
+                    {value: 'image', label: 'Image'},
+                    {value: 'precipitationProbability', label: 'Precipitation probability'},
+                    {value: 'precipitationValue', label: 'Precipitation value'},
+                    {value: 'temperatureChart', label: 'Temperature chart'},
+                ]
+            } as FormCheckboxListFieldDescriptor]} />
         </WidgetFrame>
     )
 });

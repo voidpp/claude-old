@@ -56,7 +56,7 @@ const styles = () => createStyles<string, CommonWidgetProps<Settings>>({
 export class Settings extends BaseWidgetSettings {
     city: string = 'Budapest';
     pollInterval: number = 60*10;
-    showCity: boolean = false;
+    // showCity: boolean = false;
     days: number = 7;
     rowsToShow: {[key in ShowableRows]: boolean} = {
         dayNumber: true,
@@ -148,9 +148,9 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
             }, {
                 name: 'pollInterval',
                 label: 'Interval',
-            }, {
-                name: 'showCity',
-                label: 'Show city name',
+            // }, {
+            //     name: 'showCity',
+            //     label: 'Show city name',
             }, {
                 type: 'checkboxList',
                 name: 'rowsToShow',
