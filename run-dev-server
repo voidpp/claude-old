@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import asyncio
 from aiohttp import web
 import aiohttp
@@ -7,11 +8,12 @@ from argparse import ArgumentParser
 
 from claude.app import aio_app
 
+os.environ['CLAUDE_DEBUG_MODE'] = '1'
+
 parser = ArgumentParser()
 parser.add_argument('-p', '--port', default = 5000)
 
 args = parser.parse_args()
 
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    web.run_app(aio_app, port = args.port)
+loop = asyncio.get_event_loop()
+web.run_app(aio_app, port = args.port)

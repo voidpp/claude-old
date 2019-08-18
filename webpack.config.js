@@ -52,14 +52,14 @@ module.exports = {
         "moment": "moment",
         "react-draggable": "ReactDraggable",
         "recharts": "Recharts",
+        "react-redux": "ReactRedux",
+        "prop-types": "PropTypes",
 
-        // 6.43MB vs 0.36 MB
+        // 6.43MB vs 0.29 MB
 
         /** MORE:
          * react-rnd
-         * react-redux
          * @fortawesome/react-fontawesome
-         * prop-types
          *
          */
     },

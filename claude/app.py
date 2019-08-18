@@ -3,14 +3,15 @@ import logging
 import os
 from time import sleep, time
 
+import pkg_resources
 from aiohttp import web
 from jinja2 import Template
 
 from .api import Api
 from .config import Mode, dashboard_config_loader, default_dashboard_data, load
+from .config_sync_service import config_sync
 from .javascript_libraries import javascript_libraries
 from .memcache import create_memcache_client
-from .config_sync_service import config_sync
 
 config = load()
 
@@ -31,7 +32,11 @@ with open(os.path.join(current_directory, 'templates/index.html')) as f:
 
 async def index(request):
 
-    version = str(time())
+    debug = os.environ.get('CLAUDE_DEBUG_MODE')
+
+    mode = Mode.DEVELOPMENT if debug else Mode.PRODUCTION
+
+    version = str(time()) if debug else pkg_resources.get_distribution("claude").version
     try:
         # need to reload every time when the dashboard app started because the config sync service writes the dashboard file
         dashboard_config_loader.load()
@@ -40,9 +45,9 @@ async def index(request):
         pass
 
     resp_text = index_template.render(version = version,
-                                      dev_mode = True, # TODO prod mode
+                                      dev_mode = mode == Mode.DEVELOPMENT,
                                       initial_data = dashboard_config_loader.data or default_dashboard_data,
-                                      javascript_libraries = javascript_libraries[Mode.DEVELOPMENT], # TODO prod mode
+                                      javascript_libraries = javascript_libraries[mode],
                                       )
 
     return web.Response(body = resp_text, content_type = 'text/html')
