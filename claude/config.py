@@ -18,10 +18,6 @@ tree = Tree(Settings(convert_underscores_to_hypens = True))
 @tree.root()
 class AppConfig:
 
-    @tree.node()
-    class sync_server:
-        port: int
-
     sync_log_size: str
 
     @tree.node()

@@ -1,20 +1,20 @@
-import os
+import asyncio
 import logging
-from time import time, sleep
-from flask import Flask, render_template
+import os
+from time import sleep, time
 
-from .config import dashboard_config_loader, load, Mode, default_dashboard_data
-from .api import api
+from aiohttp import web
+from jinja2 import Template
+
+from .api import Api
+from .config import Mode, dashboard_config_loader, default_dashboard_data, load
 from .javascript_libraries import javascript_libraries
 from .memcache import create_memcache_client
-
-app = Flask(__name__)
-app.register_blueprint(api)
+from .config_sync_service import config_sync
 
 config = load()
 
-app.config['APP_CONFIG'] = config
-app.config['MEMCACHE'] = create_memcache_client(config.cache.host, config.cache.port) if config.cache.port else None
+memcache = create_memcache_client(config.cache.host, config.cache.port) if config.cache.port else None
 
 logger = logging.getLogger(__name__)
 
@@ -22,19 +22,33 @@ if not config:
     print('no config')
     exit(1)
 
-@app.route('/')
-def index():
+aio_app = web.Application()
+
+current_directory = os.path.dirname(__file__)
+
+with open(os.path.join(current_directory, 'templates/index.html')) as f:
+    index_template = Template(f.read())
+
+async def index(request):
+
     version = str(time())
-    # need to reload every time when the dashboard app started because the sync service writes the dashboard file
     try:
+        # need to reload every time when the dashboard app started because the config sync service writes the dashboard file
         dashboard_config_loader.load()
     except FileNotFoundError:
         # first run, there is no dashboard config
         pass
-    return render_template('index.html',
-                           version = version,
-                           dev_mode = app.debug,
-                           initial_data = dashboard_config_loader.data or default_dashboard_data,
-                           javascript_libraries = javascript_libraries[Mode.DEVELOPMENT],
-                           sync_server_port = config.sync_server.port,
-                           )
+
+    resp_text = index_template.render(version = version,
+                                      dev_mode = True, # TODO prod mode
+                                      initial_data = dashboard_config_loader.data or default_dashboard_data,
+                                      javascript_libraries = javascript_libraries[Mode.DEVELOPMENT], # TODO prod mode
+                                      )
+
+    return web.Response(body = resp_text, content_type = 'text/html')
+
+Api(aio_app, config, memcache)
+
+aio_app.router.add_get('/', index)
+aio_app.router.add_static('/static', os.path.join(current_directory, 'static'))
+aio_app.router.add_route('GET', '/config-sync', config_sync)

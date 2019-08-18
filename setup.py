@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name = "claude",
-    description = "claude",
-    long_description = "claude",
+    description = "Pluginable dashboard app",
+    long_description = "Pluginable dashboard app",
     author = "Lajos Santa",
     author_email = "santa.lajos@gmail.com",
     url = "https://github.com/voidpp/claude",
@@ -11,11 +11,8 @@ setup(
     use_scm_version = True,
     setup_requires = ["setuptools_scm"],
     install_requires = [
-        "flask~=1.1",
-        "transmissionrpc~=0.11",
-        "websockets~=8.0",
-        "requests~=2.22",
-        "cached-property~=1.5",
+        "aiohttp~=3.5",
+        "Jinja2~=2.10",
         "configpp~=0.3",
         "lxml~=4.4",
         "pymemcache~=2.2",

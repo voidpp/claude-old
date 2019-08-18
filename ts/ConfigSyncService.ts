@@ -9,7 +9,7 @@ const nonSyncableActions = [
     Action.IS_DALOG_OPEN,
 ]
 
-class Client {
+class ConfigSyncService {
 
     public url: string;
     private ws: ReconnectingWebSocket;
@@ -17,7 +17,7 @@ class Client {
     private _dispatcher: Dispatch<AnyAction>;
 
     constructor() {
-        this.url = `ws://${window.location.hostname}:${window['syncServerPort']}/listen`;
+        this.url = `ws://${window.location.host}/config-sync`;
         this.ws = new ReconnectingWebSocket(this.url);
 
         this.ws.onopen = this.onOpen.bind(this);
@@ -63,4 +63,4 @@ class Client {
     }
 }
 
-export default new Client();
+export default new ConfigSyncService();

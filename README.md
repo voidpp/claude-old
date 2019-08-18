@@ -26,8 +26,9 @@ TODO
     * server status
         * ordering
 * new widgets
-    * chromecast widget
-    * influx graph widget
+    * chromecast
+    * transmission
+    * influx graph
     * network speed
         * need some lib to do with on the router
 * proper install guide
