@@ -1,10 +1,10 @@
+import os
 import logging
-import logging.config
+from pathlib import Path
 
 from enum import Enum
 
-from configpp.tree import Tree, Settings
-from configpp.soil import Group, GroupMember
+from configpp.soil import Config, Transport, Location
 
 class Mode(Enum):
 
@@ -13,47 +13,34 @@ class Mode(Enum):
 
 logger = logging.getLogger(__name__)
 
-tree = Tree(Settings(convert_underscores_to_hypens = True))
-
-@tree.root()
-class AppConfig:
-
-    sync_log_size: str
-
-    @tree.node()
-    class cache:
-        host: str
-        port: int
-
-        @tree.node()
-        class expiry:
-            idokep_current: int
-            idokep_days: int
-            idokep_hours: int
-
-
-dashboard_config_loader = GroupMember('dashboards.json', mandatory = False)
-app_config_loader = GroupMember('app.yaml')
-logger_config_loader = GroupMember('logger.yaml')
 
 default_dashboard_data = {
     'dashboards': {},
     'widgets': {},
 }
 
-config_loader = Group('claude', [app_config_loader, dashboard_config_loader, logger_config_loader])
+class AppConfig:
 
-def load() -> AppConfig:
+    dashboard_config_loader: Config
 
-    if not config_loader.load():
-        return None
+    def load(self, path_like: str):
 
-    logging.config.dictConfig(logger_config_loader.data)
+        path = Path(path_like).expanduser().absolute()
 
-    logger.info("Config loaded from %s (dashboard: %s)", config_loader.path, dashboard_config_loader.is_loaded)
-    logger.info("App config: %s", app_config_loader.data)
-    logger.info("Dashboard: %s", dashboard_config_loader.data)
+        if not path.parent.is_dir():
+            path.parent.mkdir(parents = True)
 
-    # TODO: handle empty dashboard_config_loader.data
+        self._location = Location(path.parent)
 
-    return tree.load(app_config_loader.data)
+        self.dashboard_config_loader = Config(path.name, transport = Transport([self._location]))
+
+        return self.dashboard_config_loader.load()
+
+    def save(self):
+        self.dashboard_config_loader.dump(self._location)
+
+    def init_logger(self, debug: bool):
+        logging.basicConfig(
+            level = logging.DEBUG if debug else logging.INFO,
+            format = '%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s: %(message)s',
+        )

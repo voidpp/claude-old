@@ -4,7 +4,7 @@ from aiohttp.web import Request, WebSocketResponse
 from aiohttp import WSMsgType
 from time import time
 
-from .config import dashboard_config_loader, default_dashboard_data
+from .config import default_dashboard_data, AppConfig
 from .tools import dict_merge
 
 logger = logging.getLogger(__name__)
@@ -18,54 +18,59 @@ def find_removed_node(node: dict, data: dict):
         else:
             find_removed_node(value, data[key])
 
-async def config_sync(request: Request):
+class ConfigSyncService:
 
-    ws = WebSocketResponse()
+    def __init__(self, config: AppConfig):
+        self._config = config
 
-    await ws.prepare(request)
+    async def controller(self, request: Request):
 
-    clients.append(ws)
+        ws = WebSocketResponse()
 
-    logger.info("New client connected to the sync service")
+        await ws.prepare(request)
 
-    async for msg in ws:
-        if msg.type == WSMsgType.TEXT:
-            if msg.data == 'close':
-                await ws.close()
-            else:
-                message = json.loads(msg.data)
+        clients.append(ws)
 
-                action = message['action']
-                diff = message['diff']
+        logger.info("New client connected to the sync service")
 
-                if not dashboard_config_loader.is_loaded:
-                    dashboard_config_loader.data = default_dashboard_data
+        async for msg in ws:
+            if msg.type == WSMsgType.TEXT:
+                if msg.data == 'close':
+                    await ws.close()
+                else:
+                    message = json.loads(msg.data)
 
-                dict_merge(diff['added'], dashboard_config_loader.data)
-                dict_merge(diff['updated'], dashboard_config_loader.data)
+                    action = message['action']
+                    diff = message['diff']
 
-                find_removed_node(diff['deleted'], dashboard_config_loader.data)
+                    if not self._config.dashboard_config_loader.is_loaded:
+                        self._config.dashboard_config_loader.data = default_dashboard_data
 
-                # TODO: delay with some sec (and add if new trigger)
-                dashboard_config_loader.dump()
+                    dict_merge(diff['added'], self._config.dashboard_config_loader.data)
+                    dict_merge(diff['updated'], self._config.dashboard_config_loader.data)
 
-                dispatch_clients = list(filter(lambda c: c != ws, clients))
+                    find_removed_node(diff['deleted'], self._config.dashboard_config_loader.data)
 
-                if dispatch_clients:
+                    # TODO: delay with some sec (and add if new trigger)
+                    self._config.save()
 
-                    action['time'] = time()
-                    action_msg = json.dumps(action)
+                    dispatch_clients = list(filter(lambda c: c != ws, clients))
 
-                    logger.debug("Action dispatch to %s clients(s)", len(dispatch_clients))
+                    if dispatch_clients:
 
-                    for client in dispatch_clients:
-                        await client.send_str(action_msg)
+                        action['time'] = time()
+                        action_msg = json.dumps(action)
 
-        elif msg.type == WSMsgType.ERROR:
-            logger.error("ws connection closed with exception %s", ws.exception())
+                        logger.debug("Action dispatch to %s clients(s)", len(dispatch_clients))
 
-    logger.info("websocket connection closed")
+                        for client in dispatch_clients:
+                            await client.send_str(action_msg)
 
-    clients.remove(ws)
+            elif msg.type == WSMsgType.ERROR:
+                logger.error("ws connection closed with exception %s", ws.exception())
 
-    return ws
+        logger.info("websocket connection closed")
+
+        clients.remove(ws)
+
+        return ws

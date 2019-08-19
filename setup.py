@@ -17,9 +17,13 @@ setup(
         "lxml~=4.4",
         "pymemcache~=2.2",
         "cssselect~=1.1",
+        "cachetools~=3.1",
     ],
     include_package_data = True,
-    packages = [],
+    packages = find_packages(),
+    scripts = [
+        "bin/start-claude-server"
+    ],
     extras_require = {},
     classifiers = [],
 )

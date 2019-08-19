@@ -8,52 +8,47 @@ from aiohttp import web
 from jinja2 import Template
 
 from .api import Api
-from .config import Mode, dashboard_config_loader, default_dashboard_data, load
-from .config_sync_service import config_sync
+from .config_sync_service import ConfigSyncService
 from .javascript_libraries import javascript_libraries
-from .memcache import create_memcache_client
-
-config = load()
-
-memcache = create_memcache_client(config.cache.host, config.cache.port) if config.cache.port else None
+from .config import AppConfig, Mode, default_dashboard_data
 
 logger = logging.getLogger(__name__)
 
-if not config:
-    print('no config')
-    exit(1)
+class App:
 
-aio_app = web.Application()
+    def __init__(self, database_file: str, debug: bool):
 
-current_directory = os.path.dirname(__file__)
+        self.config = AppConfig()
+        self.config.init_logger(debug)
+        self.config.load(database_file)
+        self.debug = debug
 
-with open(os.path.join(current_directory, 'templates/index.html')) as f:
-    index_template = Template(f.read())
+        self.aio_app = web.Application()
 
-async def index(request):
+        current_directory = os.path.dirname(__file__)
 
-    debug = os.environ.get('CLAUDE_DEBUG_MODE')
+        with open(os.path.join(current_directory, 'templates/index.html')) as f:
+            self._index_template = Template(f.read())
 
-    mode = Mode.DEVELOPMENT if debug else Mode.PRODUCTION
 
-    version = str(time()) if debug else pkg_resources.get_distribution("claude").version
-    try:
-        # need to reload every time when the dashboard app started because the config sync service writes the dashboard file
-        dashboard_config_loader.load()
-    except FileNotFoundError:
-        # first run, there is no dashboard config
-        pass
+        self.api = Api(self.aio_app)
+        self.config_syncer = ConfigSyncService(self.config)
 
-    resp_text = index_template.render(version = version,
-                                      dev_mode = mode == Mode.DEVELOPMENT,
-                                      initial_data = dashboard_config_loader.data or default_dashboard_data,
-                                      javascript_libraries = javascript_libraries[mode],
-                                      )
+        self.aio_app.router.add_get('/', self.index)
+        self.aio_app.router.add_static('/static', os.path.join(current_directory, 'static'))
+        self.aio_app.router.add_route('GET', '/config-sync', self.config_syncer.controller)
 
-    return web.Response(body = resp_text, content_type = 'text/html')
+    async def index(self, request):
 
-Api(aio_app, config, memcache)
+        mode = Mode.DEVELOPMENT if self.debug else Mode.PRODUCTION
 
-aio_app.router.add_get('/', index)
-aio_app.router.add_static('/static', os.path.join(current_directory, 'static'))
-aio_app.router.add_route('GET', '/config-sync', config_sync)
+        version = str(time()) if self.debug else pkg_resources.get_distribution("claude").version
+
+        resp_text = self._index_template.render(
+            version = version,
+            dev_mode = mode == Mode.DEVELOPMENT,
+            initial_data = self.config.dashboard_config_loader.data or default_dashboard_data,
+            javascript_libraries = javascript_libraries[mode],
+        )
+
+        return web.Response(body = resp_text, content_type = 'text/html')

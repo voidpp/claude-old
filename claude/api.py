@@ -10,8 +10,8 @@ from io import StringIO
 from aiohttp import ClientSession, web
 from lxml import etree
 
-from .config import AppConfig
-from .memcache import MemcacheClient
+from .controller_base import ControllerBase
+from .controller_cache import ControllerCache
 from .tools import parse_temp, tree_search
 
 logger = logging.getLogger(__name__)
@@ -41,27 +41,6 @@ async def check_output(cmd):
         raise CalledProcessorError(proc.returncode, stdout, stderr)
     return stdout
 
-def api_cache_result(expiry_config_key = None, enabled = True):
-    def wrapper(func):
-        @wraps(func)
-        async def decor(self: 'Api', request: web.Request):
-            if self._memcache:
-                data = self._memcache.get(request.path)
-                if data and not request.query.get('force-refetch') and enabled:
-                    logger.debug("Get '%s' data from cache", request.path)
-                    return web.json_response(data)
-
-            data = await func(self, request)
-
-            if self._memcache:
-                expiry = getattr(self._config.cache.expiry, expiry_config_key or func.__name__)
-                if expiry:
-                    self._memcache.set(request.path, data, expiry)
-
-            return web.json_response(data)
-
-        return decor
-    return wrapper
 
 async def get_json(url):
     async with ClientSession() as session:
@@ -74,12 +53,11 @@ async def get_xml(url):
             text = await response.text()
             return etree.parse(StringIO(text), parser)
 
-class Api:
+cache = ControllerCache()
 
-    def __init__(self, app: web.Application, config: AppConfig, memcache: MemcacheClient):
-        self._config = config
-        self._memcache = memcache
+class Api(ControllerBase):
 
+    def __init__(self, app: web.Application):
         for name in dir(self):
             func = getattr(self, name)
             if not hasattr(func, '_route_data'):
@@ -121,7 +99,7 @@ class Api:
         })
 
     @route('/idokep/current/{city}')
-    @api_cache_result()
+    @cache.cached_json_controller(timedelta(minutes = 10))
     async def idokep_current(self, request: web.Request):
 
         city = request.match_info.get('city')
@@ -143,7 +121,7 @@ class Api:
 
 
     @route('/idokep/days/{city}')
-    @api_cache_result()
+    @cache.cached_json_controller(timedelta(hours = 3))
     async def idokep_days(self, request):
 
         base_url = 'https://www.idokep.hu'
@@ -197,7 +175,7 @@ class Api:
         return res
 
     @route('/idokep/hours/{city}')
-    @api_cache_result()
+    @cache.cached_json_controller(timedelta(minutes = 30))
     async def idokep_hours(self, request):
 
         base_url = 'https://www.idokep.hu'

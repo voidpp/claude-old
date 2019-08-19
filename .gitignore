@@ -67,7 +67,7 @@ claude/static/*.otf
 claude.db
 __generated__
 schema.graphql
-claude.yaml
+claude.json
 app.yaml
 logger.yaml
 dashboards.json
