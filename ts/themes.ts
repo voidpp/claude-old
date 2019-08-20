@@ -9,7 +9,7 @@ export type ClaudeTheme = {
     widget: CSSProperties,
 }
 
-export type ClaudeThemeType = 'blue';
+export type ClaudeThemeType = 'blue' | 'grey';
 
 export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
     blue: {
@@ -24,5 +24,18 @@ export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
             color: '#eee',
             backgroundColor: 'rgba(0,0,0,0.4)',
         }
-    }
+    },
+    grey: {
+        title: 'Grey',
+        controlBar: {
+            openerColor: 'white',
+        },
+        dashboard: {
+            backgroundColor: '#333',
+        },
+        widget: {
+            color: '#eee',
+            backgroundColor: 'rgba(0,0,0,0.3)',
+        }
+    },
 };

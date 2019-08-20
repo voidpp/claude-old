@@ -45,13 +45,7 @@ TODO
         * app config
 * desktop client with electron
 * android client with WebView
-* themes
-    * proper night mode
-    * dark mode
-        * the white widget bg not good
-    * dashboard wide widget bg css?
 * move dashboard id from localstorage to url
-* light theme
 * localization
     * labels
     * moment
