@@ -2,14 +2,7 @@
 misc notes
 ----------
 
-guides in github wiki?
-
-`memcached` package from memcache
-
 influx table query: `SELECT last(value), max(value), min(value) FROM "magrathea"."autogen"."temperature" where time > now()-1d GROUP BY "name"`
-
-generate sri: `openssl dgst -sha384 -binary material-ui.development.js | openssl base64 -A`
-
 
 TODO
 ----
@@ -25,6 +18,14 @@ TODO
         * holidays (https://calendarific.com/)
     * server status
         * ordering
+    * clock
+        * render bug on raspbian - chromium
+    * server status
+        * 0 ms ping != None ping !!!!
+* move more than on widget simultaneously
+    * select them somehow
+* autohide controlbar trigger icon
+* export / import widget settings
 * new widgets
     * chromecast
     * transmission
@@ -44,7 +45,11 @@ TODO
         * app config
 * desktop client with electron
 * android client with WebView
-* night mode
+* themes
+    * proper night mode
+    * dark mode
+        * the white widget bg not good
+    * dashboard wide widget bg css?
 * move dashboard id from localstorage to url
 * light theme
 * localization

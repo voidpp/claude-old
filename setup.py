@@ -18,6 +18,7 @@ setup(
         "pymemcache~=2.2",
         "cssselect~=1.1",
         "cachetools~=3.1",
+        "pychromecast~=3.2",
     ],
     include_package_data = True,
     packages = find_packages(),

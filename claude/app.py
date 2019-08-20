@@ -11,6 +11,7 @@ from .api import Api
 from .config_sync_service import ConfigSyncService
 from .javascript_libraries import javascript_libraries
 from .config import AppConfig, Mode, default_dashboard_data
+from .chromecast_proxy_service import chromecast_proxy_service
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ class App:
         self.aio_app.router.add_get('/', self.index)
         self.aio_app.router.add_static('/static', os.path.join(current_directory, 'static'))
         self.aio_app.router.add_route('GET', '/config-sync', self.config_syncer.controller)
+        self.aio_app.router.add_route('GET', '/chromecast-proxy/{friendly_name}', chromecast_proxy_service)
 
     async def index(self, request):
 

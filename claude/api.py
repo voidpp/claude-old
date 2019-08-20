@@ -6,6 +6,8 @@ import subprocess
 from datetime import date, timedelta
 from functools import wraps
 from io import StringIO
+import pychromecast
+
 
 from aiohttp import ClientSession, web
 from lxml import etree
@@ -222,3 +224,10 @@ class Api(ControllerBase):
             res.append(hour_data)
 
         return res
+
+    @route('/chromeasts')
+    @cache.cached_json_controller(timedelta(minutes = 5))
+    async def chromecast_list(self, request):
+        chromecasts = pychromecast.get_chromecasts()
+
+        return [cc.device.friendly_name for cc in chromecasts]
