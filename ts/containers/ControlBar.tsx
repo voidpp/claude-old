@@ -8,7 +8,7 @@ import DashboardSelector from "./DashboardSelector";
 import DashboardSettingsButton from './DashboardSettingsButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {addWidget} from "../actions";
-import { claudeThemes } from '../tools';
+import { claudeThemes } from '../themes';
 
 type StateProps = {
     currentDashboardHasWidget: boolean,
@@ -24,7 +24,7 @@ const styles = () => createStyles({
         height: 30,
         fontSize: 20,
         cursor: 'pointer',
-        color: (props: StateProps) => props.currentDashboard ? claudeThemes[props.currentDashboard.theme].color : 'grey',
+        color: (props: StateProps) => props.currentDashboard ? claudeThemes[props.currentDashboard.theme].controlBar.openerColor : 'grey',
     },
     title: {
         padding: 15,

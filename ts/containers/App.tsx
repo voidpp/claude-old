@@ -16,6 +16,13 @@ type StateProps = {
     widgetConfigs: WidgetConfigList,
 }
 
+const defaultDashboardConfig: DashboardConfig = {
+    id: 'id0',
+    name: 'default',
+    stepSize: 1,
+    theme: 'blue',
+}
+
 const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
 
     const {dashboardConfig, widgetConfigs} = props;
@@ -29,7 +36,7 @@ const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof
 function mapStateToProps(state: State): StateProps {
     const { currentDashboardId, dashboards, widgets } = state;
     return {
-        dashboardConfig: dashboards[currentDashboardId],
+        dashboardConfig: Object.assign({}, defaultDashboardConfig, dashboards[currentDashboardId]),
         widgetConfigs: Object.values(widgets).filter(w => w.dashboardId == currentDashboardId),
     }
 }

@@ -63,7 +63,7 @@ const styles = () => createStyles({
     },
     currentDay: {
         borderRadius: 5,
-        backgroundColor: WidgetStyle.getThemeProp('backgroundColor'),
+        backgroundColor: 'grey',
     }
 });
 

@@ -2,6 +2,7 @@ import * as React from "react";
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import { WidgetConfig, DashboardConfig, WidgetConfigList, UpdateWidgetConfigAction } from "../types";
 import widgetRegistry from '../widgetRegistry'
+import { claudeThemes } from "../themes";
 
 const styles = () => createStyles({
     body: {
@@ -25,8 +26,10 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
         });
     }
 
+    console.log(claudeThemes[props.config.theme].dashboard)
+
     return (
-        <div className={props.classes.body} style={{background: props.config.background || ''}} >
+        <div className={props.classes.body} style={{...claudeThemes[props.config.theme].dashboard}} >
             {props.widgets.map(factory)}
         </div>
     )

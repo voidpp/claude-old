@@ -22,8 +22,7 @@ const dashboardHandlers: HandlerMap<DashboardConfigMap> = {
                 id: action.id,
                 name: action.name,
                 stepSize: action.stepSize,
-                background: '',
-                theme: 'dark',
+                theme: 'blue',
             }
         });
     },

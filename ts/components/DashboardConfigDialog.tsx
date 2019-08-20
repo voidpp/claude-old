@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, F
 import * as React from "react";
 import { useState } from "react";
 import { DashboardConfig } from '../types';
-import {ClaudeThemeType} from "../tools";
+import { ClaudeThemeType, claudeThemes } from "../themes";
 
 export type Props = {
     show: boolean,
@@ -19,8 +19,7 @@ export default (props: Props) => {
     const [data, setData] = useState(props.data || {
         name: '',
         stepSize: 10,
-        background: '',
-        theme: 'dark',
+        theme: 'blue',
     } as DashboardConfig);
 
     const onSubmit = (ev: React.SyntheticEvent) => {
@@ -44,13 +43,10 @@ export default (props: Props) => {
                         value={data.name} onChange={ev => updateData({name: ev.target.value})} />
                     <TextField margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
                         value={data.stepSize} onChange={ev => updateData({stepSize: parseInt(ev.target.value)})} />
-                    <TextField margin="dense" id="background" label="Background css" type="text" fullWidth
-                        value={data.background} onChange={ev => updateData({background: ev.target.value})} />
                     <FormControl fullWidth>
                         <InputLabel>Theme</InputLabel>
                         <Select fullWidth value={data.theme} onChange={ev => updateData({theme: ev.target.value as ClaudeThemeType})} >
-                            <MenuItem value="dark">Dark</MenuItem>
-                            <MenuItem value="light">Light</MenuItem>
+                            {Object.keys(claudeThemes).map(k => <MenuItem key={k} value={k}>{claudeThemes[k].title}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </DialogContent>

@@ -4,13 +4,11 @@ import * as React from "react";
 import {DraggableEvent} from "react-draggable";
 import {DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback} from "react-rnd";
 import {DashboardConfig, UpdateWidgetConfigAction, WidgetConfig} from "../types";
-import {WidgetStyle} from "../tools";
+import { claudeThemes } from "../themes";
 
 
 const styles = () => createStyles({
     body: {
-        color: WidgetStyle.getThemeProp('color'),
-        backgroundColor: WidgetStyle.getThemeProp('backgroundColor'),
         borderRadius: 5,
         height: '100%',
         position: 'relative',
@@ -116,7 +114,7 @@ function WidgetFrame(props: OwnProps & StateProps & DispatchProps & WithStyles<t
         style={{userSelect: 'none'}}
         enableUserSelectHack={false}
     >
-        <div className={classes.body}>
+        <div className={classes.body} style={{...claudeThemes[dashboardConfig.theme].widget}}>
             { props.children }
         </div>
     </Rnd>
