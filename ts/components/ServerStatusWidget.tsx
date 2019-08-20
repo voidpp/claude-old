@@ -106,14 +106,13 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
         let color = 'unset';
 
         if (info) {
-            if (info.ping) {
-                icon = info.load ? 'check-circle' : 'exclamation-circle';
-                color = info.load ? '#37a702' : '#d46703';
-            } else {
+            if (info.ping == null) {
                 icon = 'times-circle';
                 color = '#d40303';
+            } else {
+                icon = info.load ? 'check-circle' : 'exclamation-circle';
+                color = info.load ? '#37a702' : '#d46703';
             }
-
         }
 
         return <FontAwesomeIcon icon={icon} style={{color: color}} />
