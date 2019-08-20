@@ -6,6 +6,9 @@ import WidgetFrame from "../containers/WidgetFrame";
 import WidgetMenu from "./WidgetMenu";
 import {WidgetStyle} from "../tools";
 
+// some weird rendering shit in Raspberry
+const isRasbperry: boolean = !!navigator.userAgent.match('Raspbian');
+
 const styles = () => createStyles({
     body: {
         height: '100%',
@@ -16,8 +19,9 @@ const styles = () => createStyles({
     },
     clock: {
         textAlign: 'center',
-        lineHeight: '90%',
+        lineHeight: isRasbperry ? '120%' : '90%',
         fontFamily: 'Digital7',
+        marginTop: isRasbperry ? '-0.3em' : 0,
         fontSize: WidgetStyle.getRelativeSize(0.8).height,
     },
     date: {
