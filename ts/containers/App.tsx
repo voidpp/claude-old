@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import Dashboard from "../components/Dashboard";
 import { DashboardConfig, State, WidgetConfigList } from "../types";
 import ControlBar from "./ControlBar";
+import {IntlProvider} from 'react-intl';
+
+import * as moment from 'moment';
+import { LocaleType, claudeLocales } from '../locales';
 
 const styles = () => createStyles({
     root: {
@@ -14,6 +18,7 @@ const styles = () => createStyles({
 type StateProps = {
     dashboardConfig: DashboardConfig,
     widgetConfigs: WidgetConfigList,
+    locale: LocaleType,
 }
 
 const defaultDashboardConfig: DashboardConfig = {
@@ -25,19 +30,24 @@ const defaultDashboardConfig: DashboardConfig = {
 
 const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
 
-    const {dashboardConfig, widgetConfigs} = props;
+    const {dashboardConfig, widgetConfigs, locale} = props;
+
+    moment.locale(locale);
 
     return <div className={props.classes.root}>
-        <ControlBar />
-        {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} /> : null}
+        <IntlProvider locale={locale} messages={claudeLocales[locale].flatMessages}>
+            <ControlBar />
+            {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} /> : null}
+        </IntlProvider>
     </div>
 }))
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, dashboards, widgets } = state;
+    const { currentDashboardId, dashboards, widgets, locale } = state;
     return {
         dashboardConfig: Object.assign({}, defaultDashboardConfig, dashboards[currentDashboardId]),
         widgetConfigs: Object.values(widgets).filter(w => w.dashboardId == currentDashboardId),
+        locale,
     }
 }
 

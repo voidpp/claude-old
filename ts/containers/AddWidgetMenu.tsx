@@ -3,6 +3,7 @@ import * as React from "react";
 import widgetRegistry from "../widgetRegistry";
 import { State } from "../types";
 import { connect } from "react-redux";
+import { FormattedMessage } from "react-intl";
 
 type OwnProps = {
     addWidget: (widgetType: string) => void,
@@ -27,9 +28,8 @@ function AddWidgetMenu(props: StateProps & OwnProps ) {
 
     return (
         <React.Fragment>
-            <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" size="small" color="primary"
-                    onClick={handleClick}>
-                add widget
+            <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" size="small" color="primary" onClick={handleClick}>
+                <FormattedMessage id="controlBar.addWidget" />
             </Button>
             <Menu
                 id="simple-menu"

@@ -6,6 +6,7 @@ import DashboardConfigDialog from '../components/DashboardConfigDialog';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { updateDashboard } from '../actions';
+import { FormattedMessage } from 'react-intl';
 
 type StateProps = {
     data: DashboardConfig,
@@ -33,7 +34,9 @@ const DashboardSettingsButton = (props: StateProps & DispatchProps) => {
     }
 
     return <React.Fragment>
-        <Button variant="contained" size="small" color="primary" onClick={onButtonClick}>settings</Button>
+        <Button variant="contained" size="small" color="primary" onClick={onButtonClick}>
+            <FormattedMessage id="controlBar.settings" />
+        </Button>
         <DashboardConfigDialog show={isShowDialog} title="Dashboard settings" onClose={closeDialog} submit={submit} data={props.data} />
     </React.Fragment>
 };

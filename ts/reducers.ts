@@ -1,10 +1,11 @@
 import * as objectAssignDeep from 'object-assign-deep';
 import { combineReducers } from 'redux';
-import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard, setIsDalogOpen } from './actions';
+import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard, setIsDalogOpen, setLocale } from './actions';
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
 
 import widgetRegistry from './widgetRegistry';
+import { LocaleType } from './locales';
 
 type ConfigAction = ReturnType<typeof addWidget> | ReturnType<typeof updateWidgetConfig>;
 
@@ -86,11 +87,18 @@ function isDialogOpen(state = false, action: ReturnType<typeof setIsDalogOpen>):
     return state;
 }
 
+function locale(state: LocaleType = claudeLocalStorage.locale, action: ReturnType<typeof setLocale>): LocaleType {
+    if (action.type == Action.SET_LOCALE)
+        return action.locale;
+    return state;
+}
+
 const rootReducer = combineReducers<State>({
     currentDashboardId,
     dashboards,
     widgets,
     isDialogOpen,
+    locale,
 });
 
 export default rootReducer;

@@ -76,8 +76,6 @@ function CustomizedLabel(props) {
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
 
-    moment.locale('en-gb');
-
     const { config, classes, dashboardConfig } = props;
     const { rowsToShow } = config.settings;
 

@@ -59,7 +59,7 @@ const styles = () => createStyles({
         },
     },
     notCurrentMonthDay: {
-        opacity: 0.2,
+        opacity: 0.3,
     },
     currentDay: {
         borderRadius: 5,
@@ -77,11 +77,9 @@ function roundTo(val: number, to: number): number {
 
 export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => {
 
-    moment.locale('en-gb');
-
     let daysGridContainerElement: HTMLElement = null;
 
-    const today = () => moment(new Date().getTime()).startOf('day');
+    const today = () => moment(new Date().getTime()).startOf('day').subtract(0, 'month');
 
     const { config, classes, dashboardConfig } = props;
     const [currentDate, setCurrentDate] = useState(today());
@@ -96,26 +94,26 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
 
     const calcDayPadding = () => {
         const {width, height} = config;
-        return roundTo((height - width) / (width * 0.04), 7)
+        return roundTo((height - width) / (width * 0.03), 7)
     }
 
     const dayPadding = config.settings.months == 'rolling' ? calcDayPadding() : 0;
 
     const firstDayOfWeekForMonth = parseInt(currentDate.clone().startOf('month').format('E'))
 
-    let cyc = currentDate.clone().startOf('month').subtract(firstDayOfWeekForMonth-1, 'd').subtract(dayPadding, 'd');
+    let cyc = currentDate.clone().startOf('month').subtract(firstDayOfWeekForMonth - 1 + dayPadding, 'd');
 
     let days = [];
 
-    let end = currentDate.clone().add(1, 'month').startOf('month')
-    end.add(end.isoWeekday() + dayPadding, 'd')
+    let end = currentDate.clone().add(1, 'month').startOf('month').subtract(1, 'd')
+    end.add(7 - end.isoWeekday() + dayPadding, 'd')
 
     while(1) {
-        if (cyc.isAfter(end))
-            break;
-
         days.push(cyc.clone());
         cyc.add(1, 'd');
+
+        if (cyc.isAfter(end))
+            break;
     }
 
     const currentMonth = currentDate.format('M');

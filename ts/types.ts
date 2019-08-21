@@ -2,6 +2,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
 import { Dispatch } from "react";
 import { ClaudeThemeType } from "./themes";
+import { LocaleType } from './locales';
 
 export class BaseWidgetSettings {}
 
@@ -29,13 +30,13 @@ export type WidgetConfigMap = { [s: string]: WidgetConfig };
 
 export class LocalStorageSchema {
     currentDashboardId: string = ''; // move to url?
+    locale: LocaleType = 'en';
 }
 
 export interface DashboardConfig {
     id: string,
     name: string,
     stepSize: number,
-    // locale: 'hu' | 'en'
     theme: ClaudeThemeType,
 }
 
@@ -46,6 +47,7 @@ export interface State {
     dashboards: DashboardConfigMap,
     widgets: WidgetConfigMap,
     isDialogOpen: boolean,
+    locale: LocaleType,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

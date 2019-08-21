@@ -6,7 +6,6 @@ import * as ReactDOM from "react-dom";
 import { Provider } from 'react-redux';
 import App from "./containers/App";
 import configureStore from "./store";
-import {IntlProvider} from 'react-intl';
 
 library.add(fas);
 
@@ -20,18 +19,12 @@ const darkTheme = createMuiTheme({
     },
 });
 
-const intlMessages = {
-
-}
-
 ReactDOM.render(
     <React.Fragment>
         <CssBaseline />
         <Provider store={store}>
             <MuiThemeProvider theme={darkTheme}>
-                <IntlProvider locale="en-gb" messages={intlMessages}>
-                    <App/>
-                </IntlProvider>
+                <App/>
             </MuiThemeProvider>
         </Provider>
     </React.Fragment>,

@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { addDashboard, selectDashboard } from '../actions';
 import DashboardConfigDialog from "../components/DashboardConfigDialog";
 import { DashboardConfig, DashboardConfigMap, State } from "../types";
+import { FormattedMessage } from "react-intl";
 // import { dialogTransition } from "./tools";
 
 export type DispatchProps = {
@@ -48,8 +49,6 @@ function DashboardSelector(props: StateProps & DispatchProps) {
         closeMenu()
     }
 
-    // const submit = (ev: React.SyntheticEvent) => {
-        // ev.preventDefault();
     const submit = (data: DashboardConfig) => {
         props.addDashboard(data.name, data.stepSize);
         closeDialog();
@@ -61,7 +60,7 @@ function DashboardSelector(props: StateProps & DispatchProps) {
         <React.Fragment>
             <Button aria-controls="DashboardSelector" aria-haspopup="true" variant="contained" size="small" color="primary"
                 onClick={openMenu}>
-                dashboards
+                <FormattedMessage id="controlBar.dashboards" />
             </Button>
             <Menu
                 id="DashboardSelector"
@@ -70,7 +69,7 @@ function DashboardSelector(props: StateProps & DispatchProps) {
                 open={Boolean(anchorEl)}
                 onClose={closeMenu}
             >
-                <MenuItem key={0} onClick={openDialog}>Create new dashboard</MenuItem>
+                <MenuItem key={0} onClick={openDialog}><FormattedMessage id="controlBar.newDashboard" /></MenuItem>
                 {dashboards.length ? <Divider /> : null}
                 {dashboards.map(d =>
                     <MenuItem key={d.id} onClick={chooseMenu.bind(this, d.id)}>

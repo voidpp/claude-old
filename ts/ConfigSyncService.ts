@@ -7,6 +7,7 @@ import { Action } from './actions';
 const nonSyncableActions = [
     Action.SELECT_DASHBOARD,
     Action.IS_DALOG_OPEN,
+    Action.SET_LOCALE,
 ]
 
 class ConfigSyncService {
