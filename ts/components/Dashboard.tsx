@@ -26,8 +26,6 @@ export default withStyles(styles)(React.memo((props: Props & WithStyles<typeof s
         });
     }
 
-    console.log(claudeThemes[props.config.theme].dashboard)
-
     return (
         <div className={props.classes.body} style={{...claudeThemes[props.config.theme].dashboard}} >
             {props.widgets.map(factory)}
