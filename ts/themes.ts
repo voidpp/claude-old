@@ -7,6 +7,9 @@ export type ClaudeTheme = {
     },
     dashboard: CSSProperties,
     widget: CSSProperties,
+    calendar: {
+        today: CSSProperties,
+    },
 }
 
 export type ClaudeThemeType = 'blue' | 'grey';
@@ -23,7 +26,13 @@ export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
         widget: {
             color: '#eee',
             backgroundColor: 'rgba(0,0,0,0.4)',
-        }
+        },
+        calendar: {
+            today: {
+                borderRadius: 100,
+                border: '3px solid #eee',
+            },
+        },
     },
     grey: {
         title: 'Grey',
@@ -36,6 +45,11 @@ export const claudeThemes: {[key in ClaudeThemeType]: ClaudeTheme} = {
         widget: {
             color: '#eee',
             backgroundColor: 'rgba(0,0,0,0.3)',
-        }
+        },
+        calendar: {
+            today: {
+                backgroundColor: 'rgba(255,255,255,0.2)',
+            },
+        },
     },
 };

@@ -11,6 +11,7 @@ import {Moment} from "moment";
 import * as classNames from 'classnames';
 import {WidgetStyle} from "../tools";
 import { FormSelectFieldDescriptor } from './WidgetSettingsDialog';
+import { claudeThemes } from '../themes';
 
 type Props = CommonWidgetProps<Settings>;
 
@@ -65,8 +66,6 @@ const styles = () => createStyles({
         opacity: 0.3,
     },
     currentDay: {
-        borderRadius: 5,
-        backgroundColor: 'grey',
     }
 });
 
@@ -130,8 +129,11 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
             [classes.notCurrentMonthDay]: currentMonth != month,
             [classes.currentDay]: day.isSame(today()),
         });
+        let style = {};
+        if (day.isSame(today()))
+            style = claudeThemes[dashboardConfig.theme].calendar.today;
         return (
-            <div className={className} key={`${month}.${dayNumber}`}>{dayNumber}</div>
+            <div style={style} className={className} key={`${month}.${dayNumber}`}>{dayNumber}</div>
         )
     };
 
