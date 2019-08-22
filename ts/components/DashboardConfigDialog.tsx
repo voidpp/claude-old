@@ -3,6 +3,7 @@ import * as React from "react";
 import { useState } from "react";
 import { DashboardConfig } from '../types';
 import { ClaudeThemeType, claudeThemes } from "../themes";
+import { LocaleType, claudeLocales } from '../locales';
 
 export type Props = {
     show: boolean,
@@ -43,10 +44,16 @@ export default (props: Props) => {
                         value={data.name} onChange={ev => updateData({name: ev.target.value})} />
                     <TextField margin="dense" id="stepSize" label="Step size" type="number" required fullWidth
                         value={data.stepSize} onChange={ev => updateData({stepSize: parseInt(ev.target.value)})} />
-                    <FormControl fullWidth>
+                    <FormControl fullWidth style={{marginTop: '1em'}}>
                         <InputLabel>Theme</InputLabel>
                         <Select fullWidth value={data.theme} onChange={ev => updateData({theme: ev.target.value as ClaudeThemeType})} >
                             {Object.keys(claudeThemes).map(k => <MenuItem key={k} value={k}>{claudeThemes[k].title}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth style={{marginTop: '1em'}}>
+                        <InputLabel>Locale</InputLabel>
+                        <Select fullWidth value={data.locale} onChange={ev => updateData({locale: ev.target.value as LocaleType})} >
+                            {Object.keys(claudeLocales).map(k => <MenuItem key={k} value={k}>{claudeLocales[k].title}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </DialogContent>

@@ -30,7 +30,6 @@ export type WidgetConfigMap = { [s: string]: WidgetConfig };
 
 export class LocalStorageSchema {
     currentDashboardId: string = ''; // move to url?
-    locale: LocaleType = 'en';
 }
 
 export interface DashboardConfig {
@@ -38,6 +37,7 @@ export interface DashboardConfig {
     name: string,
     stepSize: number,
     theme: ClaudeThemeType,
+    locale: LocaleType,
 }
 
 export type DashboardConfigMap = { [s: string]: DashboardConfig };
@@ -47,7 +47,6 @@ export interface State {
     dashboards: DashboardConfigMap,
     widgets: WidgetConfigMap,
     isDialogOpen: boolean,
-    locale: LocaleType,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

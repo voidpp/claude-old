@@ -11,7 +11,6 @@ export enum Action {
     UPDATE_WIDGET_CONFIG = 'UPDATE_WIDGET_CONFIG',
     SELECT_DASHBOARD = 'SELECT_DASHBOARD',
     IS_DALOG_OPEN = 'IS_DALOG_OPEN',
-    SET_LOCALE = 'SET_LOCALE',
 }
 
 export const addDashboard = (name: string, stepSize: number) => ({
@@ -56,13 +55,5 @@ export const setIsDalogOpen = (isOpen: boolean) => {
     return {
         type: Action.IS_DALOG_OPEN,
         isOpen,
-    }
-}
-
-export const setLocale = (locale: LocaleType) => {
-    claudeLocalStorage.locale = locale;
-    return {
-        type: Action.SET_LOCALE,
-        locale,
     }
 }

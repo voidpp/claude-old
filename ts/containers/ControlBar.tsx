@@ -9,7 +9,6 @@ import DashboardSettingsButton from './DashboardSettingsButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {addWidget} from "../actions";
 import { claudeThemes } from '../themes';
-import LocaleSelector from './LocaleSelector';
 
 type StateProps = {
     currentDashboardHasWidget: boolean,
@@ -80,8 +79,6 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
                 <span className={classes.title}>Zsomapell Klod!</span>
 
                 <DashboardSelector />
-                <Spacer />
-                <LocaleSelector />
 
                 {currentDashboard ?
                     <React.Fragment>
@@ -98,7 +95,7 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 });
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, widgets, dashboards, locale } = state;
+    const { currentDashboardId, widgets, dashboards } = state;
     return {
         currentDashboard: dashboards[currentDashboardId],
         currentDashboardHasWidget: Object.values(widgets).find(w => w.dashboardId == currentDashboardId) != undefined,

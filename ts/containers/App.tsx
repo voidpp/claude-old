@@ -18,24 +18,24 @@ const styles = () => createStyles({
 type StateProps = {
     dashboardConfig: DashboardConfig,
     widgetConfigs: WidgetConfigList,
-    locale: LocaleType,
 }
 
 const defaultDashboardConfig: DashboardConfig = {
     id: 'id0',
     name: 'default',
-    stepSize: 1,
+    stepSize: 10,
     theme: 'blue',
+    locale: 'en',
 }
 
 const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof styles>) => {
 
-    const {dashboardConfig, widgetConfigs, locale} = props;
+    const {dashboardConfig, widgetConfigs} = props;
 
-    moment.locale(locale);
+    moment.locale(dashboardConfig.locale);
 
     return <div className={props.classes.root}>
-        <IntlProvider locale={locale} messages={claudeLocales[locale].flatMessages}>
+        <IntlProvider locale={dashboardConfig.locale} messages={claudeLocales[dashboardConfig.locale].flatMessages}>
             <ControlBar />
             {dashboardConfig ? <Dashboard config={dashboardConfig} widgets={widgetConfigs} /> : null}
         </IntlProvider>
@@ -43,11 +43,10 @@ const App = withStyles(styles)(React.memo((props: StateProps & WithStyles<typeof
 }))
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, dashboards, widgets, locale } = state;
+    const { currentDashboardId, dashboards, widgets } = state;
     return {
         dashboardConfig: Object.assign({}, defaultDashboardConfig, dashboards[currentDashboardId]),
         widgetConfigs: Object.values(widgets).filter(w => w.dashboardId == currentDashboardId),
-        locale,
     }
 }
 
