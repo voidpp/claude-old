@@ -31,6 +31,9 @@ const styles = () => createStyles({
     currentDateRow: {
         textAlign: 'center',
         paddingBottom: '0.5em',
+        '&::first-letter': {
+            textTransform: 'uppercase',
+        },
     },
     weekRow: {
         display: 'grid',
@@ -79,16 +82,18 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
 
     let daysGridContainerElement: HTMLElement = null;
 
-    const today = () => moment(new Date().getTime()).startOf('day').subtract(0, 'month');
+    const today = () => moment(new Date().getTime()).startOf('day').format('YYYYMMDD');
 
     const { config, classes, dashboardConfig } = props;
     const [currentDate, setCurrentDate] = useState(today());
 
     useInterval(() => {
         const newVal = today();
-        if (!currentDate.isSame(newVal))
+        if (currentDate != newVal)
             setCurrentDate(newVal);
     }, 1000);
+
+    const currentMomentDate = moment(currentDate);
 
     React.useEffect(() => alignDaysGrid());
 
@@ -99,13 +104,13 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
 
     const dayPadding = config.settings.months == 'rolling' ? calcDayPadding() : 0;
 
-    const firstDayOfWeekForMonth = parseInt(currentDate.clone().startOf('month').format('E'))
+    const firstDayOfWeekForMonth = parseInt(currentMomentDate.clone().startOf('month').format('E'))
 
-    let cyc = currentDate.clone().startOf('month').subtract(firstDayOfWeekForMonth - 1 + dayPadding, 'd');
+    let cyc = currentMomentDate.clone().startOf('month').subtract(firstDayOfWeekForMonth - 1 + dayPadding, 'd');
 
     let days = [];
 
-    let end = currentDate.clone().add(1, 'month').startOf('month').subtract(1, 'd')
+    let end = currentMomentDate.clone().add(1, 'month').startOf('month').subtract(1, 'd')
     end.add(7 - end.isoWeekday() + dayPadding, 'd')
 
     while(1) {
@@ -116,7 +121,7 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
             break;
     }
 
-    const currentMonth = currentDate.format('M');
+    const currentMonth = currentMomentDate.format('M');
 
     const renderDay = (day: Moment) => {
         const month = day.format('M');
@@ -141,7 +146,7 @@ export default withStyles(styles)((props: Props & WithStyles<typeof styles>) => 
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >
             <div className={classes.body}>
-                <div className={classes.currentDateRow}>{currentDate.format('MMMM')}</div>
+                <div className={classes.currentDateRow}>{currentMomentDate.format('MMMM')}</div>
                 <div className={classes.weekRow}>
                     {moment.weekdaysShort(true).map(name => <div key={name}>{name}</div>)}
                 </div>
