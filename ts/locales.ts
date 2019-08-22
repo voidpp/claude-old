@@ -44,19 +44,26 @@ export const claudeLocales: {[key in LocaleType]: LocaleData} = {
             controlBar: {
                 dashboards: 'dashboards',
                 newDashboard: 'Create new dashboard',
-                language: 'language',
+                language: 'locale',
                 settings: 'settings',
                 addWidget: 'add widget',
-            }
+            },
         },
     ),
     hu: new LocaleData('Hungarian', 'hu', {
+            // controlBar: {
+            //     dashboards: 'műszerfalak',
+            //     newDashboard: 'Új műszerfal',
+            //     language: 'nyelv',
+            //     settings: 'beállítások',
+            //     addWidget: 'műszer hozzáadása',
+            // },
             controlBar: {
-                dashboards: 'műszerfalak',
-                newDashboard: 'Új műszerfal',
-                language: 'nyelv',
-                settings: 'beállítások',
-                addWidget: 'műszer hozzáadása',
+                dashboards: 'dashboards',
+                newDashboard: 'Create new dashboard',
+                language: 'locale',
+                settings: 'settings',
+                addWidget: 'add widget',
             },
         },
     ),
