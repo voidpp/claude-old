@@ -18,11 +18,8 @@ TODO
         * holidays (https://calendarific.com/)
     * server status
         * ordering
-    * clock
-        * render bug on raspbian - chromium
 * move more than on widget simultaneously
     * select them somehow
-* autohide controlbar trigger icon
 * export / import widget settings
 * new widgets
     * chromecast
@@ -33,7 +30,8 @@ TODO
 * proper install guide
 * proper dev guide
 * widget plugin system
-    * guide for it
+    * write usage guide
+    * how is the backend part?
     * plugins:
         * tvs ep tracker
         * room temperature
@@ -44,7 +42,4 @@ TODO
 * desktop client with electron
 * android client with WebView
 * move dashboard id from localstorage to url
-* localization
-    * labels
-    * moment
-    * dashboard settings?
+    * why?

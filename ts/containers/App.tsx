@@ -21,10 +21,10 @@ type StateProps = {
 }
 
 const defaultDashboardConfig: DashboardConfig = {
-    id: 'id0',
+    id: '',
     name: 'default',
     stepSize: 10,
-    theme: 'blue',
+    theme: 'grey',
     locale: 'en',
 }
 
