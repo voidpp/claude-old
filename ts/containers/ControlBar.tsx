@@ -13,6 +13,7 @@ import { claudeThemes } from '../themes';
 type StateProps = {
     currentDashboardHasWidget: boolean,
     currentDashboard: DashboardConfig,
+    isIdle: boolean,
 }
 
 const styles = () => createStyles({
@@ -25,6 +26,8 @@ const styles = () => createStyles({
         fontSize: 20,
         cursor: 'pointer',
         color: (props: StateProps) => props.currentDashboard ? claudeThemes[props.currentDashboard.theme].controlBar.openerColor : 'grey',
+        opacity: (p: StateProps) => p.isIdle ? 0 : 1,
+        transition: 'opacity 1s',
     },
     title: {
         padding: 15,
@@ -53,7 +56,7 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
     const [opened, setOpened] = useState(false);
     const store = useStore();
 
-    const {classes, currentDashboard, currentDashboardHasWidget} = props;
+    const {classes, currentDashboard, currentDashboardHasWidget, isIdle} = props;
 
     function Spacer() {
         return <div className={classes.spacer} />
@@ -63,7 +66,7 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
         return <div className={classes.separator} />
     }
 
-    const openDrawer = opened || currentDashboard == undefined || !currentDashboardHasWidget;
+    const openDrawer = !isIdle && (opened || currentDashboard == undefined || !currentDashboardHasWidget);
 
     const onAddWidget = (type: string) => {
         store.dispatch(addWidget(currentDashboard.id, type))
@@ -95,8 +98,9 @@ const ControlBar = withStyles(styles)((props: StateProps &  WithStyles<typeof st
 });
 
 function mapStateToProps(state: State): StateProps {
-    const { currentDashboardId, widgets, dashboards } = state;
+    const { currentDashboardId, widgets, dashboards, isIdle } = state;
     return {
+        isIdle,
         currentDashboard: dashboards[currentDashboardId],
         currentDashboardHasWidget: Object.values(widgets).find(w => w.dashboardId == currentDashboardId) != undefined,
     }

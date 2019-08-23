@@ -11,6 +11,7 @@ export enum Action {
     UPDATE_WIDGET_CONFIG = 'UPDATE_WIDGET_CONFIG',
     SELECT_DASHBOARD = 'SELECT_DASHBOARD',
     IS_DALOG_OPEN = 'IS_DALOG_OPEN',
+    SET_IDLE = 'SET_IDLE',
 }
 
 export const addDashboard = (name: string, stepSize: number) => ({
@@ -57,3 +58,8 @@ export const setIsDalogOpen = (isOpen: boolean) => {
         isOpen,
     }
 }
+
+export const setIdle = (isIdle: boolean) => ({
+    type: Action.SET_IDLE,
+    isIdle,
+})

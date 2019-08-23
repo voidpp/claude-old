@@ -4,9 +4,12 @@ import { AnyAction, Dispatch } from 'redux';
 import { detailedDiff } from 'deep-object-diff';
 import { Action } from './actions';
 
-const nonSyncableActions = [
-    Action.SELECT_DASHBOARD,
-    Action.IS_DALOG_OPEN,
+const syncableActions = [
+    Action.ADD_WIDGET,
+    Action.ADD_DASHBOARD,
+    Action.UPDATE_DASHBOARD,
+    Action.REMOVE_WIDGET,
+    Action.UPDATE_WIDGET_CONFIG,
 ]
 
 class ConfigSyncService {
@@ -31,7 +34,7 @@ class ConfigSyncService {
             let result = next(action);
             const newState = store.getState();
 
-            if (nonSyncableActions.indexOf(action.type) == -1 && !action.time) {
+            if (syncableActions.indexOf(action.type) != -1 && !action.time) {
                 this.ws.send(JSON.stringify({
                     action,
                     diff: detailedDiff(oldState, newState),

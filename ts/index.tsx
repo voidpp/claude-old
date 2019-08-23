@@ -6,6 +6,7 @@ import * as ReactDOM from "react-dom";
 import { Provider } from 'react-redux';
 import App from "./containers/App";
 import configureStore from "./store";
+import { setIdle } from './actions';
 
 library.add(fas);
 
@@ -30,3 +31,18 @@ ReactDOM.render(
     </React.Fragment>,
     document.getElementById("body")
 );
+
+var idleIntervalId = 0;
+
+function resetIdleTimer() {
+    clearInterval(idleIntervalId);
+
+    if (store.getState().isIdle)
+        store.dispatch(setIdle(false));
+
+    idleIntervalId = window.setTimeout(() => {
+        store.dispatch(setIdle(true));
+    }, 60000);
+}
+
+window.onmousemove = resetIdleTimer;

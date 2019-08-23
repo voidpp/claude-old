@@ -1,6 +1,6 @@
 import * as objectAssignDeep from 'object-assign-deep';
 import { combineReducers } from 'redux';
-import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard, setIsDalogOpen } from './actions';
+import { Action, addDashboard, addWidget, removeWidget, selectDashboard, updateWidgetConfig, updateDashboard, setIsDalogOpen, setIdle } from './actions';
 import { claudeLocalStorage } from './tools';
 import { DashboardConfigMap, State, WidgetConfigMap } from './types';
 
@@ -87,11 +87,18 @@ function isDialogOpen(state = false, action: ReturnType<typeof setIsDalogOpen>):
     return state;
 }
 
+function isIdle(state = false, action: ReturnType<typeof setIdle>): boolean {
+    if (action.type == Action.SET_IDLE)
+        return action.isIdle;
+    return state;
+}
+
 const rootReducer = combineReducers<State>({
     currentDashboardId,
     dashboards,
     widgets,
     isDialogOpen,
+    isIdle,
 });
 
 export default rootReducer;

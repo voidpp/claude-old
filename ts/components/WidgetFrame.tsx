@@ -5,6 +5,7 @@ import {DraggableEvent} from "react-draggable";
 import {DraggableData, Position, ResizableDelta, Rnd, RndResizeCallback} from "react-rnd";
 import {DashboardConfig, UpdateWidgetConfigAction, WidgetConfig} from "../types";
 import { claudeThemes } from "../themes";
+import * as classNames from 'classnames';
 
 
 const styles = () => createStyles({
@@ -15,8 +16,13 @@ const styles = () => createStyles({
         overflow: 'hidden',
         '&:hover .widget-menu': {
             opacity: 1,
-        }
+        },
     },
+    hiddenMenuIcon: {
+        '& .widget-menu': {
+            opacity: 0,
+        },
+    }
 });
 
 export interface OwnProps {
@@ -29,6 +35,7 @@ export interface OwnProps {
 
 export type StateProps = {
     isDialogOpen: boolean,
+    isIdle: boolean,
 }
 
 export type DispatchProps = {
@@ -44,7 +51,7 @@ function isEquals(o1: Object, o2: Object): boolean {
 }
 
 function WidgetFrame(props: OwnProps & StateProps & DispatchProps & WithStyles<typeof styles>) {
-    const {config, dashboardConfig, updateWidgetConfig, classes, isDialogOpen} = props;
+    const {config, dashboardConfig, updateWidgetConfig, classes, isDialogOpen, isIdle} = props;
     const [position, setPosition] = React.useState({
         x: config.x,
         y: config.y,
@@ -114,7 +121,10 @@ function WidgetFrame(props: OwnProps & StateProps & DispatchProps & WithStyles<t
         style={{userSelect: 'none'}}
         enableUserSelectHack={false}
     >
-        <div className={classes.body} style={{...claudeThemes[dashboardConfig.theme].widget}}>
+        <div
+            className={classNames(classes.body, {[classes.hiddenMenuIcon]: isIdle})}
+            style={{...claudeThemes[dashboardConfig.theme].widget}}
+        >
             { props.children }
         </div>
     </Rnd>

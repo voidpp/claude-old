@@ -20,8 +20,6 @@ TODO
         * ordering
     * clock
         * render bug on raspbian - chromium
-    * server status
-        * 0 ms ping != None ping !!!!
 * move more than on widget simultaneously
     * select them somehow
 * autohide controlbar trigger icon

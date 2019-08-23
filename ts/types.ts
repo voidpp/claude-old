@@ -47,6 +47,7 @@ export interface State {
     dashboards: DashboardConfigMap,
     widgets: WidgetConfigMap,
     isDialogOpen: boolean,
+    isIdle: boolean,
 }
 
 export type ThunkDispatcher = ThunkDispatch<{}, undefined, Action>;

@@ -8,10 +8,11 @@ import {updateWidgetConfig} from '../actions';
 import WidgetFrame, {StateProps, DispatchProps, OwnProps} from '../components/WidgetFrame';
 
 function mapStateToProps(state: State): StateProps {
-    const {isDialogOpen} = state;
+    const {isDialogOpen, isIdle} = state;
 
     return {
         isDialogOpen,
+        isIdle,
     }
 }
 
