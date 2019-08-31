@@ -113,3 +113,61 @@ export type IdokepHourData = {
 }
 
 export type IdokepHoursResponse = Array<IdokepHourData>;
+
+export namespace Chromecast {
+    export namespace MediaMetaData {
+        export interface YouTube {
+            metadataType: number,
+            title: string,
+            subtitle: string,
+            images: Array<{
+                url: string,
+            }>
+        }
+        export interface Spotify {
+            albumName: string,
+            artist: string,
+            images: Array<{
+                url: string,
+                height: number,
+                width: number,
+            }>
+            metadataType: number,
+            songName: string,
+            title: string,
+        }
+    }
+    export interface Cast {
+        appId: string,
+        displayName: string,
+        isActiveInput: boolean,
+        isStandBy: boolean,
+        namespaces: Array<string>,
+        sessionId: string,
+        statusText: string,
+        transportId: string,
+        volumeLevel: number,
+        volumeMuted: boolean,
+    }
+    export type PlayerState = "PLAYING" | "BUFFERING" | "PAUSED" | "IDLE" | "UNKNOWN";
+    export interface Media {
+        contentId: string,
+        contentType: string,
+        currentSubtitleTracks: [], // TODO
+        currentTime: number,
+        duration: any,
+        idleReason: any,
+        lastUpdated: string,
+        mediaCustomData: any,
+        mediaMetadata: MediaMetaData.Spotify | MediaMetaData.YouTube,
+        mediaSessionId: number,
+        playbackRate: number,
+        playerState: PlayerState,
+        streamType: "BUFFERED" | "LIVE" | "UNKNOWN",
+        subtitleTracks: {}, // TODO
+        supportedMediaCommands: number, // bitflag: https://github.com/balloob/pychromecast/blob/6c71a3f3b9ae93465adf4be1a36f8260f273cc03/pychromecast/controllers/media.py#L44
+        volumeLevel: number,
+        volumeMuted: boolean,
+    }
+
+}

@@ -16,19 +16,20 @@ def default(o):
 class ChromecastListener:
     def __init__(self, ws: WebSocketResponse):
         self.ws = ws
-        self.ws.send_json
+        self._status = {'cast': None, 'media': None}
 
-    def send_json(self, data):
+    def send_json(self):
         loop = asyncio.new_event_loop()
-        task = loop.create_task(self.ws.send_str(json.dumps(data, default = default)))
+        task = loop.create_task(self.ws.send_str(json.dumps(self._status, default = default)))
         loop.run_until_complete(task)
 
     def new_cast_status(self, status):
-        self.send_json({'type': 'cast', 'data': status._asdict()})
+        self._status['cast'] = status._asdict()
+        self.send_json()
 
     def new_media_status(self, status):
-        self.send_json({'type': 'media', 'data': status.__dict__})
-
+        self._status['media'] = status.__dict__
+        self.send_json()
 
 async def chromecast_proxy_service(request: Request):
 

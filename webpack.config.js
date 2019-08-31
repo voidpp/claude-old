@@ -48,6 +48,7 @@ module.exports = {
         "react-dom": "ReactDOM",
         "@material-ui/core": "MaterialUI",
         "@fortawesome/free-solid-svg-icons": "free-solid-svg-icons",
+        "@fortawesome/free-brands-svg-icons": "free-brands-svg-icons",
         "@fortawesome/fontawesome-svg-core": "fontawesome-svg-core",
         "moment": "moment",
         "react-draggable": "ReactDraggable",

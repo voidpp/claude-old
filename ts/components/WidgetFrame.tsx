@@ -14,6 +14,7 @@ const styles = () => createStyles({
         height: '100%',
         position: 'relative',
         overflow: 'hidden',
+        backdropFilter: 'blur(3px)',
         '&:hover .widget-menu': {
             opacity: 1,
         },
@@ -31,6 +32,8 @@ export interface OwnProps {
     removeButton?: boolean,
     onResize?: RndResizeCallback,
     dashboardConfig: DashboardConfig,
+    style?: React.CSSProperties,
+    className?: string,
 }
 
 export type StateProps = {
@@ -122,8 +125,8 @@ function WidgetFrame(props: OwnProps & StateProps & DispatchProps & WithStyles<t
         enableUserSelectHack={false}
     >
         <div
-            className={classNames(classes.body, {[classes.hiddenMenuIcon]: isIdle})}
-            style={{...claudeThemes[dashboardConfig.theme].widget}}
+            className={classNames(classes.body, props.className, {[classes.hiddenMenuIcon]: isIdle})}
+            style={{...claudeThemes[dashboardConfig.theme].widget, ...props.style}}
         >
             { props.children }
         </div>

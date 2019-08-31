@@ -27,9 +27,22 @@ export namespace WidgetStyle {
             height: (props: CommonWidgetProps<{}>) => props.config.height * ratio,
         }
     }
-
-    // export function getThemeProp<T = {}>(propName: keyof ClaudeTheme) {
-    //     return (props: CommonWidgetProps<T>) => claudeThemes[props.dashboardConfig.theme][propName];
-    // }
 }
 
+export function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const isObject = function(a: any) {
+    return (!!a) && (a.constructor === Object);
+};
+
+export function convertKeysToCamelCase<T>(data: T): T {
+    let res = {} as T
+    for (const key in data) {
+        let newKey = key.split('_').map(s => capitalizeFirstLetter(s)).join('');
+        let value = data[key];
+        res[newKey.charAt(0).toLowerCase() + newKey.slice(1)] = isObject(value) ? convertKeysToCamelCase(value) : value;
+    }
+    return res
+}

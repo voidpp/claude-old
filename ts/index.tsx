@@ -1,5 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 import { colors, createMuiTheme, CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -8,7 +9,7 @@ import App from "./containers/App";
 import configureStore from "./store";
 import { setIdle } from './actions';
 
-library.add(fas);
+library.add(fas, fab);
 
 const store = configureStore();
 

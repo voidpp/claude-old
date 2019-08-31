@@ -8,6 +8,8 @@ TODO
 ----
 
 * tasks on existsing widgets
+    * clock
+        * if date is hidden: make the clock great again
     * idokep days
         * show city
     * idokep hours

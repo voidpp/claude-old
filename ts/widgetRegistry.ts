@@ -9,6 +9,7 @@ import InfluxTable, { Settings as InfluxTableSettings } from './components/Influ
 import IdokepCurrent, { Settings as IdokepCurrentSetting } from './components/IdokepCurrent';
 import IdokepDays, {Settings as IdokepDaysSettings} from "./components/IdokepDays";
 import IdokepHours, {Settings as IdokepHoursSettings} from "./components/IdokepHours";
+import ChromecastWidget, {Settings as ChromecastWidgetSettings} from './components/ChromecastWidget';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -69,6 +70,12 @@ let reg: WidgetRegistryType = {
         settingsType: IdokepHoursSettings,
         defaultSize: {w: 400, h: 200},
     },
+    chromecast: {
+        factory: ChromecastWidget,
+        title: 'Chromecast',
+        settingsType: ChromecastWidgetSettings,
+        defaultSize: {w: 600, h: 300},
+    }
 };
 
 export default reg;
