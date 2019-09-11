@@ -18,6 +18,8 @@ const styles = () => createStyles({
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
         },
         '& .center': {
             height: '100%',
@@ -31,14 +33,18 @@ const styles = () => createStyles({
             backgroundColor: 'rgba(0,0,0,0.6)',
             padding: WidgetStyle.getRelativeSize(0.02).width,
             borderRadius: 5,
+            flexGrow: 1,
+            display: 'flex',
+            alignItems: 'center',
+            '&:not(:last-child)': {
+                marginBottom: 0,
+            },
         },
         '& .title': {
             fontSize: WidgetStyle.getRelativeSize(0.05).width,
         },
         '& .time': {
-            display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
         },
         '& .icon': {
             marginRight: WidgetStyle.getRelativeSize(0.05).width,
@@ -185,7 +191,7 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     // const [sendMessage, lastMessage, readyState] = useWebSocket(`ws://${window.location.host}/chromecast-proxy/${config.settings.name}`);
     // const data: ChromecastStatus = (readyState && lastMessage) ? convertKeysToCamelCase(JSON.parse(lastMessage.data)) : null;
 
-    const data: ChromecastStatus = JSON.parse(exampleData.bd);
+    const data: ChromecastStatus = JSON.parse(exampleData.yt);
 
     // console.log(JSON.stringify(data))
 
