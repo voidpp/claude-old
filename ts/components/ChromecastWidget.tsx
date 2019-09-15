@@ -9,6 +9,7 @@ import { CSSProperties } from '@material-ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames = require('classnames');
 import { IconName } from '@fortawesome/fontawesome-svg-core';
+import { useInterval } from './tools';
 
 const styles = () => createStyles({
     root: {
@@ -96,7 +97,7 @@ const Panel = (props: PanelProps) => {
 
 const playerIcon: {[key in Chromecast.PlayerState]: IconName} = {
     PLAYING: 'play',
-    BUFFERING: 'buffer',
+    BUFFERING: 'sync-alt',
     PAUSED: 'pause',
     IDLE: 'dot-circle',
     UNKNOWN: 'question',
@@ -114,7 +115,7 @@ function SpotifyApp(props: AppProps) {
 }
 
 function LoadingApp(props: AppProps) {
-    return <div className="center">Loading...</div>;
+    return <div className="center"><img className="initializing" src="/static/pics/rings.svg" /></div>;
 }
 
 function InitializingApp(props: AppProps) {
@@ -149,13 +150,25 @@ function MediaApp(props: MediaAppProps) {
 
     const {title, subTitle, image, currentTime, duration, playerState} = props;
 
+    const [time, setTime] = React.useState(currentTime);
+
+    useInterval(() => {
+        if (playerState == 'PLAYING') {
+            setTime(t => t + 1);
+        }
+    }, 1000);
+
+    React.useEffect(() => {
+        setTime(currentTime);
+    }, [currentTime])
+
     return (
         <div className="body" style={{backgroundImage: `url(${image})`}}>
             <Panel className="title">{title}</Panel>
             <Panel style={{fontSize: 20}}>{subTitle}</Panel>
             <Panel className="time">
                 <FontAwesomeIcon icon={playerIcon[playerState]} className="icon" />
-                <span className="current">{formatTimeDuration(currentTime)}</span>
+                <span className="current">{formatTimeDuration(time)}</span>
                 <span className="duration"> / {formatTimeDuration(duration)}</span>
             </Panel>
         </div>
