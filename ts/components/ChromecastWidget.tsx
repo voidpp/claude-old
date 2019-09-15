@@ -57,6 +57,9 @@ const styles = () => createStyles({
         '& .duration': {
             fontSize: WidgetStyle.getRelativeSize(0.06).width,
         },
+        '& .initializing': {
+            width: WidgetStyle.getRelativeSize(0.3).width,
+        },
     }
 });
 
@@ -115,7 +118,7 @@ function LoadingApp(props: AppProps) {
 }
 
 function InitializingApp(props: AppProps) {
-    return <div className="center">Initializing...</div>;
+    return <div className="center"><img className="initializing" src="/static/pics/rings.svg" /></div>;
 }
 
 type MediaAppProps = {
