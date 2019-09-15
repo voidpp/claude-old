@@ -175,13 +175,31 @@ const mediaApps: {[s: string]: {loading: MediaLoadingScreenProps, data: (p: Chro
                 duration: p.media.duration,
                 playerState: p.media.playerState,
             }
-        }
-    }
+        },
+    },
+    Spotify: {
+        loading: {
+            icon: 'spotify',
+            color: '#1DB954',
+        },
+        data: p => {
+            const mediaMetadata = p.media.mediaMetadata as Chromecast.MediaMetaData.Spotify;
+            return {
+                title: mediaMetadata.title,
+                subTitle: `${mediaMetadata.artist} - ${mediaMetadata.albumName}`,
+                image: mediaMetadata.images[0].url,
+                currentTime: p.media.currentTime,
+                duration: p.media.duration,
+                playerState: p.media.playerState,
+            }
+        },
+    },
 }
 
 const exampleData = {
     yt: '{"cast":{"isActiveInput":false,"isStandBy":true,"volumeLevel":1,"volumeMuted":false,"appId":"233637DE","displayName":"YouTube","namespaces":["urn:x-cast:com.google.cast.debugoverlay","urn:x-cast:com.google.cast.cac","urn:x-cast:com.google.cast.media","urn:x-cast:com.google.youtube.mdx"],"sessionId":"2d8a8880-5b00-4037-acc1-f9a79c69db3f","transportId":"2d8a8880-5b00-4037-acc1-f9a79c69db3f","statusText":"YouTube"},"media":{"currentTime":901.567,"contentId":"OSTZ4XHJE34","contentType":"x-youtube/video","duration":1303.961,"streamType":"BUFFERED","idleReason":null,"mediaSessionId":1454740611,"playbackRate":1,"playerState":"PLAYING","supportedMediaCommands":262147,"volumeLevel":1,"volumeMuted":false,"mediaCustomData":{},"mediaMetadata":{"metadataType":0,"title":"Worcester - Final Version","subtitle":"Flamu","images":[{"url":"https://i.ytimg.com/vi/OSTZ4XHJE34/hqdefault.jpg"}]},"subtitleTracks":{},"currentSubtitleTracks":[],"lastUpdated":"2019-08-27T19:21:36.901680"}}',
     bd: '{"cast":{"isActiveInput":false,"isStandBy":true,"volumeLevel":1,"volumeMuted":false,"appId":"E8C28D3C","displayName":"Backdrop","namespaces":["urn:x-cast:com.google.cast.debugoverlay","urn:x-cast:com.google.cast.cac","urn:x-cast:com.google.cast.sse","urn:x-cast:com.google.cast.remotecontrol"],"sessionId":"fa0fae95-dab2-4b63-9286-862e3e9cad9b","transportId":"fa0fae95-dab2-4b63-9286-862e3e9cad9b","statusText":""},"media":null}',
+    sp: '{"cast":{"isActiveInput":false,"isStandBy":true,"volumeLevel":1,"volumeMuted":false,"appId":"CC32E753","displayName":"Spotify","namespaces":["urn:x-cast:com.google.cast.debugoverlay","urn:x-cast:com.google.cast.cac","urn:x-cast:com.spotify.chromecast.secure.v1","urn:x-cast:com.google.cast.test","urn:x-cast:com.google.cast.broadcast","urn:x-cast:com.google.cast.media"],"sessionId":"b0b7b5ef-7d22-497f-907c-faed8dbc6082","transportId":"b0b7b5ef-7d22-497f-907c-faed8dbc6082","statusText":"Spotify"},"media":{"currentTime":217.796,"contentId":"spotify:track:6dgFhHtleZmYABhqiX8MKV","contentType":"application/x-spotify.track","duration":316.224,"streamType":"BUFFERED","idleReason":null,"mediaSessionId":1,"playbackRate":1,"playerState":"PLAYING","supportedMediaCommands":514511,"volumeLevel":1,"volumeMuted":false,"mediaCustomData":{},"mediaMetadata":{"metadataType":3,"title":"Alive Alone","songName":"Alive Alone","artist":"The Chemical Brothers","albumName":"Exit Planet Dust","images":[{"url":"https://i.scdn.co/image/ba20cec1e90348cb8a2ca00679acc98331eadd78","height":300,"width":300},{"url":"https://i.scdn.co/image/0f1a5fed171dcb0023c33f8d2064329b48314d5b","height":64,"width":64},{"url":"https://i.scdn.co/image/eb286311364f330a69ff3997bd342379d16b2ab0","height":640,"width":640}]},"subtitleTracks":{},"currentSubtitleTracks":[],"lastUpdated":"2019-09-15T06:59:46.700654"}}',
 }
 
 export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyles<typeof styles>) => {
@@ -191,7 +209,8 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     // const [sendMessage, lastMessage, readyState] = useWebSocket(`ws://${window.location.host}/chromecast-proxy/${config.settings.name}`);
     // const data: ChromecastStatus = (readyState && lastMessage) ? convertKeysToCamelCase(JSON.parse(lastMessage.data)) : null;
 
-    const data: ChromecastStatus = JSON.parse(exampleData.yt);
+    const data: ChromecastStatus = JSON.parse(exampleData.bd);
+    // console.log(data);
 
     // console.log(JSON.stringify(data))
 
