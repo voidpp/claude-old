@@ -1,15 +1,14 @@
-import {createStyles, withStyles, WithStyles} from '@material-ui/core';
-import * as React from "react";
-import {CommonWidgetProps, BaseWidgetSettings, Chromecast} from "../types";
-import WidgetFrame from "../containers/WidgetFrame";
-import WidgetMenu from "./WidgetMenu";
-import useWebSocket from 'react-use-websocket';
-import { convertKeysToCamelCase, WidgetStyle } from '../tools';
-import { CSSProperties } from '@material-ui/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classNames = require('classnames');
 import { IconName } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import * as React from "react";
+import * as moment from 'moment';
+import WidgetFrame from "../containers/WidgetFrame";
+import { WidgetStyle } from '../tools';
+import { BaseWidgetSettings, Chromecast, CommonWidgetProps } from "../types";
 import { useInterval } from './tools';
+import WidgetMenu from "./WidgetMenu";
+import classNames = require('classnames');
 
 const styles = () => createStyles({
     root: {
@@ -61,6 +60,20 @@ const styles = () => createStyles({
         '& .initializing': {
             width: WidgetStyle.getRelativeSize(0.3).width,
         },
+        '& .backdrop': {
+            width: '100%',
+            height: '100%',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            borderRadius: '0.4em',
+            '& .time': {
+                backdropFilter: 'blur(4px)',
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                fontSize: WidgetStyle.getRelativeSize(0.2).width,
+                padding: '0.2em 0.4em',
+                borderRadius: '0.1em',
+            }
+        }
     }
 });
 
@@ -78,7 +91,29 @@ type AppProps = {
 }
 
 function BackdropApp(props: AppProps) {
-    return <div className="center">Backdrop...</div>;
+
+    const getNow = () => moment(new Date()).format('HH:mm');
+
+    const [img, setImg] = React.useState('');
+    const [time, setTime] = React.useState(getNow());
+
+    function rollTheImageDice() {
+        fetch('https://www.reddit.com/r/EarthPorn.json').then(r => r.json()).then(d => {
+            const entries = d.data.children.filter(i => i.data['post_hint'] == 'image');
+            const imgurl = entries[Math.floor(Math.random() * entries.length)].data.url;
+            setImg(imgurl);
+        })
+    }
+
+    React.useEffect(rollTheImageDice, []);
+
+    useInterval(rollTheImageDice, 10*60*1000);
+
+    return (
+        <div className="backdrop center" style={{backgroundImage: `url(${img})`}}>
+            <span className="time">{time}</span>
+        </div>
+    );
 }
 
 type PanelProps = {
@@ -106,12 +141,6 @@ const playerIcon: {[key in Chromecast.PlayerState]: IconName} = {
 function formatTimeDuration(s: number): string {
     s = Math.round(s);
     return (s-(s%=60))/60+(9<s?':':':0')+s
-}
-
-function SpotifyApp(props: AppProps) {
-    const mediaMetadata = props.status.media.mediaMetadata as Chromecast.MediaMetaData.Spotify;
-
-    return 'Spotify';
 }
 
 function LoadingApp(props: AppProps) {
