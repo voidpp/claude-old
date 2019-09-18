@@ -4,11 +4,12 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import * as React from "react";
 import * as moment from 'moment';
 import WidgetFrame from "../containers/WidgetFrame";
-import { WidgetStyle } from '../tools';
+import { WidgetStyle, convertKeysToCamelCase } from '../tools';
 import { BaseWidgetSettings, Chromecast, CommonWidgetProps } from "../types";
 import { useInterval } from './tools';
 import WidgetMenu from "./WidgetMenu";
 import classNames = require('classnames');
+import useWebSocket from 'react-use-websocket';
 
 const styles = () => createStyles({
     root: {
@@ -108,6 +109,7 @@ function BackdropApp(props: AppProps) {
     React.useEffect(rollTheImageDice, []);
 
     useInterval(rollTheImageDice, 10*60*1000);
+    useInterval(() => setTime(getNow()), 1000);
 
     return (
         <div className="backdrop center" style={{backgroundImage: `url(${img})`}}>
@@ -251,10 +253,10 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
 
     const { config, classes, dashboardConfig } = props;
 
-    // const [sendMessage, lastMessage, readyState] = useWebSocket(`ws://${window.location.host}/chromecast-proxy/${config.settings.name}`);
-    // const data: ChromecastStatus = (readyState && lastMessage) ? convertKeysToCamelCase(JSON.parse(lastMessage.data)) : null;
+    const [sendMessage, lastMessage, readyState] = useWebSocket(`ws://${window.location.host}/chromecast-proxy/${config.settings.name}`);
+    const data: ChromecastStatus = (readyState && lastMessage) ? convertKeysToCamelCase(JSON.parse(lastMessage.data)) : null;
 
-    const data: ChromecastStatus = JSON.parse(exampleData.bd);
+    // const data: ChromecastStatus = JSON.parse(exampleData.bd);
     // console.log(data);
 
     // console.log(JSON.stringify(data))
