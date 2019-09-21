@@ -1,4 +1,5 @@
-import {ServerStatusData, IdokepCurrentResponse, IdokepDaysResponse, IdokepHoursResponse} from "./types";
+import {ServerStatusData, IdokepCurrentResponse, IdokepDaysResponse, IdokepHoursResponse, Transmission} from "./types";
+import { convertKeysToCamelCase } from "./tools";
 
 class ApiFetcher {
 
@@ -15,7 +16,7 @@ class ApiFetcher {
 
         const response_data = await resp.json();
 
-        return response_data;
+        return convertKeysToCamelCase(response_data);
     }
 
     async getServerStatus(ip: string, statusServerPort: number): Promise<ServerStatusData> {
@@ -32,6 +33,10 @@ class ApiFetcher {
 
     async getIdokepHours(city: string): Promise<IdokepHoursResponse> {
         return this.fetch(`idokep/hours/${city}`, null, 'GET')
+    }
+
+    async transmission(url: string, username?: string, password?: string): Promise<Transmission.ApiResponse> {
+        return this.fetch('transmission', {url, username, password})
     }
 }
 

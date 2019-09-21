@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import { ClaudeThemeType } from "./themes";
 import { LocaleType } from './locales';
 
-export class BaseWidgetSettings {}
+export class BaseWidgetSettings { }
 
 export interface BaseWidgetConfig {
     x: number,
@@ -21,7 +21,7 @@ export interface WidgetConfig extends BaseWidgetConfig {
 }
 
 export type CommonWidgetProps<T = any> = {
-    config: Omit<WidgetConfig, 'settings'> & {settings: T},
+    config: Omit<WidgetConfig, 'settings'> & { settings: T },
     dashboardConfig: DashboardConfig,
 }
 
@@ -170,4 +170,46 @@ export namespace Chromecast {
         volumeMuted: boolean,
     }
 
+}
+
+export namespace Transmission {
+    export interface SessionStats {
+        activeTorrentCount: number,
+        cumulativeStats: {
+            downloadedBytes: number,
+            filesAdded: number,
+            secondsActive: number,
+            sessionCount: number,
+            uploadedBytes: number,
+        },
+        currentStats: {
+            downloadedBytes: number,
+            filesAdded: number,
+            secondsActive: number,
+            sessionCount: number,
+            uploadedBytes: number,
+        },
+        downloadSpeed: number,
+        pausedTorrentCount: number,
+        torrentCount: number,
+        uploadSpeed: number,
+    }
+
+    export interface Torrent {
+        eta: number,
+        id: number,
+        name: string,
+        percentDone: number,
+        rateDownload: number,
+        sizeWhenDone: number,
+        totalSize: number,
+    }
+
+    export interface ApiResponse {
+        data: {
+            status: SessionStats,
+            torrents: Array<Torrent>,
+        } | string,
+        status: "success" | "error",
+    }
 }

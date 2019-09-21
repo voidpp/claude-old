@@ -24,7 +24,6 @@ TODO
     * select them somehow
 * export / import widget settings
 * new widgets
-    * chromecast
     * transmission
     * influx graph
     * network speed

@@ -10,6 +10,7 @@ import IdokepCurrent, { Settings as IdokepCurrentSetting } from './components/Id
 import IdokepDays, {Settings as IdokepDaysSettings} from "./components/IdokepDays";
 import IdokepHours, {Settings as IdokepHoursSettings} from "./components/IdokepHours";
 import ChromecastWidget, {Settings as ChromecastWidgetSettings} from './components/ChromecastWidget';
+import TransmissionWidget, {Settings as TransmissionWidgetSettings} from './components/TransmissionWidget';
 
 export type WidgetRegistryType = {
     [s: string]: {
@@ -75,7 +76,13 @@ let reg: WidgetRegistryType = {
         title: 'Chromecast',
         settingsType: ChromecastWidgetSettings,
         defaultSize: {w: 600, h: 300},
-    }
+    },
+    transmission: {
+        factory: TransmissionWidget,
+        title: 'Transmission',
+        settingsType: TransmissionWidgetSettings,
+        defaultSize: {w: 600, h: 300},
+    },
 };
 
 export default reg;

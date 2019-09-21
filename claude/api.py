@@ -9,12 +9,13 @@ from io import StringIO
 import pychromecast
 
 
-from aiohttp import ClientSession, web
+from aiohttp import ClientSession, web, BasicAuth
 from lxml import etree
 
 from .controller_base import ControllerBase
 from .controller_cache import ControllerCache
 from .tools import parse_temp, tree_search
+from .transmission import Transmission, TransmissionError
 
 logger = logging.getLogger(__name__)
 
@@ -231,3 +232,24 @@ class Api(ControllerBase):
         chromecasts = pychromecast.get_chromecasts()
 
         return [cc.device.friendly_name for cc in chromecasts]
+
+    @route('/transmission', 'POST')
+    async def transmission(self, request):
+
+        config = await request.json()
+
+        client = Transmission(config['url'], config.get('username'), config.get('password'))
+
+        try:
+            return web.json_response({
+                'data': {
+                    'session-stats': await client.session_stats(),
+                    'torrents': await client.torrent_list(),
+                },
+                'status': 'success'
+            })
+        except TransmissionError as e:
+            return web.json_response({
+                'data': str(e),
+                'status': 'error'
+            })
