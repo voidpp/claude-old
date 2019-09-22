@@ -18,7 +18,7 @@ class Transmission:
 
     async def torrent_list(self):
         data = await self._call('torrent-get', {
-            "fields": [ "id", "name", "totalSize", "percentDone", "rateDownload", "sizeWhenDone", "eta" ],
+            "fields": [ "id", "name", "totalSize", "percentDone", "rateDownload", "sizeWhenDone", "eta", "rateUpload", "peersConnected" ],
         })
         return data['arguments']['torrents']
 

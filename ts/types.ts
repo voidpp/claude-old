@@ -203,11 +203,13 @@ export namespace Transmission {
         rateDownload: number,
         sizeWhenDone: number,
         totalSize: number,
+        rateUpload: number,
+        peersConnected: number,
     }
 
     export interface ApiResponse {
         data: {
-            status: SessionStats,
+            sessionStats: SessionStats,
             torrents: Array<Torrent>,
         } | string,
         status: "success" | "error",
