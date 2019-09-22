@@ -100,14 +100,13 @@ export default withStyles(styles)((props: CommonWidgetProps<Settings> & WithStyl
     const [data, setData] = React.useState<Transmission.ApiResponse>();
 
     function fetchData(cfg: Settings = settings) {
-        api.transmission(cfg.url, cfg.username, cfg.password).then(setData);
+        if (cfg.host)
+            api.transmission(cfg.url, cfg.username, cfg.password).then(setData);
     }
 
     useInterval(fetchData, 5*1000);
 
     React.useEffect(fetchData, []);
-
-    console.log(data);
 
     return (
         <WidgetFrame config={config} dashboardConfig={dashboardConfig} >

@@ -14,9 +14,7 @@ class ApiFetcher {
             body: data ? JSON.stringify(data) : undefined,
         })
 
-        const response_data = await resp.json();
-
-        return convertKeysToCamelCase(response_data);
+        return await resp.json();
     }
 
     async getServerStatus(ip: string, statusServerPort: number): Promise<ServerStatusData> {
@@ -36,7 +34,7 @@ class ApiFetcher {
     }
 
     async transmission(url: string, username?: string, password?: string): Promise<Transmission.ApiResponse> {
-        return this.fetch('transmission', {url, username, password})
+        return convertKeysToCamelCase(await this.fetch('transmission', {url, username, password}));
     }
 }
 
