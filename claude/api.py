@@ -201,10 +201,10 @@ class Api(ControllerBase):
             precipitation_prob = 0
 
             if prec_val_tree is not None:
-                precipitation_val = int(re.search(r'Kb\. ([\d]{1,}) mm', prec_val_tree.text).group(1))
+                precipitation_val = float(re.search(r'Kb\. ([\.\d]{1,}) mm', prec_val_tree.text).group(1))
 
             if prec_prob_tree is not None:
-                precipitation_prob = int(re.search(r'.+ ([\d]{1,})%', prec_prob_tree.text).group(1))
+                precipitation_prob = float(re.search(r'.+ ([\.\d]{1,})%', prec_prob_tree.text).group(1))
 
             wind_element = tree_search('.szel-icon > img', day_column)
 
