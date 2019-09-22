@@ -26,10 +26,10 @@ javascript_libraries = {
             'url': 'https://cdn.jsdelivr.net/npm/react-draggable@3.3.0/dist/react-draggable.js',
             'hash': 'sha256-dx6xPZVJdlAEbit+OnKSKb1JOwcJ7vyMdwatshRtm/U=',
         }, {
-            'url': 'https://unpkg.com/prop-types/prop-types.min.js',
+            'url': 'https://unpkg.com//prop-types@15.7.2/prop-types.min.js',
             'hash': 'sha256-TIg1BRfugqpPM2jmfvGkU8pmNtz6ZEm049b6pch3Bm4=',
         }, {
-            'url': 'https://unpkg.com/recharts/umd/Recharts.min.js',
+            'url': 'https://unpkg.com/recharts@1.7.1/umd/Recharts.min.js',
             'hash': 'sha256-1UBekyQ4ydBFe1qngtBJZUc0NhsSLbrl85xJxaNsl1o=',
         }, {
             'url': 'https://unpkg.com/react-redux@7.1.1/dist/react-redux.js',
@@ -60,10 +60,10 @@ javascript_libraries = {
             'url': 'https://cdn.jsdelivr.net/npm/react-draggable@3.3.2/dist/react-draggable.min.js',
             'hash': 'sha256-Bz00T+A2ZjG2P8ULO5VodkZd/JKF0sAHWFxz+uBRkxE=',
         }, {
-            'url': 'https://unpkg.com/prop-types/prop-types.min.js',
+            'url': 'https://unpkg.com/prop-types@15.7.2/prop-types.min.js',
             'hash': 'sha256-TIg1BRfugqpPM2jmfvGkU8pmNtz6ZEm049b6pch3Bm4=',
         }, {
-            'url': 'https://unpkg.com/recharts/umd/Recharts.min.js',
+            'url': 'https://unpkg.com/recharts@1.7.1/umd/Recharts.min.js',
             'hash': 'sha256-1UBekyQ4ydBFe1qngtBJZUc0NhsSLbrl85xJxaNsl1o=',
         }, {
             'url': 'https://unpkg.com/react-redux@7.1.1/dist/react-redux.min.js',
