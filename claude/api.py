@@ -116,7 +116,7 @@ class Api(ControllerBase):
         current_container = tree_search('.fooldal-elorejelzes .jelenlegi', tree)
 
         res = {
-            'img': base_url + tree_search('.icon > svg > image', current_container).attrib['xlink:href'],
+            'img': base_url + tree_search('.icon > img', current_container).attrib['src'],
             'value': parse_temp(tree_search('.homerseklet', current_container).text),
         }
 
