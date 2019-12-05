@@ -1,10 +1,9 @@
 import logging
-from functools import wraps
+import re
 
 from lxml.cssselect import CSSSelector
 
-from claude.config import AppConfig
-from claude.memcache import MemcacheClient
+TEMP_PATTERN = re.compile(r'([\d+\-]+)')
 
 logger = logging.getLogger(__name__)
 
@@ -29,17 +28,20 @@ def dict_merge(source, destination):
 
 
 def parse_temp(temp: str) -> int:
-    """This magnificent function iterates throught the string and if found a non int char, breaks"""
+    """
+    >>> parse_temp("-1")
+    -1
+    >>> parse_temp("+42°F")
+    42
+    >>> parse_temp(" -42 ° C ")
+    -42
+    """
 
-    number = ""
-    for char in temp:
-        try:
-            int(char)
-            number += char
-        except:
-            break
-    return number if int(number) else None
+    logger.debug("parse temp: '%s'", temp)
 
+    m = TEMP_PATTERN.search(temp)
+
+    return int(m.group(1)) if m else None
 
 def tree_search(selector, tree, return_first = True):
     sel = CSSSelector(selector)
