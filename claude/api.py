@@ -161,7 +161,8 @@ class Api(ControllerBase):
                 precipitation_prob = re.search(r'.+ ([\d]{1,})%', prec_prob_text).group(1)
 
             day_data = {
-                'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
+                # 'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
+                'img': base_url + tree_search('.icon > img', day_column).attrib['src'],
                 'day': day,
                 'date': str(col_date),
                 'max': int(tree_search('[class^="max-homerseklet-"]', day_column).text.strip()),
@@ -210,7 +211,7 @@ class Api(ControllerBase):
 
             hour_data = {
                 'hour': int(hour_cell.text[:-1]),
-                'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
+                'img': base_url + tree_search('.icon > img', day_column).attrib['src'],
                 'temp': int(tree_search('.hoerzet', day_column).text),
                 'precipitation': {
                     'value': precipitation_val,
