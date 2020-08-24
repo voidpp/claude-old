@@ -157,7 +157,8 @@ class Api(ControllerBase):
             if csapadek_tree is not None:
                 prec_val_text = tree_search('.buborek-lent .buborek-sor .buborek-text .csapadek-text', csapadek_tree).text
                 prec_prob_text = tree_search('.buborek-lent .buborek-sor .buborek-text .valoszinuseg', csapadek_tree).text
-                precipitation_val = re.search(r'Kb\. ([\d]{1,}) mm', prec_val_text).group(1)
+                precipitation_matches = re.search(r'Kb\. ([\d]{1,}) mm', prec_val_text)
+                precipitation_val = precipitation_matches.group(1) if precipitation_matches else 0
                 precipitation_prob = re.search(r'.+ ([\d]{1,})%', prec_prob_text).group(1)
 
             day_data = {
