@@ -203,7 +203,7 @@ class Api(ControllerBase):
             precipitation_prob = 0
 
             if prec_val_tree is not None:
-                precipitation_val = float(re.search(r'Kb\. ([\.\d]{1,}) mm', prec_val_tree.text).group(1))
+                precipitation_val = float(re.search(r'Kb\. ([\.\d]{1,}) .m', prec_val_tree.text).group(1))
 
             if prec_prob_tree is not None:
                 precipitation_prob = float(re.search(r'.+ ([\.\d]{1,})%', prec_prob_tree.text).group(1))
@@ -225,6 +225,8 @@ class Api(ControllerBase):
             }
 
             res.append(hour_data)
+
+        print(res)
 
         return res
 
