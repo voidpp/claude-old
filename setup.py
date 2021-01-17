@@ -19,6 +19,7 @@ setup(
         "cssselect~=1.1",
         "cachetools~=3.1",
         "pychromecast~=3.2",
+        "aiohttp-middlewares~=1.1",
     ],
     include_package_data = True,
     packages = find_packages(),

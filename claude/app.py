@@ -5,6 +5,7 @@ from time import sleep, time
 
 import pkg_resources
 from aiohttp import web
+from aiohttp_middlewares import cors_middleware
 from jinja2 import Template
 
 from .api import Api
@@ -24,7 +25,11 @@ class App:
         self.config.load(database_file)
         self.debug = debug
 
-        self.aio_app = web.Application()
+        self.aio_app = web.Application(
+            middlewares = [
+                cors_middleware(allow_all = True)
+            ]
+        )
 
         current_directory = os.path.dirname(__file__)
 
