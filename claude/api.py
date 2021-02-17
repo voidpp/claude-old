@@ -113,15 +113,14 @@ class Api(ControllerBase):
 
         tree = await get_xml('%s/idojaras/%s' % (base_url, city))
 
-        current_container = tree_search('.fooldal-elorejelzes .jelenlegi', tree)
+        current_container = tree_search('.current-weather-lockup', tree)
 
         res = {
-            'img': base_url + tree_search('.icon > img', current_container).attrib['src'],
-            'value': parse_temp(tree_search('.homerseklet', current_container).text),
+            'img': base_url + tree_search('.current-weather-icon > img', current_container).attrib['src'],
+            'value': parse_temp(tree_search('.current-temperature', current_container).text),
         }
 
         return res
-
 
     @route('/idokep/days/{city}')
     @cache.cached_json_controller(timedelta(hours = 3))
@@ -132,14 +131,14 @@ class Api(ControllerBase):
         logger.debug("Fetch data from %s", base_url)
         tree = await get_xml('%s/elorejelzes/%s' % (base_url, request.match_info.get('city')))
 
-        day_columns = tree_search('.huszonegy .oszlop', tree, False)
+        day_columns = tree_search('.dailyForecastCol', tree, False)
 
         res = []
 
         col_date = None
 
         for day_column in day_columns:
-            day_cell = tree_search('.nap-box > div', day_column)
+            day_cell = tree_search('.dfColHeader .dfDayNum', day_column)
             if day_cell is None:
                 continue
 
@@ -153,21 +152,21 @@ class Api(ControllerBase):
                 while col_date.day != day:
                     col_date = col_date + timedelta(days = 1)
 
-            csapadek_tree = tree_search('.csapadek', day_column)
-            if csapadek_tree is not None:
-                prec_val_text = tree_search('.buborek-lent .buborek-sor .buborek-text .csapadek-text', csapadek_tree).text
-                prec_prob_text = tree_search('.buborek-lent .buborek-sor .buborek-text .valoszinuseg', csapadek_tree).text
-                precipitation_matches = re.search(r'Kb\. ([\d]{1,}) mm', prec_val_text)
-                precipitation_val = precipitation_matches.group(1) if precipitation_matches else 0
-                precipitation_prob = re.search(r'.+ ([\d]{1,})%', prec_prob_text).group(1)
+            icons_tree = tree_search('.dfIconAlert', day_column)
+            # if icons_tree is not None:
+            #     prec_val_text = tree_search('.buborek-lent .buborek-sor .buborek-text .csapadek-text', icons_tree).text
+            #     prec_prob_text = tree_search('.buborek-lent .buborek-sor .buborek-text .valoszinuseg', icons_tree).text
+            #     precipitation_matches = re.search(r'Kb\. ([\d]{1,}) mm', prec_val_text)
+            #     precipitation_val = precipitation_matches.group(1) if precipitation_matches else 0
+            #     precipitation_prob = re.search(r'.+ ([\d]{1,})%', prec_prob_text).group(1)
 
             day_data = {
                 # 'img': base_url + tree_search('.icon > svg > image', day_column).attrib['xlink:href'],
-                'img': base_url + tree_search('.icon > img', day_column).attrib['src'],
+                'img': base_url + tree_search('.forecast-icon', day_column).attrib['src'],
                 'day': day,
                 'date': str(col_date),
-                'max': int(tree_search('[class^="max-homerseklet-"]', day_column).text.strip()),
-                'min': int(tree_search('[class^="min-homerseklet-"]', day_column).text.strip()),
+                'max': int(tree_search('.max a', day_column).text.strip()),
+                'min': int(tree_search('.min a', day_column).text.strip()),
                 'precipitation': {
                     'value': int(precipitation_val),
                     'probability': int(precipitation_prob),
@@ -188,40 +187,44 @@ class Api(ControllerBase):
         logger.debug("Fetch data from %s", base_url)
         tree = await get_xml('%s/elorejelzes/%s' % (base_url, request.match_info.get('city')))
 
-        day_columns = tree_search('.tizenket .oszlop', tree, False)
+        hour_columns = tree_search('.hourly-forecast-card', tree, False)
 
         res = []
 
-        for day_column in day_columns:
-            hour_cell = tree_search('.ora', day_column)
+        for hour_column in hour_columns:
+            hour_cell = tree_search('.hourly-forecast-hour', hour_column)
             if hour_cell is None:
                 continue
 
-            prec_val_tree = tree_search('.csapadek-text', day_column)
-            prec_prob_tree = tree_search('.valoszinuseg', day_column)
+            # prec_val_tree = tree_search('.csapadek-text', day_column)
+            # prec_prob_tree = tree_search('.valoszinuseg', day_column)
             precipitation_val = 0
             precipitation_prob = 0
 
-            if prec_val_tree is not None:
-                precipitation_val = float(re.search(r'Kb\. ([\.\d]{1,}) .m', prec_val_tree.text).group(1))
+            # if prec_val_tree is not None:
+            #     precipitation_val = float(re.search(r'Kb\. ([\.\d]{1,}) .m', prec_val_tree.text).group(1))
+            #
+            # if prec_prob_tree is not None:
+            #     precipitation_prob = float(re.search(r'.+ ([\.\d]{1,})%', prec_prob_tree.text).group(1))
 
-            if prec_prob_tree is not None:
-                precipitation_prob = float(re.search(r'.+ ([\.\d]{1,})%', prec_prob_tree.text).group(1))
-
-            wind_element = tree_search('.szel-icon > img', day_column)
+            # wind_element = tree_search('.hourly-wind .wind', hour_column)
 
             hour_data = {
-                'hour': int(hour_cell.text[:-1]),
-                'img': base_url + tree_search('.icon > img', day_column).attrib['src'],
-                'temp': int(tree_search('.hoerzet', day_column).text),
+                'hour': int(hour_cell.text.split(":")[0]),
+                'img': base_url + tree_search('.forecast-icon', hour_column).attrib['src'],
+                'temp': int(tree_search('.temperature-circled', hour_column).text),
                 'precipitation': {
                     'value': precipitation_val,
                     'probability': precipitation_prob,
                 },
                 'wind': {
-                    'img': base_url + wind_element.attrib['src'],
-                    'angle': int(re.search(r'rotate\(([\d]{1,3})deg\)', wind_element.attrib['style']).group(1)),
+                    'img': "",
+                    'angle': 0,
                 },
+                # 'wind': {
+                #     'img': base_url + wind_element.attrib['src'],
+                #     'angle': int(re.search(r'rotate\(([\d]{1,3})deg\)', wind_element.attrib['style']).group(1)),
+                # },
             }
 
             res.append(hour_data)
