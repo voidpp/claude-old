@@ -1,11 +1,13 @@
-
 import json
+
 from aiohttp import ClientSession, BasicAuth, ClientError
 
 SESSION_ID_HEADER_NAME = 'X-Transmission-Session-Id'
 
+
 class TransmissionError(Exception):
     pass
+
 
 class Transmission:
 
@@ -15,10 +17,9 @@ class Transmission:
         self._password = password
         self._session_id = ''
 
-
     async def torrent_list(self):
         data = await self._call('torrent-get', {
-            "fields": [ "id", "name", "totalSize", "percentDone", "rateDownload", "sizeWhenDone", "eta", "rateUpload", "peersConnected" ],
+            "fields": ["id", "name", "totalSize", "percentDone", "rateDownload", "sizeWhenDone", "eta", "rateUpload", "peersConnected"],
         })
         return data['arguments']['torrents']
 

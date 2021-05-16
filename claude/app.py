@@ -4,9 +4,8 @@ import os
 from time import sleep, time
 
 import pkg_resources
-from aiohttp import web
-from aiohttp_middlewares import cors_middleware
 from jinja2 import Template
+from starlette.applications import Starlette
 
 from .api import Api
 from .config_sync_service import ConfigSyncService
@@ -15,6 +14,16 @@ from .config import AppConfig, Mode, default_dashboard_data
 from .chromecast_proxy_service import chromecast_proxy_service
 
 logger = logging.getLogger(__name__)
+
+
+
+app = Starlette(
+    debug = True,
+    routes = [
+
+    ],
+)
+
 
 class App:
 

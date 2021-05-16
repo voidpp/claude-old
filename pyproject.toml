@@ -1,2 +1,32 @@
+
+[tool.poetry]
+name = "claude"
+version = "0.0.0"
+description = "Pluginable dashboard app"
+authors = ["Lajos Santa <santa.lajos@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.13.3"
+starlette = "^0.14.2"
+Jinja2 = "^2.11.3"
+configpp = "^0.5.0"
+lxml = "^4.6.2"
+pymemcache = "^3.4.0"
+cssselect = "^1.1.0"
+cachetools = "^4.2.1"
+PyChromecast = "^8.1.0"
+httpx = "^0.16.1"
+pydantic = "^1.7.3"
+
+[tool.poetry.dev-dependencies]
+
 [build-system]
-requires = ["setuptools>=30.3.0", "wheel", "setuptools_scm"]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+dirty = true
+metadata = true
